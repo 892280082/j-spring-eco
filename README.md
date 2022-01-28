@@ -9,11 +9,7 @@ node 实现 spring框架
 
 
 #### 安装教程
-
-1.node ApplicationBoot.js
-2.node runtemp.js
-3后台会改成 直接运行 ApplicationBoot.js即可
-
-
-
+- 1.node ApplicationBoot.js
+- 2.node runtemp.js
+- 3.后面改成直接运行 ApplicationBoot.js即可
 
