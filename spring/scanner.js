@@ -1,0 +1,1 @@
+const {SprintBeanScaner} = require("./index")

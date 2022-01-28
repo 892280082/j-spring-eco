@@ -1,0 +1,9 @@
+{
+	"msg":"hello world!",
+	"email":{
+		"user":"892280082@qq.com"
+	},
+	"mysql":{
+		"host":"8.8.8.8"
+	}
+}
