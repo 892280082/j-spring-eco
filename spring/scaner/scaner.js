@@ -35,9 +35,32 @@ const scanerDir = dirPath =>{
 		.map(convertToBeanDefine) //原始数据信息 转换成beanDefine
 }
 
+
+//校验beandefineList 是否符合标注
+const verifyBeanDefineList = beanDefineList => {
+	//1.禁止名称重复
+	beanDefineList.map(b => b.name).reduce((s,v)=> {
+		if(s[v]){
+			throw `beanDfine name replace: ${s[v]}`
+		}else{
+			s[v]=v;
+			return s;
+		}
+	},{})
+}
+
+
 //扫描目录集合
-const scanerDirList = dirPathList => dirPathList.map(scanerDir).reduce((s,v) => {
-	return [...s,...v]
-},[])
+const scanerDirList = dirPathList => {
+
+	const beanDefineList = dirPathList.map(scanerDir).reduce((s,v) => {
+		return [...s,...v]
+	},[]);
+
+	//1.校验集合是否合格
+	verifyBeanDefineList(beanDefineList)
+
+	return beanDefineList;
+}
 
 module.exports = {scanerDir,scanerDirList}

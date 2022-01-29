@@ -18,6 +18,7 @@ const juageRecurseInject = injectPaths => {
 	}
 }
 
+
 class SpringFactory {
 
 	/**
@@ -47,6 +48,14 @@ class SpringFactory {
 		this.resource = new SpringResource(resourceDir);
 		this.classReferences = classReferences;
 		this.beanDefineList = scanerDirList(dirList)
+	}
+
+
+	/**
+		根据beanDefine的name获取bean
+	*/
+	getBean(beanDefineName){
+		return this._beanCache[beanDefineName]
 	}
 
 
