@@ -1,5 +1,5 @@
 
-//@Bean
+//@Bean(email)
 class EmailService {
 
 

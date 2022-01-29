@@ -23,7 +23,10 @@ class BeanDefine extends AttributeAnnotation{
 	constructor(fsPath,name,annotationInfos){
 		super(name,annotationInfos)
 		this.fsPath = fsPath;
+		this.className = name;
 	}
+
+	className;//类名
 
 	fsPath;//String 文件路径
 

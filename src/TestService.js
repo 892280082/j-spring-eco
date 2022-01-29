@@ -8,7 +8,7 @@ class TestService {
 	//@Autowird
 	userDao;
 
-	//@Autowird
+	//@Autowird(email)
 	emailService;
 
 

@@ -1,8 +1,5 @@
 const {SpringBoot} = require("./Spring")
 
-const boot = new SpringBoot({
-	dirList:["src"],
-})
+new SpringBoot({dirList:["src"]}).run();
 
 
-boot.run();

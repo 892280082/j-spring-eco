@@ -10,6 +10,16 @@ const convertToBeanDefine = originData => {
 	beanDefine.fields = fields.map(f => new Field(f.name,f.annotationInfos))
 	beanDefine.methods = methods.map(f => new Method(f.name,f.annotationInfos))
 	//console.log(JSON.stringify(beanDefine,null,2))
+
+	if(beanDefine.hasAnnotation("Bean")){
+		const beanAnnotation = beanDefine.getAnnotation("Bean")
+		const {value} = beanAnnotation.param;
+		if(value){
+			beanDefine.name = value;
+		}
+		
+	}
+
 	return beanDefine;
 }
 

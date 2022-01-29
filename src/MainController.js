@@ -8,7 +8,7 @@ class MainController {
 	//@Autowird
 	testService;
 
-	//@Autowird
+	//@Autowird(email)
 	emailService;
 
 	main(){

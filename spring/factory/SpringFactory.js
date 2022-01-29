@@ -92,7 +92,7 @@ class SpringFactory {
 		//检测是否出现了 循环引用
 		juageRecurseInject(injectPath);
 
-		const bean = new this.classReferences[beanDefine.name]
+		const bean = new this.classReferences[beanDefine.className]
 
 		beanDefine.fields.forEach(field => {
 

@@ -48,11 +48,11 @@ class SpringBoot {
 
 		const headLib = beanDefinList.map(beanDefine => {
 			const referencePath = "."+beanDefine.fsPath.replace(rootPath,"").replace(/\\/g,"/");
-			return `const { ${beanDefine.name} } = require('${referencePath}') \n`
+			return `const { ${beanDefine.className} } = require('${referencePath}') \n`
 		}).reduce( (s,v)=> s+v,"")
 
 		const classReferences = 	`const classReferences = {};\n`+beanDefinList.map(beanDefine => {
-			return `classReferences["${beanDefine.name}"] = ${beanDefine.name};\n`;
+			return `classReferences["${beanDefine.className}"] = ${beanDefine.className};\n`;
 		}).reduce( (s,v)=> s+v,"")
 
 
