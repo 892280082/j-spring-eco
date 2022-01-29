@@ -11,14 +11,14 @@
 #### 软件架构
 - 使用方法参考下内置的app用例，跟springboot几乎是一样的。
 
-#### 内置注解
+#### 默认内置注解
 > 注解是随意自定义添加的，只要class上面添加了注解就都会被实例化。
-- @Bean(beanName) 定义bean的名称
-- @Value(name) 资源注解
+- @Bean(beanName) bean定义
+- @Value(name) 资源注入
 - @SpringBoot 启动注解，只能存在一个！
-- @Autowired 自动装配类
-- @SpringFactory 注入bean工厂
-- @SpringResource 注入资源
+- @Autowired 自动装配
+- @SpringFactory 注入Beanfactory实例
+- @SpringResource 注入Resource实例 就是配置信息
 - @Proxy 后置处理类，用于bean的提升，使用参考用例
 
 
