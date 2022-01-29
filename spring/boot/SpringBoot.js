@@ -8,7 +8,7 @@ class SpringBoot {
 	args = {
 		rootPath:"",
 		dirList:[],
-		tempJsName:"runtemp.js",
+		tempJsName:".runtemp.js",
 		resourceDir:"resource",
 		inputArgs:[],
 	}
