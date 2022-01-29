@@ -2,6 +2,8 @@ const {SpringResource} = require("../resource/SpringResource")
 const {scanerDirList} = require("../scaner/scaner")
 
 
+let facotryInstance = null;
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -144,10 +146,18 @@ class SpringFactory {
 			throw 'error: found more than one @SpringBoot bean'
 		}
 
+		//开始装配
 		const bean = this.assembleBeanByBeanDefine(beanDefineList[0])
+
+		//装配结束 放入实例
+		facotryInstance = this;
 
 		bean.main(this.args.inputArgs);
 
+	}
+
+	static getInstance(){
+		return facotryInstance;
 	}
 
 }
