@@ -25,7 +25,7 @@ class SpringFactory {
 		dirList:[],
 		tempJsName:"runtemp.js",
 		resourceDir:"resource",
-		inputArgs:[]
+		inputArgs:[],
 	*/
 	args;
 
@@ -84,6 +84,8 @@ class SpringFactory {
 	*/
 	assembleBeanByBeanDefine(beanDefine,injectPath=[]) {
 
+		const {valueInject,beanInject} = this.args.annotation;
+
 		if(this._beanCache[beanDefine.name])
 			return this._beanCache[beanDefine.name];
 
@@ -97,15 +99,15 @@ class SpringFactory {
 		beanDefine.fields.forEach(field => {
 
 			//字段注入配置文件
-			if(field.hasAnnotation("Value")){
-				const {value} = field.getAnnotation("Value").param;
+			if(field.hasAnnotation(valueInject)){
+				const {value} = field.getAnnotation(valueInject).param;
 				bean[field.name] = this.resource.getValue(value)
 			}
 
 			//字段装配bean
-			if(field.hasAnnotation("Autowird")){
+			if(field.hasAnnotation(beanInject)){
 				//@Autowird(beanName) beanName默认使用 否则使用字段首字母大写
-				const value = field.getAnnotation("Autowird").param.value || capitalizeFirstLetter(field.name);
+				const value = field.getAnnotation(beanInject).param.value || capitalizeFirstLetter(field.name);
 				const subBeanDefine = this.getBeanDefineByName(value)
 				bean[field.name] = this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
 			}
@@ -120,7 +122,10 @@ class SpringFactory {
 	//1.启动
 	boot(){
 
-		const beanDefineList = this.getBeanDefineByAnnotation("SprintBoot");
+		const {appBoot} = this.args.annotation;
+
+
+		const beanDefineList = this.getBeanDefineByAnnotation(appBoot);
 
 		if(beanDefineList.length == 0){
 			throw 'error: not find @SpringBoot bean'

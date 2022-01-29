@@ -1,5 +1,5 @@
 
-//@SprintBoot
+//@SpringBoot
 class MainController {
 
 	//@Value(config.msg)

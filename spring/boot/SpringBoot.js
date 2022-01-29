@@ -11,6 +11,11 @@ class SpringBoot {
 		tempJsName:".runtemp.js",
 		resourceDir:"resource",
 		inputArgs:[],
+		annotation:{
+			valueInject:"Value",
+			appBoot:"SpringBoot",
+			beanInject:"Autowird"
+		}
 	}
 
 	constructor(userArgs){
