@@ -10,4 +10,6 @@ node 实现 spring框架
 
 
 #### 安装教程
+```shell
 git clone git@gitee.com:woaianqi/node-ioc.git && cd node-ioc && node ApplicationBoot.js
+```
