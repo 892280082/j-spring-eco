@@ -96,12 +96,15 @@ class SpringFactory {
 
 		beanDefine.fields.forEach(field => {
 
+			//字段注入配置文件
 			if(field.hasAnnotation("Value")){
 				const {value} = field.getAnnotation("Value").param;
 				bean[field.name] = this.resource.getValue(value)
 			}
 
+			//字段装配bean
 			if(field.hasAnnotation("Autowird")){
+				//@Autowird(beanName) beanName默认使用 否则使用字段首字母大写
 				const value = field.getAnnotation("Autowird").param.value || capitalizeFirstLetter(field.name);
 				const subBeanDefine = this.getBeanDefineByName(value)
 				bean[field.name] = this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
