@@ -9,8 +9,11 @@ const convertToBeanDefine = originData => {
 	const beanDefine = new BeanDefine(fsPath,name,annotations);
 	beanDefine.fields = fields.map(f => new Field(f.name,f.annotationInfos))
 	beanDefine.methods = methods.map(f => new Method(f.name,f.annotationInfos))
-	//console.log(JSON.stringify(beanDefine,null,2))
 
+	/**
+		bean的名称就是默认名称
+		如果@Bean(targetName) 存在targetName，则使用指定名称
+	*/
 	if(beanDefine.hasAnnotation("Bean")){
 		const beanAnnotation = beanDefine.getAnnotation("Bean")
 		const {value} = beanAnnotation.param;
