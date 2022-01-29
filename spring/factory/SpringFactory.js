@@ -6,6 +6,18 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+/**
+	检测是否出现了循环引用错误
+	因为都是单例模式，所以一个bean只会实例一次 如果重复出现 就会报错
+*/
+const juageRecurseInject = injectPaths => {
+	const length = injectPaths.length;
+	if(injectPaths.length >= 3){
+		if(injectPaths[length-1] === injectPaths[length-3])
+			throw `出现了循环引用:${injectPaths[length-1]} <=> ${injectPaths[length-2]}`
+	}
+}
+
 class SpringFactory {
 
 	/**
@@ -70,10 +82,15 @@ class SpringFactory {
 	/**
 		根据beanDefine组装bean
 	*/
-	assembleBeanByBeanDefine(beanDefine) {
+	assembleBeanByBeanDefine(beanDefine,injectPath=[]) {
 
 		if(this._beanCache[beanDefine.name])
 			return this._beanCache[beanDefine.name];
+
+		injectPath.push(beanDefine.name)
+
+		//检测是否出现了 循环引用
+		juageRecurseInject(injectPath);
 
 		const bean = new this.classReferences[beanDefine.name]
 
@@ -87,7 +104,7 @@ class SpringFactory {
 			if(field.hasAnnotation("Autowird")){
 				const value = field.getAnnotation("Autowird").param.value || capitalizeFirstLetter(field.name);
 				const subBeanDefine = this.getBeanDefineByName(value)
-				bean[field.name] = this.assembleBeanByBeanDefine(subBeanDefine)
+				bean[field.name] = this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
 			}
 
 		})

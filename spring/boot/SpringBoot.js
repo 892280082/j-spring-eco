@@ -1,6 +1,7 @@
 const { scanerDirList } = require("../scaner/scaner");
 const {File} = require("../util/File")
 const path = require('path');
+const { spawn } = require('child_process');
 
 class SpringBoot {
 
@@ -16,23 +17,24 @@ class SpringBoot {
 
 		this.args = {...this.args,...userArgs}
 
-		const {rootPath,dirList,resourceDir} = this.args;
+		//默认使用启动文件目录作为根目录
+		if(!this.args.rootPath)
+			this.args.rootPath = new File(process.argv[1]).getParent().fsPath;
 
-		if(!rootPath){
-			throw 'rootPath must be exist!'
-		}
+		const {rootPath,dirList,resourceDir} = this.args;
 
 		if(dirList.length==0){
 			throw 'dirList must be exist!'
 		}
 
+		this.args.inputArgs = process.argv.slice(2);
 		this.args.dirList = dirList.map(v => path.join(rootPath,v))
 		this.args.resourceDir = path.join(rootPath,resourceDir)
 	}
 
 	run(){
 
-		const {rootPath,tempJsName} = this.args;
+		const {rootPath,tempJsName,inputArgs} = this.args;
 
 		const beanDefinList  = scanerDirList(this.args.dirList)
 
@@ -60,9 +62,32 @@ class SpringBoot {
 
 		tempRunFile.setContent(springlib+headLib+classReferences+argsParam+run).write();
 
+		this.subRuning(tempRunFile)
+
 	}
 
+	subRuning(tempRunFile){
 
+		const {inputArgs} = this.args;
+
+		const ls = spawn(`node`,[ tempRunFile.fsPath, ...inputArgs] );
+
+		const print = msg => console.log(`spring > ${msg}`)
+
+		console.log("********** Spring-Star ************\n");
+
+		ls.stdout.on('data', print);
+
+		ls.stderr.on('data', print);
+
+		ls.on('close', (code) => {
+			console.log("********** Spring-Over ************\n");
+		});
+
+		ls.on('error', (code) => {
+			console.log(`Spring Error::${code}`);
+		});
+	}
 
 }
 

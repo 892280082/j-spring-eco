@@ -8,6 +8,10 @@ class TestService {
 	//@Autowird
 	userDao;
 
+	//@Autowird
+	emailService;
+
+
 	say(msg){
 		console.log(`${this.user}: ${msg}`)
 		this.userDao.saveUser(msg);

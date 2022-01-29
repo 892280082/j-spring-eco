@@ -8,6 +8,9 @@ class MainController {
 	//@Autowird
 	testService;
 
+	//@Autowird
+	emailService;
+
 	main(){
 
 		this.testService.say(this.msg);
