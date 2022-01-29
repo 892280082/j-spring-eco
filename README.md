@@ -1,16 +1,18 @@
 # nodeIoc
 
+# 向java的spring开源社区致敬。
+
 #### 介绍
 - 原生js实现spring框架，不需要第三方babel编译，在运行时可以调用注解元数据，进行对应操作。
 - 设计模式和spring是一样的。
 - 我自己会用这个框架，写一些简单的小应用
-- 闲的时候抽时间把springmvc也写完。
+- 闲的时候把springmvc也写完。
 
 #### 软件架构
-- 根java的spring几乎一样的，ioc和aop都ok。
-- 向java的spring开源社区致敬。
+- 与java的spring几乎一样的，ioc和aop都ok。
 
 #### 内置注解
+> 注解是随意自定义添加的，只要class上面添加了注解就都会被实例化。
 - @Bean(beanName) 定义bean的名称
 - @Value(name) 资源注解
 - @SpringBoot 启动注解，只能存在一个！
