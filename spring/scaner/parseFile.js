@@ -168,6 +168,7 @@ const parseArray = (lines,readStartIndex=0)=>{
 	[
 	  	{
 		    "name": "Hello",
+		    "className":"className",
 		    "annotations": [
 		      {
 		        "name": "Component",
@@ -216,8 +217,12 @@ const parseArray = (lines,readStartIndex=0)=>{
 const parseFile = fsPath => {
 	let conteLines = new File(fsPath).readFile()
 						.removeEmptyLines()
-						//清除注释 转换注解
-						.map(c => c.replace(/\/\/@/g,"@").replace(/\/\/.*\r\t/g,""))
+						//将 //@ 转换成@ 
+						.map(c => c.replace(/\/\/@/g,"@"))
+						//删除单行注释
+						.map(c => c.replace(/\/\/.*\r\t/g,""))
+						//删除块状注释
+						.map(c => c.replace(/\/\*[^]*?\*\//g, ''))
 						.getLines()
 						.map(str => str.replace(/^\t+/g,""))
 	return parseArray(conteLines).map( d => {

@@ -17,7 +17,7 @@ class SpringBoot {
 		annotation:{
 			valueInject:"Value",
 			appBoot:"SpringBoot",
-			beanInject:"Autowird",
+			beanInject:"Autowired",
 			springFactory:"SpringFactory",
 			springResource:"SpringResource",
 			proxy:"Proxy"

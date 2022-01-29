@@ -46,7 +46,8 @@ class BeanCache {
 	}
 
 	getBeanDefineByBean(bean){
-		const oldCache = this.cache.filter(d => d.bean === bean);
+		
+		const oldCache = this.cache.find(d => d.bean === bean);
 		return oldCache ? oldCache.beanDefine : null;
 	}
 
@@ -187,10 +188,14 @@ class SpringFactory {
 
 			//字段装配bean
 			if(field.hasAnnotation(beanInject)){
-				//@Autowird(beanName) beanName默认使用 否则使用字段首字母大写
+				//@Autowired(beanName) beanName默认使用 否则使用字段首字母大写
 				const value = field.getAnnotation(beanInject).param.value || capitalizeFirstLetter(field.name);
 				const subBeanDefine = this.getBeanDefineByName(value)
-				bean[field.name] = this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
+				if(!subBeanDefine){
+					throw `bean定义获取失败 类名:${beanDefine.className} 字段:${field.name} 注解:${beanInject} `
+				}
+				const subBean = this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
+				bean[field.name] = subBean
 			}
 
 			if(field.hasAnnotation(springFactory)){
@@ -206,7 +211,7 @@ class SpringFactory {
 		})
 
 		//对bean进行增强提升
-		bean = this.proxyEnhance.doEnhance(beanDefine,bean);
+ 		bean = this.proxyEnhance.doEnhance(beanDefine,bean);
 
 		//放入缓存
 		this.beanCache.push(beanDefine,bean);
@@ -246,6 +251,7 @@ class SpringFactory {
 
 
 		const beanDefineList = this.getBeanDefineByAnnotation(appBoot);
+
 
 		if(beanDefineList.length == 0){
 			throw 'error: not find @SpringBoot bean'

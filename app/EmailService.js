@@ -5,11 +5,11 @@ class EmailService {
 	//@Value(config.email.user)
 	user;
 
-	//@Autowird
+	//@Autowired
 	userDao;
 
 	send(msg){
-		console.log(`用户<${this.user}>发邮件:${msg}`)
+		console.log(`emailService:send => 发邮件:${msg}`)
 	}
 
 }

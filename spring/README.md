@@ -141,9 +141,9 @@ assembleBeanByBeanDefine(BeanDefine beanDefine):Object;//根据bean的定义组�
 	})
 
 	//3.检测所有需要装配的组件
-	const AutowirdFields = beanDefine.getFiledByAnnotation("@Autowird")
+	const AutowiredFields = beanDefine.getFiledByAnnotation("@Autowired")
 
-	AutowirdFields.forEach(field => {
+	AutowiredFields.forEach(field => {
 
 		//这一步其实就进入递归了
 		// 这里传入自己的名称  防止循环 如果检测到需要注册的名称 跟自己相同 就表示错误 直接抛出异常！
@@ -179,7 +179,7 @@ new SpringBoot({
 2.设置内置注解
 - @SpringBoot 启动类
 - @Bean bean定义  支持@Bean(diyName)
-- @Autowird 自动装配 支持 @Autowird(diyName)
+- @Autowired 自动装配 支持 @Autowired(diyName)
 - @Value 支持 @Value(user.name)
 - @Proxy 使用 @Proxy(sort=10,annotation=Bean) 
 		sort执行顺序 annotation：代理拥有此注解的类

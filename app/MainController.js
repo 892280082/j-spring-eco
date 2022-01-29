@@ -5,8 +5,11 @@ class MainController {
 	//@Value(config.msg)
 	msg;
 
-	//@Autowird
+	//@Autowired
 	testService;
+
+	//@SpringFactory
+	factory;
 
 	main(){
 
