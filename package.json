@@ -1,0 +1,20 @@
+{
+  "name": "spring-ioc",
+  "version": "1.0.0",
+  "description": "spring ioc for node",
+  "main": "./spring/index.js",
+  "scripts": {
+    "test": "node ApplicationBoot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:woaianqi/node-ioc.git"
+  },
+  "keywords": [
+    "node",
+    "ioc",
+    "spring"
+  ],
+  "author": "yeqin",
+  "license": "ISC"
+}

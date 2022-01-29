@@ -5,6 +5,9 @@ const { spawn } = require('child_process');
 
 class SpringBoot {
 
+	//临时文件
+	tempRunFile;
+
 	args = {
 		rootPath:"",
 		dirList:[],
@@ -14,7 +17,10 @@ class SpringBoot {
 		annotation:{
 			valueInject:"Value",
 			appBoot:"SpringBoot",
-			beanInject:"Autowird"
+			beanInject:"Autowird",
+			springFactory:"SpringFactory",
+			springResource:"SpringResource",
+			proxy:"Proxy"
 		}
 	}
 
@@ -35,9 +41,12 @@ class SpringBoot {
 		this.args.inputArgs = process.argv.slice(2);
 		this.args.dirList = dirList.map(v => path.join(rootPath,v))
 		this.args.resourceDir = path.join(rootPath,resourceDir)
+
+		//开始部署
+		this.deploy()
 	}
 
-	run(){
+	deploy(){
 
 		const {rootPath,tempJsName,inputArgs} = this.args;
 
@@ -46,7 +55,7 @@ class SpringBoot {
 		if(beanDefinList.length == 0)
 			throw 'no beanDefine be found!'
 
-		const tempRunFile = new File(path.join(rootPath,tempJsName));
+		this.tempRunFile = new File(path.join(rootPath,tempJsName));
 
 		const springlib = `const {SpringFactory} = require("./spring");\n`+
 						  `/** generate lib */\n`;
@@ -65,13 +74,15 @@ class SpringBoot {
 
 		const run = `new SpringFactory(args,classReferences).boot();\n`;
 
-		tempRunFile.setContent(springlib+headLib+classReferences+argsParam+run).write();
+		this.tempRunFile.setContent(springlib+headLib+classReferences+argsParam+run).write();
 
-		this.subRuning(tempRunFile)
 
 	}
 
-	subRuning(tempRunFile){
+
+	run(){
+
+		const {tempRunFile} = this;
 
 		const {inputArgs} = this.args;
 

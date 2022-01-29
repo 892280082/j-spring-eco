@@ -1,7 +1,7 @@
 const {SpringResource} = require("../resource/SpringResource")
 const {scanerDirList} = require("../scaner/scaner")
 
-
+//单例模式：缓存自身实例 
 let facotryInstance = null;
 
 function capitalizeFirstLetter(string) {
@@ -18,6 +18,74 @@ const juageRecurseInject = injectPaths => {
 		if(injectPaths[length-1] === injectPaths[length-3])
 			throw `出现了循环引用:${injectPaths[length-1]} <=> ${injectPaths[length-2]}`
 	}
+}
+
+//缓存bean
+class BeanCache {
+
+	cache=[];
+
+	push(beanDefine,bean){
+		this.cache.push({beanDefine,bean})
+	}
+
+
+	exist(beanName){
+		return this.cache.find(v => v.beanDefine.name === beanName);
+	}
+
+	get(beanName){
+		const oldCache = this.exist(beanName);
+		if(!oldCache)
+			throw `no cache bean that name ${beanName}`
+		return oldCache.bean;
+	}
+
+	getBeanByAnnotation(annotation){
+		return this.cache.filter(d => d.beanDefine.hasAnnotation(annotation)).map(d => d.bean)
+	}
+
+	getBeanDefineByBean(bean){
+		const oldCache = this.cache.filter(d => d.bean === bean);
+		return oldCache ? oldCache.beanDefine : null;
+	}
+
+}
+
+class ProxyEnhance {
+
+	datas = [];
+
+	getBeanList(annotationList){
+		return annotationList.map(annotation => {
+			return this.datas.filter(d => d.annotation === annotation).map(d => d.proxyBean)
+		}).reduce((s,v)=>{
+			return [...s,...v]
+		},[]);
+	}
+
+	//处理的注解 增强的bean
+	push(annotation,proxyBean){
+		this.datas.push({proxyBean,annotation})
+	}
+
+	doEnhance(beanDefine,bean){
+
+		const annotationList = beanDefine.annotation.map(a => a.name);
+
+		const proxyBeanList = this.getBeanList(annotationList);
+
+		//通过代理类 对该对象进行提升
+		proxyBeanList.forEach(proxyBean => {
+
+			bean = proxyBean.doProxy(beanDefine,bean)
+
+		});
+
+		return bean;
+	}
+
+
 }
 
 
@@ -42,7 +110,10 @@ class SpringFactory {
 	beanDefineList;
 
 	//bean缓存 默认全部是单例
-	_beanCache={};
+	beanCache= new BeanCache();
+
+	//代理提升
+	proxyEnhance = new ProxyEnhance();
 
 	constructor(args,classReferences){
 		this.args = args;
@@ -54,10 +125,17 @@ class SpringFactory {
 
 
 	/**
-		根据beanDefine的name获取bean
+	根据beanDefine的name获取bean
 	*/
 	getBean(beanDefineName){
-		return this._beanCache[beanDefineName]
+		return this.beanCache.get(beanDefineName)
+	}
+
+	/**
+	传入bean获取bean的define	
+	*/
+	getBeanDefineByBean(bean){
+		return this.beanCache.getBeanDefineByBean(bean);
 	}
 
 
@@ -78,34 +156,26 @@ class SpringFactory {
 		return this.beanDefineList.filter(beanDefine =>  beanDefine.hasAnnotation(annotationName))
 	}
 
-	/**
-		根据类名获取bean 优先使用缓存 默认全部单例
-	*/
-	assembleBeanByBClassName(className)  {
-		if(this._beanCache[className]){
-			return this._beanCache[className]
-		}
-		const bean = assembleBeanByBeanDefine(getBeanDefineByClassName(className))
-		this._beanCache[className] = bean;
-		return bean;
-	}
 
 	/**
 		根据beanDefine组装bean
 	*/
 	assembleBeanByBeanDefine(beanDefine,injectPath=[]) {
 
-		const {valueInject,beanInject} = this.args.annotation;
 
-		if(this._beanCache[beanDefine.name])
-			return this._beanCache[beanDefine.name];
+		if(this.beanCache.exist(beanDefine.name)){
+			return this.beanCache.get(beanDefine.name);
+		}
+
 
 		injectPath.push(beanDefine.name)
 
 		//检测是否出现了 循环引用
 		juageRecurseInject(injectPath);
 
-		const bean = new this.classReferences[beanDefine.className]
+		const {valueInject,beanInject,springFactory,springResource} = this.args.annotation;
+
+		let bean = new this.classReferences[beanDefine.className]
 
 		beanDefine.fields.forEach(field => {
 
@@ -123,11 +193,50 @@ class SpringFactory {
 				bean[field.name] = this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
 			}
 
+			if(field.hasAnnotation(springFactory)){
+				//注入工厂
+				bean[field.name] = this;
+			}
+
+			if(field.hasAnnotation(springResource)){
+				//注入资源类
+				bean[field.name] = this.resource;
+			}
+
 		})
 
-		this._beanCache[beanDefine.name] = bean;
+		//对bean进行增强提升
+		bean = this.proxyEnhance.doEnhance(beanDefine,bean);
+
+		//放入缓存
+		this.beanCache.push(beanDefine,bean);
 
 		return bean;
+	}
+
+	loadProxy(){
+
+		const {proxy} = this.args.annotation;
+
+		//获取代理类 并根据从小到大排序
+		const beanDefineList = this.getBeanDefineByAnnotation(proxy).sort( (b1,b2) => {
+			return (b1.getAnnotation(proxy).param.sort || 100) - (b2.getAnnotation(proxy).param.sort || 100)
+		})
+
+		beanDefineList.forEach(beanDefine => {
+
+			const targetAnnotation = beanDefine.getAnnotation(proxy).param["annotation"]
+
+			const proxyBean = this.assembleBeanByBeanDefine(beanDefine)
+
+			if(!proxyBean['doProxy']){
+				throw 'the proxyBean must implements doProxy method!'
+			}
+
+			this.proxyEnhance.push(targetAnnotation,proxyBean)
+
+		})
+
 	}
 
 	//1.启动
@@ -146,11 +255,14 @@ class SpringFactory {
 			throw 'error: found more than one @SpringBoot bean'
 		}
 
-		//开始装配
-		const bean = this.assembleBeanByBeanDefine(beanDefineList[0])
-
 		//装配结束 放入实例
 		facotryInstance = this;
+
+		//优先实例化代理类
+		this.loadProxy();
+
+		//开始装配
+		const bean = this.assembleBeanByBeanDefine(beanDefineList[0])
 
 		bean.main(this.args.inputArgs);
 

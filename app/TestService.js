@@ -15,6 +15,7 @@ class TestService {
 	say(msg){
 		console.log(`${this.user}: ${msg}`)
 		this.userDao.saveUser(msg);
+		this.emailService.send(msg);
 	}
 
 

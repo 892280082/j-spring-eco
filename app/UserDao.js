@@ -1,6 +1,5 @@
 
-
-//@Bean
+//@Repository
 class UserDao {
 
 	//@Value(config.mysql.host)

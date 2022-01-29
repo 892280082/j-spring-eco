@@ -173,4 +173,18 @@ new SpringBoot({
 
 
 
+# 下一阶段开发需要
 
+1.暴露file对象
+2.设置内置注解
+- @SpringBoot 启动类
+- @Bean bean定义  支持@Bean(diyName)
+- @Autowird 自动装配 支持 @Autowird(diyName)
+- @Value 支持 @Value(user.name)
+- @Proxy 使用 @Proxy(sort=10,annotation=Bean) 
+		sort执行顺序 annotation：代理拥有此注解的类
+		调用doProxy(bean 实例化后的bean,beanDefine bean的定义)
+- @PostProssor 后置处理器  //这个先不开发了 好像没啥用
+		运行每一个后置处理器的run方法
+- @SpringFactory 注入bean工厂
+- @SpringResource 注入资源
