@@ -2,21 +2,8 @@
 
 #### 介绍
 - 原生js实现spring框架，不依赖第三方库和babel编译，运行时也可以调用bean的注解元数据。
-- 开发模式与java的spring是一样的。
+- 尽可能的还原java的spring框架。
 
-
-#### 软件架构
-> 使用方法参考下内置的app用例，跟springboot几乎是一样的。
-
-#### 默认内置注解
-> 注解是随意自定义添加的，只要class上面添加了注解就都会被扫描到。
-- @Bean(beanName) bean定义
-- @Value(name) 资源注入
-- @SpringBoot 启动注解，只能存在一个！
-- @Autowired 自动装配
-- @SpringFactory 注入Beanfactory实例
-- @SpringResource 注入Resource实例 就是配置信息
-- @Proxy 后置处理类，用于bean的功能提升，使用参考用例
 
 #### 源码下载并测试
 ```shell
@@ -91,3 +78,14 @@ new SpringBoot({srcList:["./app"],packageName:"./spring"}).run();
 */
 
 ```
+
+
+#### 默认内置注解
+> 注解是随意自定义添加的，只要class上面添加了注解就都会被扫描到。
+- @Bean(beanName) bean定义
+- @Value(name) 资源注入
+- @SpringBoot 启动注解，只能存在一个！
+- @Autowired 自动装配
+- @SpringFactory 注入Beanfactory实例
+- @SpringResource 注入Resource实例 就是配置信息
+- @Proxy 后置处理类，用于bean的功能提升，使用参考用例
