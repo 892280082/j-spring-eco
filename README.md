@@ -21,10 +21,13 @@
 - @SpringResource 注入Resource实例 就是配置信息
 - @Proxy 后置处理类，用于bean的提升，使用参考用例
 
-
-
 #### 使用教程
 ```shell
 git clone git@gitee.com:woaianqi/node-ioc.git 
 cd node-ioc && node ApplicationBoot.js
+```
+
+#### 库
+```shell
+npm install spring-ioc --save
 ```
