@@ -8,14 +8,15 @@ class SpringBoot {
 	//临时文件
 	tempRunFile;
 
+	//支持修改的参数
 	args = {
-		rootPath:"",
-		srcList:[],
-		tempJsName:".runtemp.js",
-		resourceDir:"resource",
-		inputArgs:[],
-		packageName:'spring-ioc',
-		annotation:{
+		rootPath:"", //项目根路径
+		srcList:[],  //源码目录集合
+		tempJsName:".runtemp.js", //生成临时文件名称
+		resourceDir:"resource", //资源目录名称
+		inputArgs:[], //用户参数 默认在命令行获取
+		packageName:'spring-ioc', //无需改动!
+		annotation:{ //配置系统默认注解
 			valueInject:"Value",
 			appBoot:"SpringBoot",
 			beanInject:"Autowired",

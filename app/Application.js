@@ -29,6 +29,9 @@ class Service {
 //@SpringBoot
 class Application {
 
+	//@SpringFactory
+	factory;
+
 	//@Autowired
 	service;
 	
