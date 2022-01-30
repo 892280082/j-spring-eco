@@ -1,4 +1,4 @@
-# 向java的spring开源社区致敬。
+# 向java的spring开源社区致敬!
 
 #### 介绍
 - 原生js实现spring框架，不依赖第三方库和babel编译，运行时也可以调用bean的注解元数据。
