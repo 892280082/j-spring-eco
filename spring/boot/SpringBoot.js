@@ -89,16 +89,16 @@ class SpringBoot {
 
 		const ls = spawn(`node`,[ tempRunFile.fsPath, ...inputArgs] );
 
-		const print = msg => console.log(`spring > ${msg}`)
+		const print = msg => console.log(msg.toString())
 
-		console.log("********** Spring-Star ************\n");
+		console.log("********** Spring-Launch ************\n");
 
 		ls.stdout.on('data', print);
 
 		ls.stderr.on('data', print);
 
 		ls.on('close', (code) => {
-			console.log("********** Spring-Over ************\n");
+			console.log("********** Spring-Destroy ************\n");
 		});
 
 		ls.on('error', (code) => {

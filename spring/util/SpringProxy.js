@@ -1,5 +1,19 @@
 
 
+class InvokeBean {
+	bean;
+	method;
+	args;
+	constructor(bean,method,args){
+		this.bean = bean;
+		this.method =method;
+		this.args = args;
+	}
+	invoke(args){
+		return SpringProxy.invoke(this.bean,this.method,args);
+	}
+}
+
 class SpringProxy {
 
 	//原生bean
@@ -26,13 +40,13 @@ class SpringProxy {
  			.forEach(p => {
  				this[p] = function(){
  					const args = Array.prototype.slice.apply(arguments);
- 					this.proxyInfo.method(this.bean,p,args)
+ 					return this.proxyInfo.method(new InvokeBean(this.bean,p,args),p,args);
  				}.bind(this)
  			})
 	}
 
 	static invoke(obj,method,args){
-		obj[method].apply(obj,args)
+		return obj[method].apply(obj,args);
 	}
 
 } 
