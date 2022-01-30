@@ -51,7 +51,7 @@ const verifyBeanDefineList = beanDefineList => {
 
 
 //扫描目录集合
-const scanerDirList = dirPathList => {
+const scanersrcList = dirPathList => {
 
 	const beanDefineList = dirPathList.map(scanerDir).reduce((s,v) => {
 		return [...s,...v]
@@ -63,4 +63,4 @@ const scanerDirList = dirPathList => {
 	return beanDefineList;
 }
 
-module.exports = {scanerDir,scanerDirList}
+module.exports = {scanerDir,scanersrcList}

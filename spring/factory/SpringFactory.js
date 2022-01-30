@@ -1,5 +1,5 @@
 const {SpringResource} = require("../resource/SpringResource")
-const {scanerDirList} = require("../scaner/scaner")
+const {scanersrcList} = require("../scaner/scaner")
 
 //单例模式：缓存自身实例 
 let facotryInstance = null;
@@ -94,7 +94,7 @@ class SpringFactory {
 
 	/**
 		rootPath:"",
-		dirList:[],
+		srcList:[],
 		tempJsName:"runtemp.js",
 		resourceDir:"resource",
 		inputArgs:[],
@@ -118,10 +118,10 @@ class SpringFactory {
 
 	constructor(args,classReferences){
 		this.args = args;
-		const {resourceDir,dirList} = args;
+		const {resourceDir,srcList} = args;
 		this.resource = new SpringResource(resourceDir);
 		this.classReferences = classReferences;
-		this.beanDefineList = scanerDirList(dirList)
+		this.beanDefineList = scanersrcList(srcList)
 	}
 
 

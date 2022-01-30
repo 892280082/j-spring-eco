@@ -1,4 +1,4 @@
-const { scanerDirList } = require("../scaner/scaner");
+const { scanersrcList } = require("../scaner/scaner");
 const {File} = require("../util/File")
 const path = require('path');
 const { spawn } = require('child_process');
@@ -10,7 +10,7 @@ class SpringBoot {
 
 	args = {
 		rootPath:"",
-		dirList:[],
+		srcList:[],
 		tempJsName:".runtemp.js",
 		resourceDir:"resource",
 		inputArgs:[],
@@ -33,14 +33,14 @@ class SpringBoot {
 		if(!this.args.rootPath)
 			this.args.rootPath = new File(process.argv[1]).getParent().fsPath;
 
-		const {rootPath,dirList,resourceDir} = this.args;
+		const {rootPath,srcList,resourceDir} = this.args;
 
-		if(dirList.length==0){
-			throw 'dirList must be exist!'
+		if(srcList.length==0){
+			throw 'srcList must be exist!'
 		}
 
 		this.args.inputArgs = process.argv.slice(2);
-		this.args.dirList = dirList.map(v => path.join(rootPath,v))
+		this.args.srcList = srcList.map(v => path.join(rootPath,v))
 		this.args.resourceDir = path.join(rootPath,resourceDir)
 
 		//开始部署
@@ -51,7 +51,7 @@ class SpringBoot {
 
 		const {rootPath,tempJsName,inputArgs,packageName} = this.args;
 
-		const beanDefinList  = scanerDirList(this.args.dirList)
+		const beanDefinList  = scanersrcList(this.args.srcList)
 
 		if(beanDefinList.length == 0)
 			throw 'no beanDefine be found!'
