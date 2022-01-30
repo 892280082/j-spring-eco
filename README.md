@@ -9,16 +9,16 @@
 > 使用方法参考下内置的app用例，跟springboot几乎是一样的。
 
 #### 默认内置注解
-> 注解是随意自定义添加的，只要class上面添加了注解就都会被实例化。
+> 注解是随意自定义添加的，只要class上面添加了注解就都会被扫描到。
 - @Bean(beanName) bean定义
 - @Value(name) 资源注入
 - @SpringBoot 启动注解，只能存在一个！
 - @Autowired 自动装配
 - @SpringFactory 注入Beanfactory实例
 - @SpringResource 注入Resource实例 就是配置信息
-- @Proxy 后置处理类，用于bean的提升，使用参考用例
+- @Proxy 后置处理类，用于bean的功能提升，使用参考用例
 
-#### 源码下载测试
+#### 源码下载并测试
 ```shell
 git clone git@gitee.com:woaianqi/node-ioc.git 
 cd node-ioc && node applicationBoot.js
@@ -29,7 +29,7 @@ cd node-ioc && node applicationBoot.js
 npm install spring-ioc --save
 ```
 
-#### 代码实例
+#### 代码用例
 > 主程序代码 ./app/Application.js
 ```js
 const {SpringProxy} = require('../spring')
@@ -87,7 +87,7 @@ new SpringBoot({srcList:["./app"],packageName:"./spring"}).run();
 	new SpringBoot({srcList:["./app"]});
 	
 	2.手动启动临时文件
-	shell: node .runtemp.js
+	bash> node .runtemp.js
 */
 
 ```
