@@ -132,6 +132,14 @@ class File {
 		.map(f => path.join(this.fsPath,f))
 	}
 
+	isDir(){
+		if(this.exist()){
+			 const stat = fs.statSync(this.fsPath);
+			 return stat.isDirectory();
+		}
+		return false;
+	}
+
 }
 
 

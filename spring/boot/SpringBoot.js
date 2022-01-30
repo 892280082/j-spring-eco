@@ -14,6 +14,7 @@ class SpringBoot {
 		tempJsName:".runtemp.js",
 		resourceDir:"resource",
 		inputArgs:[],
+		packageName:'spring-ioc',
 		annotation:{
 			valueInject:"Value",
 			appBoot:"SpringBoot",
@@ -48,7 +49,7 @@ class SpringBoot {
 
 	deploy(){
 
-		const {rootPath,tempJsName,inputArgs} = this.args;
+		const {rootPath,tempJsName,inputArgs,packageName} = this.args;
 
 		const beanDefinList  = scanerDirList(this.args.dirList)
 
@@ -57,7 +58,7 @@ class SpringBoot {
 
 		this.tempRunFile = new File(path.join(rootPath,tempJsName));
 
-		const springlib = `const {SpringFactory} = require("./spring");\n`+
+		const springlib = `const {SpringFactory} = require("${packageName}");\n`+
 						  `/** generate lib */\n`;
 
 		const headLib = beanDefinList.map(beanDefine => {

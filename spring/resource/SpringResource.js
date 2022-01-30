@@ -6,11 +6,17 @@ class SpringResource {
 
 	constructor(assertDirPath){
 
-		new File(assertDirPath).getFileList().map(f => new File(f)).forEach(f => {
+		const resourceFile = new File(assertDirPath);
 
-			this.data[f.getFileName(true)] = f.getObject()
+		if(resourceFile.isDir()){
 
-		})
+			new File(assertDirPath).getFileList().map(f => new File(f)).forEach(f => {
+
+				this.data[f.getFileName(true)] = f.getObject()
+
+			})
+
+		}
 
 	}
 

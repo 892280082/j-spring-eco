@@ -6,6 +6,7 @@ class EmailService {
 	user;
 
 	//@Autowired
+	//这就有问题了
 	userDao;
 
 	send(msg){
@@ -13,5 +14,7 @@ class EmailService {
 	}
 
 }
+
+
 
 module.exports = {EmailService}

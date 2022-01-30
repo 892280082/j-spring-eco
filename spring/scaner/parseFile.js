@@ -145,6 +145,17 @@ const parseClass = (lines,readStartIndex) => {
 }
 
 
+
+const verifyExistModuleName = (name,lines) => {
+	//从头向后检测
+	for(let i=lines.length-1;i>=0;i--){
+		if(lines[i].indexOf("module.exports")> -1 && lines[i].indexOf(name) > -1){
+			return true;
+		}
+	}
+	throw `not find bean ${name} module.exports = { ${name} } code,please check!`
+}
+
 /**
 	读取内容
 	* => [Object]
@@ -154,8 +165,13 @@ const parseArray = (lines,readStartIndex=0)=>{
 	//解析类
 	const {result,lastIndex} = parseClass(lines,readStartIndex)
 
+	if(result){
+		//console.log(result.name,lines)
+		verifyExistModuleName(result.name,lines)
+	}
+
 	//不存在结果 或者 内容读取结束 返回空数组
-	if(!result || lastIndex>=lines.length ){
+	if(lastIndex>=lines.length ){
 		return [];
 	}
 
@@ -224,6 +240,8 @@ const parseFile = fsPath => {
 						//删除块状注释
 						.map(c => c.replace(/\/\*[^]*?\*\//g, ''))
 						.getLines()
+						//再次删除单行注释（之前有些情况删除不了）
+						.filter(line => !/^\s{0,}\/\//.test(line) )
 						.map(str => str.replace(/^\t+/g,""))
 	return parseArray(conteLines).map( d => {
 		return {...d,fsPath};
