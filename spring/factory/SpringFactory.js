@@ -249,33 +249,39 @@ class SpringFactory {
 	//1.启动
 	async boot(){
 
-		const {appBoot} = this.args.annotation;
+		try {
 
+			const {appBoot} = this.args.annotation;
 
-		const beanDefineList = this.getBeanDefineByAnnotation(appBoot);
+			const beanDefineList = this.getBeanDefineByAnnotation(appBoot);
 
+			if(beanDefineList.length == 0){
+				throw 'error: not find @SpringBoot bean'
+			}
 
-		if(beanDefineList.length == 0){
-			throw 'error: not find @SpringBoot bean'
+			if(beanDefineList.length > 1){
+				throw 'error: found more than one @SpringBoot bean'
+			}
+
+			//装配结束 放入实例
+			facotryInstance = this;
+
+			//优先实例化代理类
+			this.loadProxy();
+
+			//开始装配
+			const bean = this.assembleBeanByBeanDefine(beanDefineList[0])
+
+			//启动自动启动注解
+			await this.doBeanInit();
+
+			bean.main(this.args.inputArgs);
+
+		}catch(e){
+
+			console.log('启动失败');
+
 		}
-
-		if(beanDefineList.length > 1){
-			throw 'error: found more than one @SpringBoot bean'
-		}
-
-		//装配结束 放入实例
-		facotryInstance = this;
-
-		//优先实例化代理类
-		this.loadProxy();
-
-		//开始装配
-		const bean = this.assembleBeanByBeanDefine(beanDefineList[0])
-
-		//启动自动启动注解
-		await this.doBeanInit();
-
-		bean.main(this.args.inputArgs);
 
 	}
 
