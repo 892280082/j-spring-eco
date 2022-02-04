@@ -1,20 +1,20 @@
-const {SpringProxy} = require('../spring')
 
 //@Proxy(annotation=Service)
 class TransactionManager {
 	//beanDefine:定义和注解  bean:实例
 	doProxy(beanDefine,bean){
-		return new SpringProxy(bean,{
+		return {
 			method(wrapBean,method,args){
 				console.log(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => 你好]`);
 				return wrapBean.invoke(["你好 "])
 			}
-		})
+		}
 	}
 }
 
 
 //@Service
+//@BeanInit
 class Service {
 
 	//@Value(config.app.msg)
@@ -22,6 +22,11 @@ class Service {
 
 	say(userMsg){
 		return `${userMsg} ${this.appMsg} \n`;
+	}
+
+	//@NoProxy
+	async appInit(beanDefine){
+		console.log("bean初始化");
 	}
 
 }

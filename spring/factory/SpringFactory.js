@@ -1,5 +1,6 @@
 const {SpringResource} = require("../resource/SpringResource")
 const {scanersrcList} = require("../scaner/scaner")
+const {SpringProxy} = require('../util/SpringProxy')
 
 //单例模式：缓存自身实例 
 let facotryInstance = null;
@@ -79,8 +80,9 @@ class ProxyEnhance {
 		//通过代理类 对该对象进行提升
 		proxyBeanList.forEach(proxyBean => {
 
-			bean = proxyBean.doProxy(beanDefine,bean)
+			const proxyInfo = proxyBean.doProxy(beanDefine,bean)
 
+			bean = new SpringProxy(beanDefine,bean,proxyInfo)
 		});
 
 		return bean;
@@ -245,7 +247,7 @@ class SpringFactory {
 	}
 
 	//1.启动
-	boot(){
+	async boot(){
 
 		const {appBoot} = this.args.annotation;
 
@@ -270,7 +272,28 @@ class SpringFactory {
 		//开始装配
 		const bean = this.assembleBeanByBeanDefine(beanDefineList[0])
 
+		//启动自动启动注解
+		await this.doBeanInit();
+
 		bean.main(this.args.inputArgs);
+
+	}
+
+
+	async doBeanInit(){
+
+		const initBeans = this.beanCache.getBeanByAnnotation("BeanInit");
+
+		for(let i=0;i<initBeans.length;i++){
+
+			const bean = initBeans[i].bean;
+
+			if(typeof bean["appInit"] !== 'function')
+				throw "BeanInit Bean must implements appInit method"
+
+			await initBeans[i].appInit(initBeans[i])
+
+		}
 
 	}
 

@@ -46,8 +46,8 @@ class BeanDefine extends AttributeAnnotation{
 		获取拥有指定注解的方法
 		String => [Method]
 	*/
-	getMethodByAnnotation(annotationName){
-
+	getMethod(methodName){
+		return this.methods.find(m => m.name === methodName)
 	}
 
 }

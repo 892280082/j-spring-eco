@@ -16,13 +16,17 @@ class InvokeBean {
 
 class SpringProxy {
 
+	//BeanDefine 信息
+	beanDefine;
+
 	//原生bean
 	bean;
 
 	//代理信息
 	proxyInfo;
 
-	constructor(bean,proxyInfo){
+	constructor(beanDefine,bean,proxyInfo){
+		this.beanDefine = beanDefine;
 		this.bean = bean;
 		this.proxyInfo = proxyInfo;
 
@@ -38,8 +42,19 @@ class SpringProxy {
  		Object.getOwnPropertyNames(structor.prototype)
  			.filter(p => p !== "constructor" && typeof structor.prototype[p] === 'function' )
  			.forEach(p => {
+
+				const args = Array.prototype.slice.apply(arguments);
+
+				//该方法上存在@NoProxy注解，则不进行代理
+ 				const methodDefine = this.beanDefine.getMethod(p);
+ 				if(methodDefine && methodDefine.hasAnnotation("NoProxy")){
+ 					this[p] = function(){ 
+ 						return this.bean[p].apply(this.bean,args);
+ 					}
+ 					return;
+ 				}
+
  				this[p] = function(){
- 					const args = Array.prototype.slice.apply(arguments);
  					return this.proxyInfo.method(new InvokeBean(this.bean,p,args),p,args);
  				}.bind(this)
  			})
