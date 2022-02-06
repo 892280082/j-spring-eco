@@ -39,6 +39,13 @@ class SpringProxy {
 		if(!structor)
 			throw `the bean no constructor:${this.bean}`
 
+		//复制除了函数的所有属性
+		for(let p in this.bean){
+			if(typeof this.bean[p] !== 'function')
+				this[p] = this.bean[p];
+		}
+
+		//替换方法
  		Object.getOwnPropertyNames(structor.prototype)
  			.filter(p => p !== "constructor" && typeof structor.prototype[p] === 'function' )
  			.forEach(p => {

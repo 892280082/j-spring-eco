@@ -14,8 +14,9 @@ class TransactionManager {
 
 
 //@Service
-//@BeanInit
 class Service {
+
+	name='dolala'
 
 	//@Value(config.app.msg)
 	appMsg;
@@ -25,8 +26,8 @@ class Service {
 	}
 
 	//@NoProxy
-	async appInit(beanDefine){
-		console.log("bean初始化");
+	async beanInit(beanDefine){
+			console.log("bean初始化");
 	}
 
 }
@@ -41,6 +42,7 @@ class Application {
 	service;
 	
 	main(){
+		console.log(`service name:${this.service.name} \n`)
 		console.log(this.service.say("hello"))
 	}
 }

@@ -103,6 +103,7 @@ const {SpringBoot} = require("./Spring")
 
 #### 默认内置注解
 > 注解是随意自定义添加的，只要class上面添加了注解就都会被扫描到。
+> bean实例化完成过后调用beanInit方法（支持异步）。
 - @Bean<(beanName)> bean定义
 - @Value(path) 资源注入
 - @SpringBoot 启动注解，只能存在一个！
@@ -111,4 +112,4 @@ const {SpringBoot} = require("./Spring")
 - @SpringResource 注入Resource实例 就是配置信息
 - @Proxy 后置处理类，用于bean的功能提升，使用参考用例
 - @NoProxy 标注了该注解的方法，不会被代理
-- @BeanInit bean实例化完成过后调用appInit方法（支持异步）。
+

@@ -163,7 +163,7 @@ class SpringFactory {
 	/**
 		根据beanDefine组装bean
 	*/
-	assembleBeanByBeanDefine(beanDefine,injectPath=[]) {
+	async assembleBeanByBeanDefine(beanDefine,injectPath=[]) {
 
 
 		if(this.beanCache.exist(beanDefine.name)){
@@ -180,7 +180,9 @@ class SpringFactory {
 
 		let bean = new this.classReferences[beanDefine.className]
 
-		beanDefine.fields.forEach(field => {
+		for(let i=0;i<beanDefine.fields.length;i++){
+
+			const field = beanDefine.fields[i];
 
 			//字段注入配置文件
 			if(field.hasAnnotation(valueInject)){
@@ -196,7 +198,7 @@ class SpringFactory {
 				if(!subBeanDefine){
 					throw `bean定义获取失败 类名:${beanDefine.className} 字段:${field.name} 注解:${beanInject} `
 				}
-				const subBean = this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
+				const subBean = await this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
 				bean[field.name] = subBean
 			}
 
@@ -210,7 +212,8 @@ class SpringFactory {
 				bean[field.name] = this.resource;
 			}
 
-		})
+		}
+
 
 		//对bean进行增强提升
  		bean = this.proxyEnhance.doEnhance(beanDefine,bean);
@@ -218,10 +221,14 @@ class SpringFactory {
 		//放入缓存
 		this.beanCache.push(beanDefine,bean);
 
+		if(bean['beanInit'] && typeof bean['beanInit'] === 'function'){
+			await bean.beanInit(beanDefine);
+		}
+
 		return bean;
 	}
 
-	loadProxy(){
+	async loadProxy(){
 
 		const {proxy} = this.args.annotation;
 
@@ -230,11 +237,13 @@ class SpringFactory {
 			return (b1.getAnnotation(proxy).param.sort || 100) - (b2.getAnnotation(proxy).param.sort || 100)
 		})
 
-		beanDefineList.forEach(beanDefine => {
+		for(let i=0;i<beanDefineList.length;i++){
+
+			const beanDefine = beanDefineList[i];
 
 			const targetAnnotation = beanDefine.getAnnotation(proxy).param["annotation"]
 
-			const proxyBean = this.assembleBeanByBeanDefine(beanDefine)
+			const proxyBean = await this.assembleBeanByBeanDefine(beanDefine)
 
 			if(!proxyBean['doProxy']){
 				throw 'the proxyBean must implements doProxy method!'
@@ -242,7 +251,8 @@ class SpringFactory {
 
 			this.proxyEnhance.push(targetAnnotation,proxyBean)
 
-		})
+
+		}
 
 	}
 
@@ -267,41 +277,24 @@ class SpringFactory {
 			facotryInstance = this;
 
 			//优先实例化代理类
-			this.loadProxy();
+			await this.loadProxy();
 
 			//开始装配
-			const bean = this.assembleBeanByBeanDefine(beanDefineList[0])
+			const bean = await this.assembleBeanByBeanDefine(beanDefineList[0])
 
 			//启动自动启动注解
-			await this.doBeanInit();
+			// await this.doBeanInit();1
 
 			bean.main(this.args.inputArgs);
 
 		}catch(e){
 
-			console.log('启动失败');
+			console.log('启动失败',e);
 
 		}
 
 	}
 
-
-	async doBeanInit(){
-
-		const initBeans = this.beanCache.getBeanByAnnotation("BeanInit");
-
-		for(let i=0;i<initBeans.length;i++){
-
-			const bean = initBeans[i].bean;
-
-			if(typeof bean["appInit"] !== 'function')
-				throw "BeanInit Bean must implements appInit method"
-
-			await initBeans[i].appInit(initBeans[i])
-
-		}
-
-	}
 
 	static getInstance(){
 		return facotryInstance;
