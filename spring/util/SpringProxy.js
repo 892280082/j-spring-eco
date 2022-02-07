@@ -2,76 +2,89 @@
 
 class InvokeBean {
 	bean;
-	method;
+	methodFn;
+	methodName;
+	beanDefine;
 	args;
-	constructor(bean,method,args){
+	constructor(bean,methodFn,methodName,beanDefine,args){
 		this.bean = bean;
-		this.method =method;
+		this.methodFn =methodFn;
 		this.args = args;
+		this.methodName = methodName;
+		this.beanDefine = beanDefine;
+	}
+	next(){
+		return this.invoke(this.args)
 	}
 	invoke(args){
-		return SpringProxy.invoke(this.bean,this.method,args);
+		const {bean,methodFn} = this;
+		return methodFn.apply(bean,args);
+	}
+	getMethodDefine(){
+		return this.beanDefine.getMethod(this.methodName)
+	}
+	getMethodAnnotation(annoatationiName){
+		const methodDefine = this.getMethodDefine();
+		return methodDefine ? methodDefine.getAnnotation(annoatationiName) : null;
 	}
 }
 
-class SpringProxy {
 
-	//BeanDefine 信息
-	beanDefine;
 
-	//原生bean
-	bean;
+//代理方法
+const addProxyMethod = (bean,beanDefine,proxyInfo) => {
 
-	//代理信息
-	proxyInfo;
+	//遍历父类及所有方法
+	getAllFunction(bean,bean.constructor.prototype).forEach(fn => {
 
-	constructor(beanDefine,bean,proxyInfo){
-		this.beanDefine = beanDefine;
-		this.bean = bean;
-		this.proxyInfo = proxyInfo;
+		const methodDefine = beanDefine.getMethod(fn);
 
-		if(this.proxyInfo.method)
-			this.addProxyMethod();
-	}
+		//方法上存在@NoProxy注解 则不进行代理
+		if(methodDefine && methodDefine.hasAnnotation("NoProxy"))
+			return;
 
-	addProxyMethod(){
-		const structor = this.bean.constructor;
-		if(!structor)
-			throw `the bean no constructor:${this.bean}`
+		//旧的方法
+		const oldFn = bean[fn];
 
-		//复制除了函数的所有属性
-		for(let p in this.bean){
-			if(typeof this.bean[p] !== 'function')
-				this[p] = this.bean[p];
+		//新的方法
+		bean[fn] = function(){
+
+			const args = Array.prototype.slice.apply(arguments);
+
+			return proxyInfo.method(new InvokeBean(bean,oldFn,fn,beanDefine,args),fn,args)
+
 		}
 
-		//替换方法
- 		Object.getOwnPropertyNames(structor.prototype)
- 			.filter(p => p !== "constructor" && typeof structor.prototype[p] === 'function' )
- 			.forEach(p => {
+	})
 
-				const args = Array.prototype.slice.apply(arguments);
+	return bean;
 
-				//该方法上存在@NoProxy注解，则不进行代理
- 				const methodDefine = this.beanDefine.getMethod(p);
- 				if(methodDefine && methodDefine.hasAnnotation("NoProxy")){
- 					this[p] = function(){ 
- 						return this.bean[p].apply(this.bean,args);
- 					}
- 					return;
- 				}
+}
 
- 				this[p] = function(){
- 					return this.proxyInfo.method(new InvokeBean(this.bean,p,args),p,args);
- 				}.bind(this)
- 			})
-	}
+//获取所有属性
+const getAllFunction = (obj,prototype)=>{
 
-	static invoke(obj,method,args){
-		return obj[method].apply(obj,args);
-	}
+	//判断prototype={}的情况
+	if(!prototype.__proto__)
+		return [];
 
-} 
+	const out = [];
+	Object.getOwnPropertyNames(prototype).forEach(p => {
+
+		if(p === 'constructor'){
+			getAllFunction(obj,prototype.__proto__).forEach(f => out.push(f))
+			return;
+		}
+
+		if(typeof obj[p]  === 'function'){
+			out.push(p);
+		}
+
+	})
+
+	return out;
+
+}
 
 
-module.exports = {SpringProxy}
+module.exports = {addProxyMethod}

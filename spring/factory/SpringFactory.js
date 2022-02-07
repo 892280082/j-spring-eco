@@ -1,6 +1,6 @@
 const {SpringResource} = require("../resource/SpringResource")
 const {scanersrcList} = require("../scaner/scaner")
-const {SpringProxy} = require('../util/SpringProxy')
+const {addProxyMethod} = require('../util/SpringProxy')
 
 //单例模式：缓存自身实例 
 let facotryInstance = null;
@@ -82,7 +82,7 @@ class ProxyEnhance {
 
 			const proxyInfo = proxyBean.doProxy(beanDefine,bean)
 
-			bean = new SpringProxy(beanDefine,bean,proxyInfo)
+			bean = addProxyMethod(bean,beanDefine,proxyInfo)
 		});
 
 		return bean;
