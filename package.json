@@ -1,6 +1,6 @@
 {
   "name": "spring-ioc",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "spring ioc for node",
   "main": "./spring/index.js",
   "scripts": {

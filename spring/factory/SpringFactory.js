@@ -60,29 +60,31 @@ class ProxyEnhance {
 
 	getBeanList(annotationList){
 		return annotationList.map(annotation => {
-			return this.datas.filter(d => d.annotation === annotation).map(d => d.proxyBean)
+			return this.datas.filter(d => d.annotation === annotation);
 		}).reduce((s,v)=>{
 			return [...s,...v]
 		},[]);
 	}
 
 	//处理的注解 增强的bean
-	push(annotation,proxyBean){
-		this.datas.push({proxyBean,annotation})
+	push(annotation,proxyBean,proxyBeanDefine){
+		this.datas.push({proxyBean,annotation,proxyBeanDefine})
 	}
 
 	doEnhance(beanDefine,bean){
 
+		//拿到需要提升bean的所有的注解
 		const annotationList = beanDefine.annotation.map(a => a.name);
 
+		//拿到处理这些注解的代理类
 		const proxyBeanList = this.getBeanList(annotationList);
 
 		//通过代理类 对该对象进行提升
-		proxyBeanList.forEach(proxyBean => {
+		proxyBeanList.forEach(({proxyBean,proxyBeanDefine}) => {
 
-			const proxyInfo = proxyBean.doProxy(beanDefine,bean)
+			const proxyInfo = proxyBean.doProxy(bean,beanDefine)
 
-			bean = addProxyMethod(bean,beanDefine,proxyInfo)
+			bean = addProxyMethod(bean,beanDefine,proxyInfo,proxyBean,proxyBeanDefine)
 		});
 
 		return bean;
@@ -241,7 +243,11 @@ class SpringFactory {
 
 			const beanDefine = beanDefineList[i];
 
-			const targetAnnotation = beanDefine.getAnnotation(proxy).param["annotation"]
+			const targetAnnotation = beanDefine.getAnnotation(proxy).param["bean"]
+
+			if(!targetAnnotation){
+				throw `proxy annotation must have bean param`
+			}
 
 			const proxyBean = await this.assembleBeanByBeanDefine(beanDefine)
 
@@ -249,7 +255,7 @@ class SpringFactory {
 				throw 'the proxyBean must implements doProxy method!'
 			}
 
-			this.proxyEnhance.push(targetAnnotation,proxyBean)
+			this.proxyEnhance.push(targetAnnotation,proxyBean,beanDefine)
 
 
 		}

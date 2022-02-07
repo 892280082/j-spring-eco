@@ -19,11 +19,12 @@ npm install spring-ioc --save
 #### 代码用例
 > 主程序代码 ./app/Application.js
 ```js
-//处理标注@Service注解的bean，只拦截标注有@Test注解的方法
-//@Proxy(annotation=Service)
+
+//代理@Service的bean，并且只针对@Test方法进行代理（可不添加，代理全部）
+//@Proxy(bean=Service,method=Test)
 class TransactionManager {
 	//beanDefine:定义和注解  bean:实例
-	doProxy(beanDefine,bean){
+	doProxy(bean,beanDefine){
 		return {
 			/**
 				wrapBean {
@@ -39,20 +40,30 @@ class TransactionManager {
 				}
 			*/
 			method(wrapBean,method,args){
+				//替换参数映射
+				const mapping = {"hello":" 你好","playing game":"打游戏"};
+				
+				//测试注解
+				const convertArg = mapping[args[0]];
+				console.log(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => ${convertArg}]`);
 
-				//获取方法上的注解
-				const TestAnnotation = wrapBean.getMethodAnnotation("Test");
-				if(TestAnnotation){
-					console.log(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => 你好]`);
-					return wrapBean.invoke(["你好 "])
-				}else{
-					return wrapBean.next();
+				const result = wrapBean.invoke([convertArg])
+				//代理异步方法
+				if(result instanceof Promise){
+					return result.then(data => {
+						console.log(`result => data`);
+						return new Promise(r => r(data))
+					})
 				}
+				console.log(`result =>${result}`)
+				return result;
 
 			}
 		}
 	}
 }
+
+
 
 
 //@Service
@@ -64,11 +75,15 @@ class Service {
 	appMsg;
 
 	//@Test
-	say(userMsg){
+	saySync(userMsg){
 		return `${userMsg} ${this.appMsg} \n`;
 	}
 
-	//@NoProxy
+	//@Test
+	async doAsync(doSomething){
+		return `i am busy.i am ${doSomething} \n`
+	}
+
 	async beanInit(beanDefine){
 			console.log("bean初始化");
 	}
@@ -84,9 +99,10 @@ class Application {
 	//@Autowired
 	service;
 	
-	main(){
+	async main(){
 		console.log(`service name:${this.service.name} \n`)
-		console.log(this.service.say("hello"))
+		console.log(this.service.saySync("hello"))
+		console.log(await this.service.doAsync("playing game"))
 	}
 }
 

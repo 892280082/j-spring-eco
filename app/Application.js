@@ -1,9 +1,9 @@
 
-//处理标注@Service注解的bean
-//@Proxy(annotation=Service)
+//代理@Service的bean，并且只针对@Test方法进行代理（可不添加，代理全部）
+//@Proxy(bean=Service,method=Test)
 class TransactionManager {
 	//beanDefine:定义和注解  bean:实例
-	doProxy(beanDefine,bean){
+	doProxy(bean,beanDefine){
 		return {
 			/**
 				wrapBean {
@@ -21,25 +21,22 @@ class TransactionManager {
 			method(wrapBean,method,args){
 				//替换参数映射
 				const mapping = {"hello":" 你好","playing game":"打游戏"};
+				
 				//测试注解
-				const TestAnnotation = wrapBean.getMethodAnnotation("Test");
+				const convertArg = mapping[args[0]];
+				console.log(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => ${convertArg}]`);
 
-				if(TestAnnotation){
-					console.log(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => 你好]`);
-					const convertArg = mapping[args[0]];
-					const result = wrapBean.invoke([convertArg])
-					//代理异步方法
-					if(result instanceof Promise){
-						return result.then(data => {
-							console.log(`result => data`);
-							return new Promise(r => r(data))
-						})
-					}
-					console.log(`result =>${result}`)
-					return result;
+				const result = wrapBean.invoke([convertArg])
+				//代理异步方法
+				if(result instanceof Promise){
+					return result.then(data => {
+						console.log(`result => data`);
+						return new Promise(r => r(data))
+					})
 				}
+				console.log(`result =>${result}`)
+				return result;
 
-				return wrapBean.next();
 			}
 		}
 	}
@@ -66,8 +63,6 @@ class Service {
 		return `i am busy.i am ${doSomething} \n`
 	}
 
-
-	//@NoProxy
 	async beanInit(beanDefine){
 			console.log("bean初始化");
 	}

@@ -32,7 +32,7 @@ class InvokeBean {
 
 
 //代理方法
-const addProxyMethod = (bean,beanDefine,proxyInfo) => {
+const addProxyMethod = (bean,beanDefine,proxyInfo,proxyBean,proxyBeanDefine) => {
 
 	//遍历父类及所有方法
 	getAllFunction(bean,bean.constructor.prototype).forEach(fn => {
@@ -43,17 +43,35 @@ const addProxyMethod = (bean,beanDefine,proxyInfo) => {
 		if(methodDefine && methodDefine.hasAnnotation("NoProxy"))
 			return;
 
-		//旧的方法
-		const oldFn = bean[fn];
+		//获取代理类上的注解 method的参数
+		const targetMethod = proxyBeanDefine.getAnnotation("Proxy").param["method"];
 
-		//新的方法
-		bean[fn] = function(){
+		//封装代理方法
+		const innerProxy = ()=> {
+			//旧的方法
+			const oldFn = bean[fn];
 
-			const args = Array.prototype.slice.apply(arguments);
+			//新的方法
+			bean[fn] = function(){
 
-			return proxyInfo.method(new InvokeBean(bean,oldFn,fn,beanDefine,args),fn,args)
+				const args = Array.prototype.slice.apply(arguments);
 
+				return proxyInfo.method(new InvokeBean(bean,oldFn,fn,beanDefine,args),fn,args)
+
+			}
 		}
+
+		//如果存在指定的注解要求 只代理标注了该注解的方法
+		if(targetMethod){
+
+			if(methodDefine && methodDefine.hasAnnotation(targetMethod)){
+				innerProxy();
+			}
+
+		}else{
+			innerProxy();
+		}
+
 
 	})
 
