@@ -1,5 +1,5 @@
 
-//处理标注@Service注解的bean，只拦截标注有@Test注解的方法
+//处理标注@Service注解的bean
 //@Proxy(annotation=Service)
 class TransactionManager {
 	//beanDefine:定义和注解  bean:实例
@@ -19,20 +19,33 @@ class TransactionManager {
 				}
 			*/
 			method(wrapBean,method,args){
-
-				//获取方法上的注解
+				//替换参数映射
+				const mapping = {"hello":" 你好","playing game":"打游戏"};
+				//测试注解
 				const TestAnnotation = wrapBean.getMethodAnnotation("Test");
+
 				if(TestAnnotation){
 					console.log(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => 你好]`);
-					return wrapBean.invoke(["你好 "])
-				}else{
-					return wrapBean.next();
+					const convertArg = mapping[args[0]];
+					const result = wrapBean.invoke([convertArg])
+					//代理异步方法
+					if(result instanceof Promise){
+						return result.then(data => {
+							console.log(`result => data`);
+							return new Promise(r => r(data))
+						})
+					}
+					console.log(`result =>${result}`)
+					return result;
 				}
 
+				return wrapBean.next();
 			}
 		}
 	}
 }
+
+
 
 
 //@Service
@@ -44,9 +57,15 @@ class Service {
 	appMsg;
 
 	//@Test
-	say(userMsg){
+	saySync(userMsg){
 		return `${userMsg} ${this.appMsg} \n`;
 	}
+
+	//@Test
+	async doAsync(doSomething){
+		return `i am busy.i am ${doSomething} \n`
+	}
+
 
 	//@NoProxy
 	async beanInit(beanDefine){
@@ -64,9 +83,10 @@ class Application {
 	//@Autowired
 	service;
 	
-	main(){
+	async main(){
 		console.log(`service name:${this.service.name} \n`)
-		console.log(this.service.say("hello"))
+		console.log(this.service.saySync("hello"))
+		console.log(await this.service.doAsync("playing game"))
 	}
 }
 
