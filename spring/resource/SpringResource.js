@@ -10,7 +10,9 @@ class SpringResource {
 
 		if(resourceFile.isDir()){
 
-			new File(assertDirPath).getFileList().map(f => new File(f)).forEach(f => {
+			new File(assertDirPath).getFileList().map(f => new File(f))
+			.filter(f => f.getExtName() ==='.json')
+			.forEach(f => {
 
 				this.data[f.getFileName(true)] = f.getObject()
 
