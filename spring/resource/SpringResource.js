@@ -32,9 +32,13 @@ class SpringResource {
 		call getValue("config.email.user") => 892280082@qq.com
 	*/
 	getValue(key){
-		return key.split(".").reduce((s,v) => {
-			return s[v];
-		},{...this.data})
+		try{
+			return key.split(".").reduce((s,v) => {
+				return s[v];
+			},{...this.data})
+		}catch(e){
+			throw `read resource config error:${key}`
+		}
 	}
 
 
