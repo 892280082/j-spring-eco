@@ -161,6 +161,20 @@ class SpringFactory {
 		return this.beanDefineList.filter(beanDefine =>  beanDefine.hasAnnotation(annotationName))
 	}
 
+	/**
+	   根据annotationName获取bean的集合
+		String => [bean]
+	*/
+	async getBeanByAnnotation(annotationName){
+		const defineList = this.getBeanDefineByAnnotation(annotationName);
+		const outs = [];
+		for(let i=0;i<defineList.length;i++){
+			const define = defineList[i];
+			const bean = await this.assembleBeanByBeanDefine(define);
+			outs[i] = bean;
+		}
+		return outs;
+	}
 
 	/**
 		根据beanDefine组装bean
@@ -189,7 +203,14 @@ class SpringFactory {
 			//字段注入配置文件
 			if(field.hasAnnotation(valueInject)){
 				const {value} = field.getAnnotation(valueInject).param;
-				bean[field.name] = this.resource.getValue(value)
+				try{
+					bean[field.name] = this.resource.getValue(value)
+				}catch(e){
+					//如果不存在默认配置 则抛出异常
+					if(!bean[field.name]){
+						throw e;
+					}
+				}
 			}
 
 			//字段装配bean

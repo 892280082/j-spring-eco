@@ -35,11 +35,15 @@ class SpringResource {
 	*/
 	getValue(key){
 		try{
-			return key.split(".").reduce((s,v) => {
+			const value =  key.split(".").reduce((s,v) => {
 				return s[v];
 			},{...this.data})
+			if(value === undefined){
+				throw `field inject config error:${key}`
+			}
+			return value;
 		}catch(e){
-			throw `read resource config error:${key}`
+			throw `field inject config error:${key}`
 		}
 	}
 

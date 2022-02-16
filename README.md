@@ -160,3 +160,5 @@ const {SpringBoot} = require("./Spring")
 
 #### bean的生命周期
 - beanInit bean在装备完之后就会立即调用（支持异步）。
+
+
