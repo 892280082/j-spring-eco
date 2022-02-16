@@ -5,6 +5,7 @@ const {SpringBoot} = require("./Spring")
 args = {
 	rootPath:"", //项目根路径
 	srcList:[],  //源码目录集合
+	moduleList:[], //加载第三方模块 例如 moduleList:[SpringMvc] 这样就可以直接引用springMvc里面的包了
 	tempJsName:".runtemp.js", //生成临时文件名称
 	resourceDir:"resource", //资源目录名称
 	annotation:{ //配置系统默认注解

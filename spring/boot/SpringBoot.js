@@ -12,6 +12,7 @@ class SpringBoot {
 	args = {
 		rootPath:"", //项目根路径
 		srcList:[],  //源码目录集合
+		moduleList:[],
 		tempJsName:".runtemp.js", //生成临时文件名称
 		resourceDir:"resource", //资源目录名称
 		inputArgs:[], //用户参数 默认在命令行获取
@@ -30,9 +31,12 @@ class SpringBoot {
 
 		this.args = {...this.args,...userArgs}
 
-		//默认使用启动文件目录作为根目录
+		//1.默认使用启动文件目录作为根目录
 		if(!this.args.rootPath)
 			this.args.rootPath = new File(process.argv[1]).getParent().fsPath;
+
+		//2.追加包的扫描源码目录
+		this.mergepath();
 
 		const {rootPath,srcList,resourceDir} = this.args;
 
@@ -41,16 +45,27 @@ class SpringBoot {
 		}
 
 		this.args.inputArgs = process.argv.slice(2);
-		this.args.srcList = srcList.map(v => path.join(rootPath,v))
+		this.args.srcList = srcList.map(v => v.indexOf(".") === 0 ? path.join(rootPath,v) : v)
 		this.args.resourceDir = path.join(rootPath,resourceDir)
 
 		//开始部署
 		this.deploy()
 	}
 
+	mergepath(){
+		const {srcList,moduleList} = this.args;
+		const modulePaths = moduleList.map(moduleFn => {
+			if(typeof moduleFn !== 'function'){
+				throw 'moduleList元素必须是函数,并且返回的是指定模块的绝对路径'
+			}
+			return moduleFn();
+		})
+		this.args.srcList = [...srcList,...modulePaths]
+	}
+
 	deploy(){
 
-		const {rootPath,tempJsName,inputArgs,packageName} = this.args;
+		const {rootPath,tempJsName,inputArgs,packageName,moduleList} = this.args;
 
 		const beanDefinList  = scanersrcList(this.args.srcList)
 
