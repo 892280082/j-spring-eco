@@ -63,7 +63,7 @@ const scanersrcList = dirPathList => {
 	return beanDefineList;
 }
 
-
+//针对参数进行扫描
 const sacnnerArgs = args => {
 
 	const {srcList,moduleList} = args;
