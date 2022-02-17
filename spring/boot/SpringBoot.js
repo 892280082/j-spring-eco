@@ -36,16 +36,7 @@ class SpringBoot {
 			this.args.rootPath = new File(process.argv[1]).getParent().fsPath;
 
 		//2.格式化第三方模块包
-		this.args.moduleList = this.args.moduleList.map(v => {
-
-			const r =  typeof v === 'function' ? v() : v;
-
-			if(!r.packageName || !r.srcList){
-				throw `模块装载格式错误:${v},扩展模块数据格式:{packageName:String,srcList:[String]}`
-			}
-
-			return r;
-		});
+		this.formartModuleList();
 
 		const {rootPath,srcList,resourceDir} = this.args;
 
@@ -59,6 +50,20 @@ class SpringBoot {
 
 		//开始部署
 		this.deploy()
+	}
+
+	formartModuleList(){
+		
+		this.args.moduleList = this.args.moduleList.map(v => {
+
+			const r =  typeof v === 'function' ? v() : v;
+
+			if(!r.packageName || !r.srcList){
+				throw `模块装载格式错误:${v},扩展模块数据格式:{packageName:String,srcList:[String]}`
+			}
+
+			return r;
+		});
 	}
 
 	deploy(){
