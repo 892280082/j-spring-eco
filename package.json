@@ -11,9 +11,9 @@
     "url": "git@gitee.com:woaianqi/node-ioc.git"
   },
   "keywords": [
-    "node",
-    "ioc",
-    "spring"
+    "spring-ioc",
+    "node-ioc",
+    "yq-ioc"
   ],
   "author": "yeqin",
   "license": "ISC"
