@@ -1,4 +1,4 @@
-const { scanersrcList } = require("../scaner/scaner");
+const { sacnnerArgs } = require("../scaner/scaner");
 const {File} = require("../util/File")
 const path = require('path');
 const { spawn } = require('child_process');
@@ -35,8 +35,8 @@ class SpringBoot {
 		if(!this.args.rootPath)
 			this.args.rootPath = new File(process.argv[1]).getParent().fsPath;
 
-		//2.追加包的扫描源码目录
-		this.mergepath();
+		//2.格式化第三方模块包
+		this.args.moduleList = this.args.moduleList.map(v => typeof v === 'function' ? v() : v);
 
 		const {rootPath,srcList,resourceDir} = this.args;
 
@@ -52,22 +52,11 @@ class SpringBoot {
 		this.deploy()
 	}
 
-	mergepath(){
-		const {srcList,moduleList} = this.args;
-		const modulePaths = moduleList.map(moduleFn => {
-			if(typeof moduleFn !== 'function'){
-				throw 'moduleList元素必须是函数,并且返回的是指定模块的绝对路径'
-			}
-			return moduleFn();
-		})
-		this.args.srcList = [...srcList,...modulePaths]
-	}
-
 	deploy(){
 
 		const {rootPath,tempJsName,inputArgs,packageName,moduleList} = this.args;
 
-		const beanDefinList  = scanersrcList(this.args.srcList)
+		const beanDefinList  = sacnnerArgs(this.args)
 
 		if(beanDefinList.length == 0)
 			throw 'no beanDefine be found!'
@@ -78,6 +67,10 @@ class SpringBoot {
 						  `/** generate lib */\n`;
 
 		const headLib = beanDefinList.map(beanDefine => {
+			//如果是第三方包 则直接导入
+			if(beanDefine.packageName){
+				return `const {${beanDefine.className}} = require('${beanDefine.packageName}') \n`;
+			}
 			const referencePath = "."+beanDefine.fsPath.replace(rootPath,"").replace(/\\/g,"/");
 			return `const { ${beanDefine.className} } = require('${referencePath}') \n`
 		}).reduce( (s,v)=> s+v,"")

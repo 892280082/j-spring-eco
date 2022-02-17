@@ -1,5 +1,5 @@
 const {SpringResource} = require("../resource/SpringResource")
-const {scanersrcList} = require("../scaner/scaner")
+const {sacnnerArgs} = require("../scaner/scaner")
 const {addProxyMethod} = require('../util/SpringProxy')
 
 //单例模式：缓存自身实例 
@@ -125,7 +125,7 @@ class SpringFactory {
 		const {resourceDir,srcList} = args;
 		this.resource = new SpringResource(resourceDir);
 		this.classReferences = classReferences;
-		this.beanDefineList = scanersrcList(srcList)
+		this.beanDefineList = sacnnerArgs(args)
 	}
 
 

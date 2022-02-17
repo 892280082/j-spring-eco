@@ -63,4 +63,27 @@ const scanersrcList = dirPathList => {
 	return beanDefineList;
 }
 
-module.exports = {scanerDir,scanersrcList}
+
+const sacnnerArgs = args => {
+
+	const {srcList,moduleList} = args;
+
+	let beanDefinList  = scanersrcList(srcList)
+
+	moduleList.forEach(moduleInfo=>{
+
+		const {packageName,srcList} = moduleInfo;
+
+		const defines = scanersrcList(srcList).map(d => {
+			d.packageName = packageName;
+			return d;
+		})
+
+		beanDefinList = [...beanDefinList,...defines]
+
+	})
+
+	return beanDefinList;
+}
+
+module.exports = {scanerDir,scanersrcList,sacnnerArgs}
