@@ -69,7 +69,7 @@ const analyAnnotation = (lines,currentIndex) => {
 			if(match){
 				result.type =  "methods";
 				result.name = match[2];
-				result.param = match[3];
+				result.params = match[3];
 			}else{
 				result.type =  "fields";
 				result.name = lines[currentIndex].match(reg.isFieldReg)[1];

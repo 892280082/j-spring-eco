@@ -8,7 +8,7 @@ const convertToBeanDefine = originData => {
 	const {name,annotations,methods,fields,fsPath} = originData;
 	const beanDefine = new BeanDefine(fsPath,name,annotations);
 	beanDefine.fields = fields.map(f => new Field(f.name,f.annotationInfos))
-	beanDefine.methods = methods.map(f => new Method(f.name,f.annotationInfos))
+	beanDefine.methods = methods.map(f => new Method(f.name,f.annotationInfos,f.params))
 
 	/**
 		bean的名称就是默认名称

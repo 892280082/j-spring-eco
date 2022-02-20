@@ -11,8 +11,9 @@ class Field extends AttributeAnnotation{
 
 class Method extends AttributeAnnotation{
 
-	constructor(name,annotationInfos){
+	constructor(name,annotationInfos,params){
 		super(name,annotationInfos)
+		this.params = params;
 	}
 
 	params=[];//方法的参数列表
