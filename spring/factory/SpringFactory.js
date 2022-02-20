@@ -202,12 +202,12 @@ class SpringFactory {
 
 			//字段注入配置文件
 			if(field.hasAnnotation(valueInject)){
-				const {value} = field.getAnnotation(valueInject).param;
+				const {value,force='true'} = field.getAnnotation(valueInject).param;
 				try{
 					bean[field.name] = this.resource.getValue(value)
 				}catch(e){
 					//如果不存在默认配置 则抛出异常
-					if(!bean[field.name]){
+					if(force === 'true'){
 						throw e;
 					}
 				}
@@ -216,13 +216,20 @@ class SpringFactory {
 			//字段装配bean
 			if(field.hasAnnotation(beanInject)){
 				//@Autowired(beanName) beanName默认使用 否则使用字段首字母大写
-				const value = field.getAnnotation(beanInject).param.value || capitalizeFirstLetter(field.name);
-				const subBeanDefine = this.getBeanDefineByName(value)
-				if(!subBeanDefine){
+				const injectAnnotation = field.getAnnotation(beanInject);
+				const {value,force='true'} = injectAnnotation.param;
+				const injectFieldName = value || capitalizeFirstLetter(field.name);
+				const subBeanDefine = this.getBeanDefineByName(injectFieldName);
+
+				//不存在Bean定义 并且是强制装配 则报错
+				if(!subBeanDefine && force === 'true'){
 					throw `bean定义获取失败 类名:${beanDefine.className} 字段:${field.name} 注解:${beanInject} `
 				}
-				const subBean = await this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
-				bean[field.name] = subBean
+
+				if(subBeanDefine){
+					const subBean = await this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
+					bean[field.name] = subBean
+				}
 			}
 
 			if(field.hasAnnotation(springFactory)){

@@ -53,17 +53,20 @@ class SpringBoot {
 	}
 
 	formartModuleList(){
-		
-		this.args.moduleList = this.args.moduleList.map(v => {
-
-			const r =  typeof v === 'function' ? v() : v;
-
-			if(!r.packageName || !r.srcList){
-				throw `模块装载格式错误:${v},扩展模块数据格式:{packageName:String,srcList:[String]}`
+		const moduleList = [];
+		this.args.moduleList.forEach(v => {
+			const rs =  typeof v === 'function' ? v() : v;
+			if(!Array.isArray(rs)){
+				throw `模块加载器必须返回数组`
 			}
-
-			return r;
+			rs.forEach(r => {
+				if(!r.packageName || !r.srcList){
+					throw `模块装载格式错误:${v},扩展模块数据格式:[{packageName:String,srcList:[String]}]`
+				}
+				moduleList.push(r);
+			})
 		});
+		this.args.moduleList = moduleList;
 	}
 
 	deploy(){
