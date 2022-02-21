@@ -153,8 +153,6 @@ const {SpringBoot} = require("./Spring")
 - @Value(path) 资源注入
 - @SpringBoot 启动注解，只能存在一个！
 - @Autowired<(beanNam)> 自动装配
-- @SpringFactory 注入Beanfactory实例
-- @SpringResource 注入Resource实例 就是配置信息
 - @Proxy 后置处理类，用于bean的功能提升，使用参考用例
 - @NoProxy 标注了该注解的方法，不会被代理
 

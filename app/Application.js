@@ -72,8 +72,8 @@ class Service {
 //@SpringBoot
 class Application {
 
-	//@SpringFactory
-	factory;
+	//@Autowired
+	springFactory;
 
 	//@Autowired
 	service;
