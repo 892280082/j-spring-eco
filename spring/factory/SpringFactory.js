@@ -221,6 +221,18 @@ class SpringFactory {
 				const injectFieldName = value || capitalizeFirstLetter(field.name);
 				const subBeanDefine = this.getBeanDefineByName(injectFieldName);
 
+				//注入工厂
+				if(injectFieldName === springFactory){
+					bean[field.name] = this;
+					continue;
+				}
+
+				//注入资源类
+				if(injectFieldName === springResource){
+					bean[field.name] = this.resource;
+					continue;
+				}
+
 				//不存在Bean定义 并且是强制装配 则报错
 				if(!subBeanDefine && force === 'true'){
 					throw `bean定义获取失败 类名:${beanDefine.className} 字段:${field.name} 注解:${beanInject} `
@@ -230,16 +242,6 @@ class SpringFactory {
 					const subBean = await this.assembleBeanByBeanDefine(subBeanDefine,injectPath)
 					bean[field.name] = subBean
 				}
-			}
-
-			if(field.hasAnnotation(springFactory)){
-				//注入工厂
-				bean[field.name] = this;
-			}
-
-			if(field.hasAnnotation(springResource)){
-				//注入资源类
-				bean[field.name] = this.resource;
 			}
 
 		}

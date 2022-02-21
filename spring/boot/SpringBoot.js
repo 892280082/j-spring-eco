@@ -21,8 +21,8 @@ class SpringBoot {
 			valueInject:"Value",
 			appBoot:"SpringBoot",
 			beanInject:"Autowired",
-			springFactory:"SpringFactory",
-			springResource:"SpringResource",
+			springFactory:"springFactory",
+			springResource:"springResource",
 			proxy:"Proxy"
 		}
 	}
