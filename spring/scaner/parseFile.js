@@ -2,7 +2,7 @@ const {File} = require("../util/File")
 const path = require("path")
 
 const reg = {
-	classReg:/class\s(\${0,}\w+)\s/,
+	classReg:/class\s{0,}(\${0,}\w+)\s{0,}/,
 	annotationReg:/@(.\w+)(.*)/,
 	isMethodReg:/^\s{0,}(async)?\s{0,}(.*)\s{0,}\((.*)\)/,
 	isFieldReg:/^\s{0,}(\${0,}\w+);?/
