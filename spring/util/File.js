@@ -86,7 +86,7 @@ class File {
 	}
 
 	setObject(object){
-		this.setContent(JSON.stringify(object));
+		this.setContent(JSON.stringify(object,null,2));
 		return this;
 	}
 
@@ -129,6 +129,12 @@ class File {
 	getFileList(){
 		return fs.readdirSync(this.fsPath)
 		.filter(f =>  fs.statSync(path.join(this.fsPath,f)).isFile())
+		.map(f => path.join(this.fsPath,f))
+	}
+
+	getDirectoryList(){
+		return fs.readdirSync(this.fsPath)
+		.filter(f =>  fs.statSync(path.join(this.fsPath,f)).isDirectory())
 		.map(f => path.join(this.fsPath,f))
 	}
 
