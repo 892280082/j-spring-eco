@@ -1,6 +1,7 @@
 const {SpringResource} = require("../resource/SpringResource")
 const {sacnnerArgs} = require("../scaner/scaner")
 const {addProxyMethod} = require('../util/SpringProxy')
+const {setLogSingleton,getLogSingleton,fastLog} = require("../log/SpringLog")
 
 //单例模式：缓存自身实例 
 let facotryInstance = null;
@@ -76,11 +77,13 @@ class ProxyEnhance {
 		//拿到需要提升bean的所有的注解
 		const annotationList = beanDefine.annotation.map(a => a.name);
 
-		//拿到处理这些注解的代理类
+		//获取能处理直接注解的代理类
 		const proxyBeanList = this.getBeanList(annotationList);
 
 		//通过代理类 对该对象进行提升
 		proxyBeanList.forEach(({proxyBean,proxyBeanDefine}) => {
+
+			fastLog('ProxyEnhance=>doEnhance','trace',`动态代理增强:${proxyBeanDefine.name} => ${beanDefine.name}`)
 
 			const proxyInfo = proxyBean.doProxy(bean,beanDefine)
 
@@ -122,9 +125,28 @@ class SpringFactory {
 
 	constructor(args,classReferences){
 		this.args = args;
-		const {resourceDir,srcList} = args;
+		const {resourceDir,srcList,SpringLog} = args;
 		this.resource = new SpringResource(resourceDir);
+		const springLog = new SpringLog(
+			this.resource.getOr("Spring-ioc.log.state","off"),
+			this.resource.getOr("Spring-ioc.log.level","debug"));
+
+		setLogSingleton(springLog);
+		this.log = getLogSingleton("SpringFactory")
+
+		this.log.trace("日志创建成功")
+		this.log.trace("启动参数")
+		this.log.trace(JSON.stringify(args,null,2))
+		this.log.trace("系统配置")
+		this.log.trace(JSON.stringify(this.resource.data,null,2))
+		
 		this.classReferences = classReferences;
+		const allClassList = Object.keys(classReferences);
+		this.log.trace(`引用类检索信息:${allClassList.length}个`)
+		this.log.trace(JSON.stringify(allClassList,null,2))
+
+	
+		this.log.trace("扫描并解析依赖文件")
 		this.beanDefineList = sacnnerArgs(args)
 	}
 
@@ -181,6 +203,9 @@ class SpringFactory {
 	*/
 	async assembleBeanByBeanDefine(beanDefine,injectPath=[]) {
 
+		this.log.trace(`装配bean:${beanDefine.name},依赖路劲:${injectPath}`)
+
+
 
 		if(this.beanCache.exist(beanDefine.name)){
 			return this.beanCache.get(beanDefine.name);
@@ -192,7 +217,7 @@ class SpringFactory {
 		//检测是否出现了 循环引用
 		juageRecurseInject(injectPath);
 
-		const {valueInject,beanInject,springFactory,springResource} = this.args.annotation;
+		const {valueInject,beanInject,springFactory,springResource,logInject} = this.args.annotation;
 
 		let bean = new this.classReferences[beanDefine.className]
 
@@ -205,6 +230,7 @@ class SpringFactory {
 				const {value,force='true'} = field.getAnnotation(valueInject).param;
 				try{
 					bean[field.name] = this.resource.getValue(value)
+					this.log.trace(`注入配置文件:value:${value},force:${force} => ${bean[field.name]}`)
 				}catch(e){
 					//如果不存在默认配置 则抛出异常
 					if(force === 'true'){
@@ -220,6 +246,14 @@ class SpringFactory {
 				const {value,force='true'} = injectAnnotation.param;
 				const injectFieldName = value || capitalizeFirstLetter(field.name);
 				const subBeanDefine = this.getBeanDefineByName(injectFieldName);
+
+				this.log.trace(`解析注解:${injectAnnotation.name},注入组件:${injectFieldName},强制:${force},`)
+
+				//注入日志代理
+				if(injectFieldName === logInject){
+					bean[field.name] = getLogSingleton(beanDefine.className,beanDefine);
+					continue;
+				}
 
 				//注入工厂
 				if(injectFieldName === springFactory){
@@ -269,6 +303,8 @@ class SpringFactory {
 			return (b1.getAnnotation(proxy).param.sort || 100) - (b2.getAnnotation(proxy).param.sort || 100)
 		})
 
+		this.log.trace(`代理类总数量:${beanDefineList.length}`)
+
 		for(let i=0;i<beanDefineList.length;i++){
 
 			const beanDefine = beanDefineList[i];
@@ -312,11 +348,16 @@ class SpringFactory {
 			//装配结束 放入实例
 			facotryInstance = this;
 
+			this.log.trace('实例化代理类')
+
 			//优先实例化代理类
 			await this.loadProxy();
 
 			//开始装配
 			const bean = await this.assembleBeanByBeanDefine(beanDefineList[0])
+
+
+			this.log.trace('---------------------容器初始化结束-----------------')
 
 			//启动自动启动注解
 			// await this.doBeanInit();1

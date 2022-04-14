@@ -8,6 +8,7 @@ args = {
 	moduleList:[], //加载第三方模块 例如 moduleList:[SpringMvc] 这样就可以直接引用springMvc里面的包了
 	tempJsName:".runtemp.js", //生成临时文件名称
 	resourceDir:"resource", //资源目录名称
+	logPackageName:"",//日志包
 	annotation:{ //配置系统默认注解
 		valueInject:"Value",
 		appBoot:"SpringBoot",
@@ -20,7 +21,7 @@ args = {
 */
 
 //正式使用的时候 删除packageName属性
-new SpringBoot({srcList:["./app"],packageName:"./spring"}).run();
+new SpringBoot({srcList:["./app"],packageName:"./spring",logPackageName:"./spring"}).run();
 
 
 /**

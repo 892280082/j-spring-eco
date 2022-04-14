@@ -1,6 +1,7 @@
 const {parseFile} = require("./parseFile")
 const {Annotation,Field,Method,BeanDefine} = require("../beandefine/Define")
 const {File} = require("../util/File")
+const {fastLog} = require("../log/SpringLog")
 
 //将解析的原始数据转换成bean定义对象
 const convertToBeanDefine = originData => {
@@ -29,9 +30,17 @@ const convertToBeanDefine = originData => {
 //递归扫描目录
 const scanerDir = dirPath =>{
 	return new File(dirPath).getFileListRecurse() //递归获取所有的文件
-		.map(parseFile) //解析文件
+		.map(file => {
+			fastLog("scaner=>scanerDir","trace",`解析文件:${file}`)
+			const f = parseFile(file);
+			return f;
+		}) //解析文件
 		.reduce((s,v)=> [...s,...v] ,[]) // 合并
-		.filter(v => v.annotations.length > 0) //出去没有注解的bean
+		.filter(v => v.annotations.length > 0)//出去没有注解的bean
+		.map(f => {
+			fastLog("scaner=>scanerDir","trace",JSON.stringify(f,null,2))
+			return f;
+		})
 		.map(convertToBeanDefine) //原始数据信息 转换成beanDefine
 }
 
@@ -53,7 +62,11 @@ const verifyBeanDefineList = beanDefineList => {
 //扫描目录集合
 const scanersrcList = dirPathList => {
 
-	const beanDefineList = dirPathList.map(scanerDir).reduce((s,v) => {
+	const beanDefineList = dirPathList.map(dir => {
+		fastLog("scaner=>scanersrcList","trace",`扫描目录:${dir}`)
+		const result =  scanerDir(dir);
+		return result;
+	}).reduce((s,v) => {
 		return [...s,...v]
 	},[]);
 
@@ -73,6 +86,8 @@ const sacnnerArgs = args => {
 	moduleList.forEach(moduleInfo=>{
 
 		const {packageName,srcList} = moduleInfo;
+
+		fastLog('scaner=>sacnnerArgs','trace',`解析第三方模块:${packageName}`)
 
 		const defines = scanersrcList(srcList).map(d => {
 			d.packageName = packageName;

@@ -17,13 +17,15 @@ class SpringBoot {
 		resourceDir:"resource", //资源目录名称
 		inputArgs:[], //用户参数 默认在命令行获取
 		packageName:'spring-ioc', //无需改动!
+		logPackageName:'spring-ioc',
 		annotation:{ //配置系统默认注解
 			valueInject:"Value",
 			appBoot:"SpringBoot",
 			beanInject:"Autowired",
 			springFactory:"SpringFactory",
 			springResource:"SpringResource",
-			proxy:"Proxy"
+			proxy:"Proxy",
+			logInject:"Log"
 		}
 	}
 
@@ -71,7 +73,7 @@ class SpringBoot {
 
 	deploy(){
 
-		const {rootPath,tempJsName,inputArgs,packageName,moduleList} = this.args;
+		const {rootPath,tempJsName,inputArgs,packageName,moduleList,logPackageName} = this.args;
 
 		const beanDefinList  = sacnnerArgs(this.args)
 
@@ -82,6 +84,9 @@ class SpringBoot {
 
 		const springlib = `const {SpringFactory} = require("${packageName}");\n`+
 						  `/** generate lib */\n`;
+
+		const springlog = `const {SpringLog} = require("${logPackageName}");\n`+
+						  `/** generate lib */\n`;		  
 
 		const headLib = beanDefinList.map(beanDefine => {
 			//如果是第三方包 则直接导入
@@ -97,11 +102,13 @@ class SpringBoot {
 		}).reduce( (s,v)=> s+v,"")
 
 
-		const argsParam = `const args = JSON.parse(\`${ JSON.stringify(this.args).replace(/\\\\/g,"//") }\`); \n`
+		const argsParam = `const args = JSON.parse(\`${ JSON.stringify(this.args).replace(/\\\\/g,"//") }\`); \n args.SpringLog = SpringLog;\n`
+
+
 
 		const run = `new SpringFactory(args,classReferences).boot();\n`;
 
-		this.tempRunFile.setContent(springlib+headLib+classReferences+argsParam+run).write();
+		this.tempRunFile.setContent(springlib+springlog+headLib+classReferences+argsParam+run).write();
 
 
 	}

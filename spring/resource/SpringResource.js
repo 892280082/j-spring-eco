@@ -47,6 +47,13 @@ class SpringResource {
 		}
 	}
 
+	getOr(key,defaultValue){
+		try{
+			return this.getValue(key);
+		}catch(e){
+			return defaultValue;
+		}
+	}
 
 }
 

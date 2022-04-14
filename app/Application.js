@@ -77,11 +77,17 @@ class Application {
 
 	//@Autowired
 	service;
+
+	//@Autowired
+	log;
 	
 	async main(){
-		console.log(`service name:${this.service.name} \n`)
-		console.log(this.service.saySync("hello"))
-		console.log(await this.service.doAsync("playing game"))
+
+		this.log.info("我启动了");
+
+		this.log.info(`service name:${this.service.name} \n`)
+		this.log.info(this.service.saySync("hello"))
+		this.log.info(await this.service.doAsync("playing game"))
 	}
 }
 
