@@ -18,29 +18,24 @@ class SpringLog {
 		this.level = level;
 	}
 
-	_log(className,type,msg){
-		if(AllLevel[type] >= AllLevel[this.level] )
-			console.log(`${className}[${type}]:${msg}`)
+	_formatParam(param){
+		return param.map(msg => {
+			if(typeof msg ==='string')
+				return msg;
+			if(typeof msg === 'object'){
+				return JSON.stringify(msg,null,2)
+			}
+			return msg;
+		})
 	}
 
-	trace(warpBean,msg){
-		this._log(warpBean.className,"trace",msg)
-	}
 
-	debug(warpBean,msg){
-		this._log(warpBean.className,"debug",msg)
-	}
-
-	info(warpBean,msg){
-		this._log(warpBean.className,"info",msg)
-	}
-
-	warn(warpBean,msg){
-		this._log(warpBean.className,"warn",msg)
-	}
-
-	error(warpBean,msg){
-		this._log(warpBean.className,"error",msg)
+	log(info){
+		const {warpBean,method,param} = info;
+		const {className,beanDefine} = warpBean;
+		if(AllLevel[method] >= AllLevel[this.level] ){
+			console.log.apply(console,[`${className}[${method}]:`,...this._formatParam(param)])
+		}
 	}
 }
 
@@ -59,25 +54,29 @@ class LogBeanWrap {
 		this.beanDefine = beanDefine;
 	}
 
-	trace(msg){
-		this.springLog.trace(this,msg)
+	_delegateMethod(methodName,param){
+		this.springLog.log({warpBean:this,param,method:methodName})
+	}
+
+	trace(...param){
+		this._delegateMethod("trace",param)
 	}
 
 
-	debug(msg){
-		this.springLog.debug(this,msg)
+	debug(...param){
+		this._delegateMethod("debug",param)
 	}
 
-	info(msg){
-		this.springLog.info(this,msg)
+	info(...param){
+		this._delegateMethod("info",param)
 	}
 
-	warn(msg){
-		this.springLog.warn(this,msg)
+	warn(...param){
+		this._delegateMethod("warn",param)
 	}
 
-	error(msg){
-		this.springLog.error(this,msg)
+	error(...param){
+		this._delegateMethod("error",param)
 	}
 
 	method(methodName){

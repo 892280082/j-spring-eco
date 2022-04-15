@@ -84,7 +84,7 @@ class Application {
 	
 	async main(){
 
-		this.log.info("我启动了");
+		this.log.info("我启动了",{msg:"提醒"});
 
 		const log = this.log.method("main")
 
