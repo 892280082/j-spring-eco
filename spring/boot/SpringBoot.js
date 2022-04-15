@@ -25,7 +25,7 @@ class SpringBoot {
 			springFactory:"SpringFactory",
 			springResource:"SpringResource",
 			proxy:"Proxy",
-			logInject:"Log"
+			logInject:"log"
 		}
 	}
 

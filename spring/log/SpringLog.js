@@ -20,7 +20,7 @@ class SpringLog {
 
 	_log(className,type,msg){
 		if(AllLevel[type] >= AllLevel[this.level] )
-			console.log(`${className}-${type}:${msg}`)
+			console.log(`${className}[${type}]:${msg}`)
 	}
 
 	trace(warpBean,msg){
@@ -78,6 +78,10 @@ class LogBeanWrap {
 
 	error(msg){
 		this.springLog.error(this,msg)
+	}
+
+	method(methodName){
+		return new LogBeanWrap(this.springLog,`${this.className}=>${methodName}`,this.beanDefine)
 	}
 
 }

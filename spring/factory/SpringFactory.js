@@ -249,11 +249,13 @@ class SpringFactory {
 
 				this.log.trace(`解析注解:${injectAnnotation.name},注入组件:${injectFieldName},强制:${force},`)
 
+
+
 				//注入日志代理
-				if(injectFieldName === logInject){
-					bean[field.name] = getLogSingleton(beanDefine.className,beanDefine);
-					continue;
-				}
+				// if(injectFieldName === logInject){
+				// 	bean[field.name] = getLogSingleton(beanDefine.className,beanDefine);
+				// 	continue;
+				// }
 
 				//注入工厂
 				if(injectFieldName === springFactory){
@@ -278,6 +280,13 @@ class SpringFactory {
 				}
 			}
 
+
+
+		}
+
+		//如果该bean存在log字段，并且没有初始值 赋予日志对象
+		if(Object.keys(bean).indexOf(logInject) > -1 && typeof bean[logInject] === 'undefined'){
+			bean[logInject] = getLogSingleton(beanDefine.className,beanDefine);
 		}
 
 

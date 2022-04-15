@@ -53,6 +53,8 @@ class Service {
 	//@Value(config.app.msg)
 	appMsg;
 
+	log;
+
 	//@Test
 	saySync(userMsg){
 		return `${userMsg} ${this.appMsg} \n`;
@@ -64,7 +66,7 @@ class Service {
 	}
 
 	async beanInit(beanDefine){
-			console.log("bean初始化");
+		this.log.method("beanInit").info("bean初始化");
 	}
 
 }
@@ -78,16 +80,19 @@ class Application {
 	//@Autowired
 	service;
 
-	//@Autowired
 	log;
 	
 	async main(){
 
 		this.log.info("我启动了");
 
-		this.log.info(`service name:${this.service.name} \n`)
-		this.log.info(this.service.saySync("hello"))
-		this.log.info(await this.service.doAsync("playing game"))
+		const log = this.log.method("main")
+
+		
+
+		log.info(`service name:${this.service.name} \n`)
+		log.info(this.service.saySync("hello"))
+		log.info(await this.service.doAsync("playing game"))
 	}
 }
 
