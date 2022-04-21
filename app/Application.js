@@ -2,8 +2,15 @@
 //代理@Service的bean，并且只针对@Test方法进行代理（可不添加，代理全部）
 //@Proxy(bean=Service,method=Test)
 class TransactionManager {
+
+
+	log;
+
 	//beanDefine:定义和注解  bean:实例
 	doProxy(bean,beanDefine){
+
+		const log = this.log.method("doProxy")
+
 		return {
 			/**
 				wrapBean {
@@ -24,19 +31,22 @@ class TransactionManager {
 				
 				//测试注解
 				const convertArg = mapping[args[0]];
-				console.log(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => ${convertArg}]`);
+				log.info(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => ${convertArg}]`);
 
+				//返回结果
 				const result = wrapBean.invoke([convertArg])
+
 				//代理异步方法
 				if(result instanceof Promise){
 					return result.then(data => {
-						console.log(`result => data`);
+						log.info(`result => data`);
 						return new Promise(r => r(data))
 					})
 				}
-				console.log(`result =>${result}`)
-				return result;
 
+				log.info(`result =>${result}`)
+
+				return result;
 			}
 		}
 	}
