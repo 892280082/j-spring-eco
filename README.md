@@ -160,3 +160,6 @@ const {SpringBoot} = require("./Spring")
 - beanInit bean在装备完之后就会立即调用（支持异步）。
 
 
+#### 自定义日志
+- 1.编写模块 AA 继承 Spring-ioc { SpringLog } 对象，重写里面的方法即可 
+- 2.new SpringBoot({srcList:["./app"],logPackageName:"AA"}).run();
