@@ -123,14 +123,17 @@ class SpringFactory {
 	//代理提升
 	proxyEnhance = new ProxyEnhance();
 
+	log;//log instance
+
 	constructor(args,classReferences){
 		this.args = args;
 		const {resourceDir,srcList,SpringLog} = args;
 		this.resource = new SpringResource(resourceDir);
-		const springLog = new SpringLog(
+		const springLog = new SpringLog(this,
 			this.resource.getOr("Spring-ioc.log.state","off"),
 			this.resource.getOr("Spring-ioc.log.level","debug"));
 
+		//set log instance  
 		setLogSingleton(springLog);
 		this.log = getLogSingleton("SpringFactory")
 
@@ -372,6 +375,8 @@ class SpringFactory {
 			// await this.doBeanInit();1
 
 			bean.main(this.args.inputArgs);
+
+			//await this.log.beanInit();
 
 		}catch(e){
 

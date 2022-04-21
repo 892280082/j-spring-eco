@@ -1,5 +1,8 @@
 
-//代理@Service的bean，并且只针对@Test方法进行代理（可不添加，代理全部）
+/**	
+	作用就是将用户输入的英文参数转成中文
+	代理@Service的bean，并且只针对@Test方法进行代理 如不添加method属性，则代表代理全部方法！
+*/
 //@Proxy(bean=Service,method=Test)
 class TransactionManager {
 
@@ -31,20 +34,23 @@ class TransactionManager {
 				
 				//测试注解
 				const convertArg = mapping[args[0]];
+
 				log.info(`TransactionManager: 拦截方法:${method} 参数替换:[${args} => ${convertArg}]`);
 
 				//返回结果
 				const result = wrapBean.invoke([convertArg])
 
-				//代理异步方法
-				if(result instanceof Promise){
-					return result.then(data => {
-						log.info(`result => data`);
-						return new Promise(r => r(data))
-					})
-				}
+				/**
+					这里需要注意的时 如果原方法 返回的时Promise,则返回结果也应是Promise
+					if(result instanceof Promise){
+						return result.then(data => {
+					 		return new Promise(r => r(  doSomething(data) ))
+					 	})
+					}
+				*/
 
-				log.info(`result =>${result}`)
+
+				log.info(result)
 
 				return result;
 			}
