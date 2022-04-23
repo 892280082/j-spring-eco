@@ -97,9 +97,10 @@ const getLogSingleton = (className,beanDefine) => {
 	return new LogBeanWrap(logSingleton,className,beanDefine);
 }
 
-const fastLog = (className,type,msg) => {
+const fastLog = (className,type,...msg) => {
 	if(logSingleton){
-		getLogSingleton(className,null)[type](msg);
+		const warpBean = getLogSingleton(className,null);
+		warpBean[type].apply(warpBean,msg)
 	}
 }
 
