@@ -14,7 +14,7 @@ class SpringBoot {
 		srcList:[],  //源码目录集合
 		moduleList:[],
 		tempJsName:".runtemp.js", //生成临时文件名称
-		resourceDir:"resource", //资源目录名称
+		configPaths:['./resource/app-dev.yaml'], //资源目录名称
 		inputArgs:[], //用户参数 默认在命令行获取
 		packageName:'spring-ioc', //无需改动!
 		logPackageName:'spring-ioc',
@@ -40,7 +40,7 @@ class SpringBoot {
 		//2.格式化第三方模块包
 		this.formartModuleList();
 
-		const {rootPath,srcList,resourceDir} = this.args;
+		const {rootPath,srcList,configPaths} = this.args;
 
 		if(srcList.length==0){
 			throw 'srcList must be exist!'
@@ -48,10 +48,10 @@ class SpringBoot {
 
 		this.args.inputArgs = process.argv.slice(2);
 		this.args.srcList = srcList.map(v => v.indexOf(".") === 0 ? path.join(rootPath,v) : v)
-		this.args.resourceDir = resourceDir.indexOf(".") === 0 ? path.join(rootPath,resourceDir) : resourceDir;
+		this.args.configPaths = configPaths.map(v => v.indexOf(".") === 0 ? path.join(rootPath,v) : v)
 
 		//开始部署
-		this.deploy()
+		//this.deploy()
 	}
 
 	formartModuleList(){
@@ -71,7 +71,9 @@ class SpringBoot {
 		this.args.moduleList = moduleList;
 	}
 
-	deploy(){
+	build(addArgs = {}){
+
+		this.args = {...this.args,...addArgs}
 
 		const {rootPath,tempJsName,inputArgs,packageName,moduleList,logPackageName} = this.args;
 
@@ -110,7 +112,7 @@ class SpringBoot {
 
 		this.tempRunFile.setContent(springlib+springlog+headLib+classReferences+argsParam+run).write();
 
-
+		return this;
 	}
 
 
@@ -139,6 +141,9 @@ class SpringBoot {
 		});
 	}
 
+	start(){
+		this.build().run();
+	}
 }
 
 

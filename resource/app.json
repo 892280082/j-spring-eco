@@ -1,8 +1,0 @@
-{
-	"Spring-ioc":{
-		"log":{
-			"state":"on",
-			"level":"debug"
-			}
-	}
-}

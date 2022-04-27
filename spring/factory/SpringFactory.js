@@ -103,7 +103,7 @@ class SpringFactory {
 		rootPath:"",
 		srcList:[],
 		tempJsName:"runtemp.js",
-		resourceDir:"resource",
+		configPaths:"resource",
 		inputArgs:[],
 	*/
 	args;
@@ -127,8 +127,8 @@ class SpringFactory {
 
 	constructor(args,classReferences){
 		this.args = args;
-		const {resourceDir,srcList,SpringLog} = args;
-		this.resource = new SpringResource(resourceDir);
+		const {configPaths,srcList,SpringLog} = args;
+		this.resource = new SpringResource(configPaths);
 		const springLog = new SpringLog(this,
 			this.resource.getOr("Spring-ioc.log.state","off"),
 			this.resource.getOr("Spring-ioc.log.level","debug"));

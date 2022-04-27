@@ -24,7 +24,7 @@ args = {
 new SpringBoot({
 	srcList:["./app"],
 	packageName:"./spring",
-	logPackageName:"./spring"}).run();
+	logPackageName:"./spring"}).start();
 
 
 /**

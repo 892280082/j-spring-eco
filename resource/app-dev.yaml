@@ -1,0 +1,7 @@
+Spring-ioc:
+  log:
+    state: on
+    level: debug
+config:
+  app:
+    msg: world!
