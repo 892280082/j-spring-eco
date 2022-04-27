@@ -11,7 +11,7 @@ class SpringBoot {
 	//支持修改的参数
 	args = {
 		rootPath:"", //项目根路径
-		srcList:[],  //源码目录集合
+		srcList:["./app"],  //源码目录集合
 		moduleList:[],
 		tempJsName:".runtemp.js", //生成临时文件名称
 		configPaths:['./resource/app-dev.yaml'], //资源目录名称
