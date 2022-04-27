@@ -1,4 +1,5 @@
 const {File} = require("../util/File")
+const YAML = require('yamljs')
 
 class SpringResource {
 
@@ -8,15 +9,18 @@ class SpringResource {
 
 		const resourceFile = new File(assertDirPath);
 
+		const loadData = data => {
+			for(let p in data)
+				this.data[p] = data[p];
+		}
+
 		if(resourceFile.isDir()){
 
-			new File(assertDirPath).getFileList().map(f => new File(f))
-			.filter(f => f.getExtName() ==='.json')
-			.forEach(f => {
+			const fileList = new File(assertDirPath).getFileList().map(f => new File(f));
 
-				this.data[f.getFileName(true)] = f.getObject()
+			fileList.filter(f => f.getExtName() ==='.json').map(f => f.getObject()).forEach(loadData)
 
-			})
+			fileList.filter(f => f.getExtName() ==='.yaml').map(f => YAML.load(f.fsPath)).forEach(loadData)
 
 		}
 

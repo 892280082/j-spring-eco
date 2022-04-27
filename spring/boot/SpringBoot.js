@@ -48,7 +48,7 @@ class SpringBoot {
 
 		this.args.inputArgs = process.argv.slice(2);
 		this.args.srcList = srcList.map(v => v.indexOf(".") === 0 ? path.join(rootPath,v) : v)
-		this.args.resourceDir = path.join(rootPath,resourceDir)
+		this.args.resourceDir = resourceDir.indexOf(".") === 0 ? path.join(rootPath,resourceDir) : resourceDir;
 
 		//开始部署
 		this.deploy()

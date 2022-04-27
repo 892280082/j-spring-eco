@@ -1,6 +1,6 @@
 {
   "name": "spring-ioc",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "spring ioc for node",
   "main": "./spring/index.js",
   "scripts": {
@@ -16,5 +16,8 @@
     "yq-ioc"
   ],
   "author": "yeqin",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "yamljs": "^0.3.0"
+  }
 }
