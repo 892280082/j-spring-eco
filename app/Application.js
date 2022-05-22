@@ -9,6 +9,7 @@ class TransactionManager {
 
 	log;
 
+	//方法代理
 	//beanDefine:定义和注解  bean:实例
 	doProxy(bean,beanDefine){
 
@@ -56,8 +57,21 @@ class TransactionManager {
 			}
 		}
 	}
-}
 
+	//对象提升
+	doEnhance(bean,beanDefine){
+
+		const log = this.log.method("doEnhance")
+
+		//1.添加一个额外的方法
+		bean.toFly = ()=>{
+			log.info(`fly to the moon!`)
+		}
+
+		return bean;
+	}
+
+}
 
 
 
@@ -104,11 +118,12 @@ class Application {
 
 		const log = this.log.method("main")
 
-		
 
 		log.info(`service name:${this.service.name} \n`)
 		log.info(this.service.saySync("hello"))
 		log.info(await this.service.doAsync("playing game"))
+
+		this.service.toFly()
 	}
 }
 

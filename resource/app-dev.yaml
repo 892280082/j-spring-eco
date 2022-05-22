@@ -1,7 +1,7 @@
 Spring-ioc:
   log:
     state: on
-    level: debug
+    level: trace
 config:
   app:
     msg: world!

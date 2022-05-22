@@ -80,15 +80,22 @@ class ProxyEnhance {
 		//获取能处理直接注解的代理类
 		const proxyBeanList = this.getBeanList(annotationList);
 
-		//通过代理类 对该对象进行提升
+		//1.代理原对象方法
 		proxyBeanList.forEach(({proxyBean,proxyBeanDefine}) => {
 
 			fastLog('ProxyEnhance=>doEnhance','trace',`动态代理增强:${proxyBeanDefine.name} => ${beanDefine.name}`)
 
 			const proxyInfo = proxyBean.doProxy(bean,beanDefine)
 
-			bean = addProxyMethod(bean,beanDefine,proxyInfo,proxyBean,proxyBeanDefine)
+			bean = addProxyMethod(bean,beanDefine,proxyInfo,proxyBean,proxyBeanDefine);
+
 		});
+
+
+		//2.增强原对象
+		proxyBeanList.filter(v => typeof v.proxyBean.doEnhance === 'function').forEach(({proxyBean,proxyBeanDefine}) =>{
+			bean = proxyBean.doEnhance(bean,beanDefine)
+		})
 
 		return bean;
 	}
@@ -364,6 +371,7 @@ class SpringFactory {
 
 			//优先实例化代理类
 			await this.loadProxy();
+
 
 			//开始装配
 			const bean = await this.assembleBeanByBeanDefine(beanDefineList[0])
