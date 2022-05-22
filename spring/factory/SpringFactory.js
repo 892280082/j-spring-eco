@@ -338,9 +338,9 @@ class SpringFactory {
 
 			const proxyBean = await this.assembleBeanByBeanDefine(beanDefine)
 
-			if(!proxyBean['doProxy']){
-				throw 'the proxyBean must implements doProxy method!'
-			}
+			// if(!proxyBean['doProxy']){
+			// 	throw 'the proxyBean must implements doProxy method!'
+			// }
 
 			this.proxyEnhance.push(targetAnnotation,proxyBean,beanDefine)
 
