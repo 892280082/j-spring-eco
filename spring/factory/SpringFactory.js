@@ -81,7 +81,7 @@ class ProxyEnhance {
 		const proxyBeanList = this.getBeanList(annotationList);
 
 		//1.代理原对象方法
-		proxyBeanList.forEach(({proxyBean,proxyBeanDefine}) => {
+		proxyBeanList.filter(v => typeof v.proxyBean.doProxy === 'function').forEach(({proxyBean,proxyBeanDefine}) => {
 
 			fastLog('ProxyEnhance=>doEnhance','trace',`动态代理增强:${proxyBeanDefine.name} => ${beanDefine.name}`)
 
@@ -94,7 +94,9 @@ class ProxyEnhance {
 
 		//2.增强原对象
 		proxyBeanList.filter(v => typeof v.proxyBean.doEnhance === 'function').forEach(({proxyBean,proxyBeanDefine}) =>{
+
 			bean = proxyBean.doEnhance(bean,beanDefine)
+			
 		})
 
 		return bean;
