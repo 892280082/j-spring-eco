@@ -72,7 +72,7 @@ class ProxyEnhance {
 		this.datas.push({proxyBean,annotation,proxyBeanDefine})
 	}
 
-	doEnhance(beanDefine,bean){
+	async doEnhance(beanDefine,bean){
 
 		//拿到需要提升bean的所有的注解
 		const annotationList = beanDefine.annotation.map(a => a.name);
@@ -80,24 +80,52 @@ class ProxyEnhance {
 		//获取能处理直接注解的代理类
 		const proxyBeanList = this.getBeanList(annotationList);
 
+
 		//1.代理原对象方法
-		proxyBeanList.filter(v => typeof v.proxyBean.doProxy === 'function').forEach(({proxyBean,proxyBeanDefine}) => {
+		const doProxyBeanList = proxyBeanList.filter(v => typeof v.proxyBean.doProxy === 'function');
 
-			fastLog('ProxyEnhance=>doEnhance','trace',`动态代理增强:${proxyBeanDefine.name} => ${beanDefine.name}`)
+		for(let i =0;i<doProxyBeanList.length;i++){
 
-			const proxyInfo = proxyBean.doProxy(bean,beanDefine)
+			const {proxyBean,proxyBeanDefine} = doProxyBeanList[i];
+
+			fastLog('ProxyEnhance=>doEnhance','trace',`方法增强:${proxyBeanDefine.name} => ${beanDefine.name}`)
+
+			const proxyInfo = await proxyBean.doProxy(bean,beanDefine)
 
 			bean = addProxyMethod(bean,beanDefine,proxyInfo,proxyBean,proxyBeanDefine);
 
-		});
+		}
+
+	  //2.增强原对象
+		const doEnhanceBeanList = proxyBeanList.filter(v => typeof v.proxyBean.doEnhance === 'function')
+		for(let i =0;i<doEnhanceBeanList.length;i++){
+
+			const {proxyBean} = doEnhanceBeanList[i];
+
+			fastLog('ProxyEnhance=>doEnhance','trace',`bean提升: ${beanDefine.name}`)
+
+			bean = await proxyBean.doEnhance(bean,beanDefine)
+
+		}
+
+		// //1.代理原对象方法
+		// proxyBeanList.filter(v => typeof v.proxyBean.doProxy === 'function').forEach(({proxyBean,proxyBeanDefine}) => {
+
+		// 	fastLog('ProxyEnhance=>doEnhance','trace',`动态代理增强:${proxyBeanDefine.name} => ${beanDefine.name}`)
+
+		// 	const proxyInfo = proxyBean.doProxy(bean,beanDefine)
+
+		// 	bean = addProxyMethod(bean,beanDefine,proxyInfo,proxyBean,proxyBeanDefine);
+
+		// });
 
 
 		//2.增强原对象
-		proxyBeanList.filter(v => typeof v.proxyBean.doEnhance === 'function').forEach(({proxyBean,proxyBeanDefine}) =>{
+		// proxyBeanList.filter(v => typeof v.proxyBean.doEnhance === 'function').forEach(({proxyBean,proxyBeanDefine}) =>{
 
-			bean = proxyBean.doEnhance(bean,beanDefine)
+		// 	bean = proxyBean.doEnhance(bean,beanDefine)
 			
-		})
+		// })
 
 		return bean;
 	}
@@ -303,7 +331,7 @@ class SpringFactory {
 
 
 		//对bean进行增强提升
- 		bean = this.proxyEnhance.doEnhance(beanDefine,bean);
+ 		bean = await this.proxyEnhance.doEnhance(beanDefine,bean);
 
 		//放入缓存
 		this.beanCache.push(beanDefine,bean);
