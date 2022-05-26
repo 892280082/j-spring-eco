@@ -120,7 +120,7 @@ const parseClass = (lines,readStartIndex) => {
 			/**处理已经查询到的class情况*/
 
 			//1.检测到结束条件 则退出
-			if(lineContain(line,['class','module.exports'])){
+			if(lineContain(line,['class ','module.exports'])){
 				return sendResult(readStartIndex);
 			}
 
