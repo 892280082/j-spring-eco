@@ -10,6 +10,7 @@ class SpringBoot {
 
 	//支持修改的参数
 	args = {
+		pattern:'node',//生成脚本的运行模式 node和shell
 		rootPath:"", //项目根路径
 		srcList:["./app"],  //源码目录集合
 		moduleList:[],
@@ -75,7 +76,7 @@ class SpringBoot {
 
 		this.args = {...this.args,...addArgs}
 
-		const {rootPath,tempJsName,inputArgs,packageName,moduleList,logPackageName} = this.args;
+		const {pattern,rootPath,tempJsName,inputArgs,packageName,moduleList,logPackageName} = this.args;
 
 		const beanDefinList  = sacnnerArgs(this.args)
 
@@ -83,6 +84,13 @@ class SpringBoot {
 			throw 'no beanDefine be found!'
 
 		this.tempRunFile = new File(path.join(rootPath,tempJsName));
+
+		//运行模式
+		const patternLib = {"node":"","shell":"#!/usr/bin/env node \n"}[pattern];
+
+		if(patternLib === undefined){
+			throw 'pattern argument error! options:[node,shell]'
+		}
 
 		const springlib = `const {SpringFactory} = require("${packageName}");\n`+
 						  `/** generate lib */\n`;
@@ -110,7 +118,7 @@ class SpringBoot {
 
 		const run = `new SpringFactory(args,classReferences).boot();\n`;
 
-		this.tempRunFile.setContent(springlib+springlog+headLib+classReferences+argsParam+run).write();
+		this.tempRunFile.setContent(patternLib+springlib+springlog+headLib+classReferences+argsParam+run).write();
 
 		return this;
 	}

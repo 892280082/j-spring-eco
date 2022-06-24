@@ -382,6 +382,8 @@ class SpringFactory {
 
 		try {
 
+			const {pattern} = this.args;
+
 			const {appBoot} = this.args.annotation;
 
 			const beanDefineList = this.getBeanDefineByAnnotation(appBoot);
@@ -412,7 +414,9 @@ class SpringFactory {
 			//启动自动启动注解
 			// await this.doBeanInit();1
 
-			bean.main(this.args.inputArgs);
+			const realArgs = pattern === 'shell' ? process.argv.slice(2) : this.args.inputArgs;
+
+			bean.main(realArgs);
 
 			//await this.log.beanInit();
 
