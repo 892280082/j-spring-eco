@@ -165,7 +165,10 @@ const parseArray = (lines,readStartIndex=0)=>{
 	//解析类
 	const {result,lastIndex} = parseClass(lines,readStartIndex)
 
-	if(result){
+	console.log({result})
+
+	//如果存在结果 并且该类存在注解
+	if(result && result.annotations.length > 0){
 		//console.log(result.name,lines)
 		verifyExistModuleName(result.name,lines)
 	}
