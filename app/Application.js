@@ -123,6 +123,7 @@ class Application {
 		log.info(this.service.saySync("hello"))
 		log.info(await this.service.doAsync("playing game"))
 
+		//额外添加的方法
 		this.service.toFly()
 	}
 }
