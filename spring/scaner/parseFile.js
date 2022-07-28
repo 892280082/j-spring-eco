@@ -69,7 +69,7 @@ const analyAnnotation = (lines,currentIndex) => {
 			if(match){
 				result.type =  "methods";
 				result.name = match[2];
-				result.params = match[3] ? match[3].replace(/\s/g,"").split(",") : [];
+				result.params = match[3] ? match[3].replace(/\s/g,"").split(",").map(k => k.split("=")[0]) : [];
 			}else{
 				result.type =  "fields";
 				result.name = lines[currentIndex].match(reg.isFieldReg)[1];
@@ -165,7 +165,6 @@ const parseArray = (lines,readStartIndex=0)=>{
 	//解析类
 	const {result,lastIndex} = parseClass(lines,readStartIndex)
 
-	console.log({result})
 
 	//如果存在结果 并且该类存在注解
 	if(result && result.annotations.length > 0){
