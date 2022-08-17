@@ -22,17 +22,11 @@ args = {
 */
 
 //正式使用的时候 删除packageName属性
-new SpringBoot({
+const app = new SpringBoot({
 	pattern:'shell',
 	srcList:["./app"],
 	packageName:"./spring",
-	logPackageName:"./spring"}).start();
+	logPackageName:"./spring"
+})
 
-
-/**
-	1.同样也支持手动启动,先用node生成.runtemp.js临时运行文件
-	new SpringBoot({srcList:["./app"]});
-	
-	2.手动启动
-	shell: node .runtemp.js
-*/
+app.start();
