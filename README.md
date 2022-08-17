@@ -4,14 +4,16 @@
 
 原生javascript实现Spring框架，还原度极高，无学习成本，体验丝滑。
 
+
+## 特点
 - 支持注解
 - 无第三方依赖
 - 无需babel编译
-- 支持自动注入Npm包的组件
+- 支持自动注入Npm包中的组件
 
 
 ## 生态
-- [spring-mvc](https://gitee.com/woaianqi/spring-ioc-mvc) 轻量级web开发框架
+- [spring-ioc-mvc](https://gitee.com/woaianqi/spring-ioc-mvc) 轻量级web开发框架
 - [spring-sqlite3-orm](https://gitee.com/woaianqi/spring-sqlite3-orm) 轻量级orm框架
 - [spring-ioc-cli](https://gitee.com/woaianqi/spring-ioc-cli) 项目脚手架
 
