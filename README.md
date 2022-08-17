@@ -13,8 +13,11 @@ Class Application {
   /**
     演示如何引入阿里大鱼的短信服务
       1. npm install alibaba-sms-demo --save
-      2. 在app-dev.yaml中配置组件的基础配置
-      3. 在项目中引入具体组件
+      2. 在app-dev.yaml中配置组件的基础信息
+          alibaba-sms-demo
+            key: 'xxx'
+            secret: 'xxx'
+      3. 在项目中引入具体Bean
   */
   //@Autowired(alibaba.sms.demo.smsUtil)
   smsUtil;
