@@ -1,4 +1,4 @@
-# <img src="doc/spring-framework.png" width="80" height="80"> Spring Framework For Node
+# <img src="doc/spring-framework.png" width="80" height="80"> J-Spring Framework For Node
 
 ---
 
@@ -17,7 +17,7 @@ Class Application {
           alibaba-sms-demo:
             key: 'xxx'
             secret: 'xxx'
-      3. 在项目中引入具体Bean
+      3. 在项目中引入alibaba-sms-demo包中具体组件
   */
   //@Autowired(alibaba.sms.demo.smsUtil)
   smsUtil;
@@ -37,7 +37,7 @@ Class Application {
 - 支持注解
 - 无第三方依赖
 - 无需babel编译
-- 支持注入Npm包组件
+- 支持注入Npm组件
 
 ---
 
@@ -51,29 +51,30 @@ Class Application {
 
 ## 文档
 
-* 如何使用
-  > 1.手动创建  
-  > 2.脚手架自动创建   
+* 一、如何使用
+  > 1.[创建项目](doc/1-1.md)
 
-* 启动流程及参数设置
+* 二、启动流程
   > 1.启动流程  
-  > 2.启动参数  
-  > 3.线上启动
 
-* 定义注解
+* 三、启动参数
+  > 1.参数详解  
+
+* 四、注解
   > 1.内置注解    
-  > 2.定义注解
+  > 2.自定义注解  
+  > 3.运行时操作注解
 
-* 定义Bean
+* 五、Bean
   > 1.内置bean  
   > 2.定义Bean  
 
 
-* 设置AOP
+* 六、AOP
  > 1.代理设置
 
 
-* npm组件包
+* 七、npm
   > 1.开发组件包  
   > 2.引入组件包
 
