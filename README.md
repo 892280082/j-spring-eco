@@ -1,4 +1,4 @@
-# <img src="doc/spring-framework.png" width="80" height="80"> J-Spring Framework For Node
+# <img src="doc/spring-framework.png" width="80" height="80"> Spring Framework For Node
 
 ---
 
@@ -61,18 +61,16 @@ Class Application {
   > 1.参数详解  
 
 * 四、注解
-  > 1.内置注解    
-  > 2.自定义注解  
+  > 1.自定义注解    
+  > 2.内置注解  
   > 3.运行时操作注解
 
 * 五、Bean
-  > 1.内置bean  
-  > 2.定义Bean  
-
+  > 1.定义Bean   
+  > 2.内置bean  
 
 * 六、AOP
  > 1.代理设置
-
 
 * 七、npm
   > 1.开发组件包  
