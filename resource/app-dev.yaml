@@ -1,4 +1,4 @@
-Spring-ioc:
+j-spring:
   log:
     state: on
     level: trace

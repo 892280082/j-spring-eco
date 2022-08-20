@@ -42,9 +42,9 @@ Class Application {
 ---
 
 ## 生态
-- [spring-ioc-mvc](https://gitee.com/woaianqi/spring-ioc-mvc) 轻量级web开发框架
+- [j-spring-mvc](https://gitee.com/woaianqi/j-spring-mvc) 轻量级web开发框架
 - [spring-sqlite3-orm](https://gitee.com/woaianqi/spring-sqlite3-orm) 轻量级orm框架
-- [spring-ioc-cli](https://gitee.com/woaianqi/spring-ioc-cli) 项目脚手架
+- [j-spring-cli](https://gitee.com/woaianqi/j-spring-cli) 项目脚手架
 
 
 ---

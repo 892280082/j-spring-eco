@@ -17,8 +17,8 @@ class SpringBoot {
 		tempJsName:".runtemp.js", //生成临时文件名称
 		configPaths:['./resource/app-dev.yaml'], //资源目录名称
 		inputArgs:[], //用户参数 默认在命令行获取
-		packageName:'spring-ioc', //无需改动!
-		logPackageName:'spring-ioc',
+		packageName:'j-spring', //无需改动!
+		logPackageName:'j-spring',
 		annotation:{ //配置系统默认注解
 			valueInject:"Value",
 			appBoot:"SpringBoot",

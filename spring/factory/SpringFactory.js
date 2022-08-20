@@ -167,8 +167,8 @@ class SpringFactory {
 		const {configPaths,srcList,SpringLog} = args;
 		this.resource = new SpringResource(configPaths);
 		const springLog = new SpringLog(this,
-			this.resource.getOr("Spring-ioc.log.state","off"),
-			this.resource.getOr("Spring-ioc.log.level","debug"));
+			this.resource.getOr("j-spring.log.state","off"),
+			this.resource.getOr("j-spring.log.level","debug"));
 
 		//set log instance  
 		setLogSingleton(springLog);
