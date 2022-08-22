@@ -4,7 +4,8 @@
 
 **向Spring开源社区致敬！**
 
-原生javascript实现Spring框架，无缝还原，上手丝滑。
+原生javascript实现Spring框架，无缝还原，上手丝滑，秒级启动。适合轻应用和产品原型开发。
+
 
 ```js
 //@SpringBoot
@@ -38,6 +39,7 @@ Class Application {
 - 无第三方依赖
 - 无需babel编译
 - 支持注入Npm组件
+- 秒级启动
 
 ---
 
@@ -55,7 +57,7 @@ Class Application {
   > 1.[创建项目](doc/1-1.md)
 
 * 二、启动流程
-  > 1.启动流程  
+  > 1.[启动流程](doc/2-1.md)
 
 * 三、启动参数
   > 1.参数详解  
@@ -72,7 +74,9 @@ Class Application {
 * 六、AOP
  > 1.代理设置
 
-* 七、npm
+* 七、日志扩展
+
+* 八、npm
   > 1.开发组件包  
   > 2.引入组件包
 
