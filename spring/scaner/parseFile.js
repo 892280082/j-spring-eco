@@ -233,24 +233,21 @@ const parseArray = (lines,readStartIndex=0)=>{
 
 */
 const parseFile = fsPath => {
-	let conteLines = new File(fsPath).readFile()
+	let contentLins = new File(fsPath).readFile()
 						.removeEmptyLines()
-						//将 //@ 转换成@ 
+						//将 //@ 转换成@
 						.map(c => c.replace(/\/\/@/g,"@"))
 						//删除单行注释
-						.map(c => c.replace(/\/\/.*\r\t/g,""))
+						.map(c => c.replace(/^\s{0,}\/\/.*\n/g,""))
 						//删除块状注释
 						.map(c => c.replace(/\/\*[^]*?\*\//g, ''))
 						.getLines()
-						//再次删除单行注释（之前有些情况删除不了）
-						.filter(line => !/^\s{0,}\/\//.test(line) )
-						.map(str => str.replace(/^\t+/g,""))
-	return parseArray(conteLines).map( d => {
+						.map(line => line.trim())
+						//console.log(fsPath,contentLins)
+	return parseArray(contentLins).map( d => {
 		return {...d,fsPath};
 	})
 }
 
 
 module.exports = {parseFile}
-
-

@@ -21,7 +21,7 @@ const convertToBeanDefine = originData => {
 		if(value){
 			beanDefine.name = value;
 		}
-		
+
 	}
 
 	return beanDefine;

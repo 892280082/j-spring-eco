@@ -68,20 +68,40 @@ class SpringBoot {
 		//this.deploy()
 	}
 
+	//格式化moduleList 使其扁平化并去重。
 	formartModuleList(){
+
+		//用户模块集合
+		const argsModule = 	this.args.moduleList;
 		const moduleList = [];
-		this.args.moduleList.forEach(v => {
-			const rs =  typeof v === 'function' ? v() : v;
-			if(!Array.isArray(rs)){
-				throw `模块加载器必须返回数组`
+		const packageNameList = [];
+
+		//确认包的格式是否正确
+		const loadModule = r => {
+			const {packageName,srcList} = r;
+			if(!packageName || !srcList){
+				throw `模块装载格式错误:${r},扩展模块数据格式:[{packageName:String,srcList:[String]}]`
 			}
-			rs.forEach(r => {
-				if(!r.packageName || !r.srcList){
-					throw `模块装载格式错误:${v},扩展模块数据格式:[{packageName:String,srcList:[String]}]`
-				}
+			//防止重复加载
+			if(packageNameList.indexOf(packageName) === -1){
 				moduleList.push(r);
-			})
-		});
+				packageNameList.push(packageName);
+			}
+		}
+
+		//加载包 遇到函数则递归载入
+		const loadDispather = md => {
+			if(typeof md === 'function'){
+				loadDispather(md());
+			}else if(Array.isArray(md)){
+				md.forEach(r => typeof r === 'function' ? loadDispather(r) : loadModule(r))
+			} else {
+				throw `moduleList just support array or function`
+			}
+		}
+
+		argsModule.forEach(loadDispather)
+
 		this.args.moduleList = moduleList;
 	}
 
