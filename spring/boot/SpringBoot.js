@@ -8,6 +8,17 @@ class SpringBoot {
 	//临时文件
 	tempRunFile;
 
+	//配置系统默认注解
+	annotationArgs = {
+		valueInject:"Value",
+		appBoot:"SpringBoot",
+		beanInject:"Autowired",
+		springFactory:"SpringFactory",
+		springResource:"SpringResource",
+		proxy:"Proxy",
+		logInject:"log"
+	}
+
 	//支持修改的参数
 	args = {
 		pattern:'node',//生成脚本的运行模式 node和shell
@@ -31,6 +42,8 @@ class SpringBoot {
 	}
 
 	constructor(userArgs){
+
+		userArgs.annotation = {...this.annotationArgs,...(userArgs.annotation || {})}
 
 		this.args = {...this.args,...userArgs}
 
@@ -96,7 +109,7 @@ class SpringBoot {
 						  `/** generate lib */\n`;
 
 		const springlog = `const {SpringLog} = require("${logPackageName}");\n`+
-						  `/** generate lib */\n`;		  
+						  `/** generate lib */\n`;
 
 		const headLib = beanDefinList.map(beanDefine => {
 			//如果是第三方包 则直接导入

@@ -23,7 +23,7 @@ args = {
 
 //正式使用的时候 删除packageName属性
 const app = new SpringBoot({
-	pattern:'shell',
+	pattern:'node',
 	srcList:["./app"],
 	packageName:"./spring",
 	logPackageName:"./spring"

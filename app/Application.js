@@ -1,5 +1,5 @@
 
-/**	
+/**
 	作用就是将用户输入的英文参数转成中文
 	代理@Service的bean，并且只针对@Test方法进行代理 如不添加method属性，则代表代理全部方法！
 */
@@ -32,7 +32,7 @@ class TransactionManager {
 			method(wrapBean,method,args){
 				//替换参数映射
 				const mapping = {"hello":" 你好","playing game":"打游戏"};
-				
+
 				//测试注解
 				const convertArg = mapping[args[0]];
 
@@ -111,7 +111,7 @@ class Application {
 	service;
 
 	log;
-	
+
 	async main(){
 
 		this.log.info("我启动了",{msg:"提醒"});
