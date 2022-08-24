@@ -1,5 +1,9 @@
 
-
+/**
+	注解的基础属性
+	1.name 注解的名称
+	2.param 注解的参数
+*/
 class Annotation {
 
 	constructor(name,paramStr){
@@ -43,7 +47,7 @@ class AttributeAnnotation {
 	//String => Annotation throw 'no annotation for {1}'
 	getAnnotation(annotationName){
 		return this.annotation.find(v => v.name === annotationName)
-	} 
+	}
 }
 
 
