@@ -31,6 +31,7 @@ class SpringBoot {
 		packageName:'j-spring', //无需改动!
 		logPackageName:'j-spring',
 		annotation:{ //配置系统默认注解
+			baen:"Bean", //用于指定Bean的名称
 			valueInject:"Value",
 			appBoot:"SpringBoot",
 			beanInject:"Autowired",

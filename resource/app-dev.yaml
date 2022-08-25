@@ -4,4 +4,4 @@ j-spring:
     level: info
 config:
   app:
-    msg: world!
+    user: j-spring
