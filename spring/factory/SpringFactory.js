@@ -59,6 +59,11 @@ class SpringFactory {
 
 		this.log.trace("扫描并解析依赖文件")
 		this.beanDefineList = sacnnerArgs(args)
+		//注入构造器
+		this.beanDefineList.forEach((beanDefine) => {
+			beanDefine._constructor_ = this.classReferences[beanDefine.className]
+		});
+
 	}
 
 
@@ -78,9 +83,8 @@ class SpringFactory {
 
 
 	/**
-		根据类名获取bean的定义信息
+		根据名称获取bean的定义信息
 		String => BeanDefine
-		throw 'no beanDefine name {}'
 	*/
 	getBeanDefineByName(name){
 		return this.beanDefineList.find(v => v.name === name);
@@ -130,7 +134,9 @@ class SpringFactory {
 
 		const {valueInject,beanInject,springFactory,springResource,logInject} = this.args.annotation;
 
-		let bean = new this.classReferences[beanDefine.className]
+		//let bean = new this.classReferences[beanDefine.className]
+
+		let bean = new beanDefine._constructor_();
 
 		for(let i=0;i<beanDefine.fields.length;i++){
 

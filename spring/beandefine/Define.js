@@ -11,7 +11,16 @@ class BaseDefine {
 		this.annotation = annotationInfos.map(v => new Annotation(v.name,v.param))
 	}
 
+	_constructor_;//类的构造器 SpringFactory初始化时注入
+
+	/**
+    Field 取字段名
+    Method 取方法名
+    BeanDefine 默认取类名；但使用@Bean(diyName)可以手动设定名称
+  */
+
 	name; //String 字段名称
+
 	annotation=[];//[Annotation]注解
 
 	//String => Boolean;判断是否存在指定注解的名称
@@ -65,12 +74,12 @@ class BeanDefine extends BaseDefine{
 		获取拥有指定注解的字段
 		String => [Field]
 	*/
-	getFiledByAnnotation(annotationName){
-
+	getField(annotationName){
+		return this.fields.find(m => m.name === annotationName)
 	};
 
 	/**
-		获取拥有指定注解的方法
+		获取拥有指定名称的方法注解
 		String => [Method]
 	*/
 	getMethod(methodName){

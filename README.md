@@ -68,8 +68,8 @@ Class Application {
   > 3.[j-spring内置注解](doc/4-3.md)  
 
 * 五、Bean
-  > 1.定义Bean   
-  > 2.内置bean  
+  > 1.[Bean](doc/5-1.md)   
+  > 2.[内置bean](doc/5-2.md)
 
 * 六、AOP
  > 1.代理设置
