@@ -71,10 +71,11 @@ Class Application {
   > 1.[Bean](doc/5-1.md)   
   > 2.[内置bean](doc/5-2.md)
 
-* 六、AOP
- > 1.代理设置
+* 六、代理
+ > 1.[代理设置](doc/6-1.md)
 
 * 七、日志扩展
+ > 1.[日志](doc/7-1.md)
 
 * 八、npm
   > 1.开发组件包  

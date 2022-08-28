@@ -29,17 +29,7 @@ class SpringBoot {
 		configPaths:['./resource/app-dev.yaml'], //资源目录名称
 		inputArgs:[], //用户参数 默认在命令行获取
 		packageName:'j-spring', //无需改动!
-		logPackageName:'j-spring',
-		annotation:{ //配置系统默认注解
-			baen:"Bean", //用于指定Bean的名称
-			valueInject:"Value",
-			appBoot:"SpringBoot",
-			beanInject:"Autowired",
-			springFactory:"SpringFactory",
-			springResource:"SpringResource",
-			proxy:"Proxy",
-			logInject:"log"
-		}
+		logPackageName:'j-spring'
 	}
 
 	constructor(userArgs){

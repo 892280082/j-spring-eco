@@ -26,13 +26,18 @@ class SpringLog {
 		return param;
 	}
 
+	//扩展的接口 
+	extendLog(debugType,className,param){
+			console.log.apply(console,[`[${debugType}]${className}:`,...this._formatParam(param)])
+	}
+
 
 	log(info){
 		const {AllLevel} = this;
 		const {warpBean,debugType,param} = info;
 		const {className,beanDefine} = warpBean;
 		if(AllLevel[debugType] >= AllLevel[this.level] ){
-			console.log.apply(console,[`[${debugType}]${className}:`,...this._formatParam(param)])
+			this.extendLog(debugType,className,param)
 		}
 	}
 
