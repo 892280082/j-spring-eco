@@ -1,4 +1,4 @@
-# <img src="doc/spring-framework.png" width="80" height="80"> Spring Framework For Node
+#  Spring Framework For Node
 
 **向Spring开源社区致敬！**
 
