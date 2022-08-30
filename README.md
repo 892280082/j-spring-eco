@@ -1,7 +1,5 @@
 # <img src="doc/spring-framework.png" width="80" height="80"> Spring Framework For Node
 
----
-
 **向Spring开源社区致敬！**
 
 原生javascript实现Spring框架，无缝还原，上手丝滑，秒级启动。适合轻应用和产品原型开发。
@@ -34,6 +32,7 @@ Class Application {
 ```
 
 
+
 ## 特点
 - 支持注解
 - 无第三方依赖
@@ -50,6 +49,11 @@ Class Application {
 
 
 ---
+
+## 安装
+```shell
+npm install j-spring --save
+```
 
 ## 文档
 
