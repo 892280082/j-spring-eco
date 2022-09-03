@@ -1,7 +1,7 @@
 const {SpringResource} = require("../resource/SpringResource")
 const {sacnnerArgs} = require("../scaner/scaner")
 const {setLogSingleton,getLogSingleton,fastLog} = require("../log/SpringLog")
-const {capitalizeFirstLetter,juageRecurseInject,BeanCache,ProxyEnhance} = require('./factoryUtil')
+const {capitalizeFirstLetter,juageRecurseInject,BeanCache,ProxyEnhance} = require('./FactoryUtil')
 //单例模式：缓存自身实例
 let facotryInstance = null;
 
