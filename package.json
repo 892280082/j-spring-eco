@@ -1,6 +1,6 @@
 {
   "name": "j-spring",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "spring for node",
   "main": "./spring/index.js",
   "scripts": {
