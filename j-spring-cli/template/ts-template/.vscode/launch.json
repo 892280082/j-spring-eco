@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ts-node",
+            "name": "TS-Debug",
             "type": "node",
             "request": "launch",
             "args": [
@@ -18,6 +18,26 @@
             "cwd": "${workspaceRoot}",
             "protocol": "inspector",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Jest-Debug",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "stopOnEntry": false,
+            "args": ["${fileBasename}", "--runInBand", "--detectOpenHandles"],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": ["--nolazy"],
+            "env": {
+              "NODE_ENV": "development"
+            },
+            "console": "integratedTerminal",
+            "sourceMaps": true,
+            "windows": {
+              "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            }
         }
     ]
 }
