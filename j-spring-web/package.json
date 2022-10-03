@@ -1,0 +1,70 @@
+{
+  "version": "1.0.3",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "j-spring-web",
+  "author": "yeqin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/892280082/j-spring-web.git"
+  },
+  "module": "dist/springapp.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/springapp.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/springapp.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^8.1.0",
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.14",
+    "@types/express-session": "^1.17.5",
+    "@types/node": "^16.11.59",
+    "husky": "^8.0.1",
+    "size-limit": "^8.1.0",
+    "ts-node": "^10.9.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^3.9.10"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "j-spring": "file:.yalc/j-spring"
+  }
+}
