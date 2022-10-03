@@ -184,4 +184,23 @@ class ProjectMove {
 
 // }
 
-module.exports = {ProjectMove,SpringNativeTemplateMove,SpringWebTemplateMove,ExtendsModuleTemplateMove};
+
+class TsTemplate extends ProjectMove {
+
+	constructor(targetProjectName){
+		super("ts-template")
+		this.targetProjectName = targetProjectName;
+	}
+
+	getModifyInstruct(){
+		const superDirection = super.getModifyInstruct()
+		const out = [];
+
+		out.push(["replace","/package.json",`ts-template`,this.getFormatDirName()])
+
+		return superDirection.concat(out)
+	}
+
+}
+
+module.exports = {ProjectMove,TsTemplate};

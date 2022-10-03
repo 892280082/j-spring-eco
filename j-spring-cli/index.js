@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const {readLine,readNumber} = require('./src/userInput')
-const {} = require("./src/ProjectMove");
+const {TsTemplate} = require("./src/ProjectMove");
 const path =require('path');
 
 /**
@@ -30,13 +30,13 @@ const main = async ()=>{
 
 	const tips = [tip,tip,tip];
 
-	const classConstructorList = []
+	const classConstructorList = [TsTemplate]
 
 	const projectName = await readLine(tips[projectType-1])
 
 	const mvInstance = await copyTemplate(classConstructorList[projectType-1],projectName);
 
-	console.log(`Building complish!  \n 1.cd ${mvInstance.getFormatDirName()} \n 2.npm install \n 3.node index.js \n`);
+	console.log(`Building complish!  \n 1.cd ${mvInstance.getFormatDirName()} \n 2.pnpm install \n 3.npm run test \n`);
 
 	process.exit(0);
 
