@@ -1,0 +1,16 @@
+j-spring:
+  log:
+    state: on
+    level: info
+
+j-spring-mvc:
+  port: 3000
+  viewEngine: art
+  views: views
+  static: /static
+
+j-spring-mvc-session-sqlite3:
+  state: on
+  secret: '234fgsfdg234'
+  maxAge: 60000
+  injectView: true

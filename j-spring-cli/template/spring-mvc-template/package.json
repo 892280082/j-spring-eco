@@ -1,0 +1,16 @@
+{
+  "name": "spring-mvc-template",
+  "version": "1.0.5",
+  "description": "",
+  "main": "spring_extends/index.js",
+  "dependencies": {
+    "j-spring-mvc": "1.2.5",
+    "j-spring":"1.3.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

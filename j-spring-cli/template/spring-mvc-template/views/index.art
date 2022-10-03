@@ -1,0 +1,70 @@
+<html>
+	<head>
+	</head>
+	<style type="text/css">
+		.mid { text-align: left; margin-left: 30px; }
+		.top1 {font-size: 20px;font-weight: bold;}
+		.test-container {
+
+		}
+		.req-input { width: 50%;  }
+	</style>
+	<body>
+		<h1 class="mid">{{ msg }}</h1>
+
+
+		<div>
+			<div>
+				<p class="top1">测试1:测试session操作</p>
+			</div>
+			<hr>
+			<div class="test-container">
+				
+				<div>
+					<input type="text" name="addInfoInput"> 
+					<button onclick="addSessioon();">添加session信息</button>
+					<button onclick="cleanSessioon();">清空</button>
+				</div>
+				<ul>
+
+					{{each $sessionList }}
+
+					<li>{{ $index+1 }}.{{ $value }}  <button onclick="removeSession(<%= $index %>);">删除</button></li>
+
+					{{/each}}
+				</ul>
+
+			</div>
+			<div>
+				<p>被拦截的请求:{{ $FilterUrl }}</p>
+			<div>
+		</div>
+
+		<div>
+			<div>
+				<p class="top1">测试2：测试接口</p>
+				<button onclick="testAll();">全部测试</button>
+			</div>
+			<hr>
+			{{each apiTestData }}
+
+			<div class="test-container">
+				<div>
+					<p>{{ $value.index }}.{{ $value.title }} <span>预期status:{{ $value.status }}</span></p>
+					<input class="req-input" type="text" id="apiInput{{$value.index}}" value="{{ requestPrefix }}{{ $value.api }}"> 
+					<button class="testbtn" onclick="doApiTest('{{ $value.index }}','{{ $value.type }}','{{ $value.status }}');">请求</button>
+					<span id='apiResult{{$value.index}}'></span>
+					<span id='apiRemark{{$value.index}}'></span>
+				</div>
+			</div>
+
+			{{/each}}
+
+		</div>
+
+
+	</body>
+	<script type="text/javascript" src="/static/jquery.js"></script>
+	<script type="text/javascript" src="/static/session.js"></script>
+	<script type="text/javascript" src="/static/testApi.js"></script>
+</html>

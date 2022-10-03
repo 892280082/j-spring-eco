@@ -1,0 +1,14 @@
+{
+  "name": "spring-application-template",
+  "version": "1.0.0",
+  "description": "introduce-temp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "j-spring": "^1.4.1"
+  }
+}

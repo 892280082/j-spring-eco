@@ -1,0 +1,6 @@
+j-spring:
+  log:
+    state: on
+    level: info
+TemplateBean:
+  msg: "Hello world. yq!"

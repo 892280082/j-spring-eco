@@ -1,0 +1,6 @@
+j-spring:
+  log:
+    state: on
+    level: debug
+j-spring-mvc:
+  port: 3000

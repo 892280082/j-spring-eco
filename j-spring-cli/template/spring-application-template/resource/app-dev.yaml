@@ -1,0 +1,7 @@
+j-spring:
+  log:
+    state: on
+    level: debug
+config:
+  app:
+    user: j-spring

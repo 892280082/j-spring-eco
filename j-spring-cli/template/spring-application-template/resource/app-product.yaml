@@ -1,0 +1,4 @@
+j-spring:
+  log:
+    state: on
+    level: debug
