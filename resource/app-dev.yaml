@@ -1,7 +1,0 @@
-j-spring:
-  log:
-    state: on
-    level: info
-config:
-  app:
-    user: j-spring
