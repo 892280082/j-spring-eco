@@ -1,0 +1,54 @@
+{
+  "version": "2.0.35",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "j-spring",
+  "author": "yeqin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/892280082/j-spring.git"
+  },
+  "keywords": [
+    "j-spring",
+    "j-spring-mvc"
+  ],
+  "module": "dist/j-spring.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/j-spring.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/j-spring.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "yalcSig": "51df0c13190467418b1b05aef59f3189"
+}

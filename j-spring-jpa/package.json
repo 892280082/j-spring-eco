@@ -1,0 +1,62 @@
+{
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "j-spring-jpa",
+  "author": "yeqin",
+  "module": "dist/j-spring-jpa.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/j-spring-jpa.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/j-spring-jpa.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^8.1.0",
+    "@types/jest": "^29.1.1",
+    "@types/node": "^18.8.0",
+    "husky": "^8.0.1",
+    "size-limit": "^8.1.0",
+    "sqlite3": "^5.1.2",
+    "ts-node": "^10.9.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^3.9.10"
+  },
+  "dependencies": {
+    "j-spring": "file:.yalc/j-spring",
+    "typeorm": "^0.3.10"
+  }
+}
