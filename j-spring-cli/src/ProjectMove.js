@@ -117,71 +117,71 @@ class ProjectMove {
 }
 
 
-class ExtendsModuleTemplateMove extends ProjectMove {
+// class ExtendsModuleTemplateMove extends ProjectMove {
 
-	constructor(targetProjectName){
-		super("spring-extends-template")
-		this.targetProjectName = targetProjectName;
-	}
+// 	constructor(targetProjectName){
+// 		super("spring-extends-template")
+// 		this.targetProjectName = targetProjectName;
+// 	}
 
-	getModifyInstruct(){
-		const superDirection = super.getModifyInstruct()
-		const out = [];
+// 	getModifyInstruct(){
+// 		const superDirection = super.getModifyInstruct()
+// 		const out = [];
 
-		//change file name
-		//out.push(["rename","/resource/TemplateBean.json",`${this.targetProjectName}.json`])
-		out.push(["rename","/spring_extends/bean/TemplateBean.js",`${this.targetProjectName}.js`])
+// 		//change file name
+// 		//out.push(["rename","/resource/TemplateBean.json",`${this.targetProjectName}.json`])
+// 		out.push(["rename","/spring_extends/bean/TemplateBean.js",`${this.targetProjectName}.js`])
 
-		//modify content
-		const changeContent = [
-			["templateBean",this.getFirstLowerName()],
-			["TemplateBean",this.targetProjectName],
-			["spring-extends-template",this.getFormatDirName()]
-		];
+// 		//modify content
+// 		const changeContent = [
+// 			["templateBean",this.getFirstLowerName()],
+// 			["TemplateBean",this.targetProjectName],
+// 			["spring-extends-template",this.getFormatDirName()]
+// 		];
 
-		out.push(["replaceRecursive",changeContent]);
-
-
-		return superDirection.concat(out)
-	}
-
-}
+// 		out.push(["replaceRecursive",changeContent]);
 
 
-class SpringWebTemplateMove extends ProjectMove {
+// 		return superDirection.concat(out)
+// 	}
 
-	constructor(targetProjectName){
-		super("spring-mvc-template")
-		this.targetProjectName = targetProjectName;
-	}
+// }
 
-	getModifyInstruct(){
-		const superDirection = super.getModifyInstruct()
-		const out = [];
 
-		out.push(["replace","/package.json",`spring-mvc-template`,this.getFormatDirName()])
+// class SpringWebTemplateMove extends ProjectMove {
 
-		return superDirection.concat(out)
-	}
+// 	constructor(targetProjectName){
+// 		super("spring-mvc-template")
+// 		this.targetProjectName = targetProjectName;
+// 	}
 
-}
+// 	getModifyInstruct(){
+// 		const superDirection = super.getModifyInstruct()
+// 		const out = [];
 
-class SpringNativeTemplateMove extends ProjectMove {
+// 		out.push(["replace","/package.json",`spring-mvc-template`,this.getFormatDirName()])
 
-	constructor(targetProjectName){
-		super("spring-application-template")
-		this.targetProjectName = targetProjectName;
-	}
+// 		return superDirection.concat(out)
+// 	}
 
-	getModifyInstruct(){
-		const superDirection = super.getModifyInstruct()
-		const out = [];
+// }
 
-		out.push(["replace","/package.json",`spring-application-template`,this.getFormatDirName()])
+// class SpringNativeTemplateMove extends ProjectMove {
 
-		return superDirection.concat(out)
-	}
+// 	constructor(targetProjectName){
+// 		super("spring-application-template")
+// 		this.targetProjectName = targetProjectName;
+// 	}
 
-}
+// 	getModifyInstruct(){
+// 		const superDirection = super.getModifyInstruct()
+// 		const out = [];
+
+// 		out.push(["replace","/package.json",`spring-application-template`,this.getFormatDirName()])
+
+// 		return superDirection.concat(out)
+// 	}
+
+// }
 
 module.exports = {ProjectMove,SpringNativeTemplateMove,SpringWebTemplateMove,ExtendsModuleTemplateMove};

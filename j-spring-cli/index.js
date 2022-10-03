@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const {readLine,readNumber} = require('./src/userInput')
-const {ExtendsModuleTemplateMove,SpringNativeTemplateMove,SpringWebTemplateMove} = require("./src/ProjectMove");
+const {} = require("./src/ProjectMove");
 const path =require('path');
 
 /**
@@ -24,13 +24,13 @@ const copyTemplate = async (classConstructor,projectName) => {
 
 const main = async ()=>{
 
-	const projectType = await readNumber("please enter the building type: \n 1.j-spring native \n 2.j-spring-mvc for web \n 3.j-spring-npm extends module development",1,3)
+	const projectType = await readNumber("please enter the building type: \n 1.TS project \n 2.WEB project \n 3.WEB+JPA project",1,3)
 
 	const tip = "please enter a project name. example:HelloProject";
 
 	const tips = [tip,tip,tip];
 
-	const classConstructorList = [SpringNativeTemplateMove,SpringWebTemplateMove,ExtendsModuleTemplateMove]
+	const classConstructorList = []
 
 	const projectName = await readLine(tips[projectType-1])
 
