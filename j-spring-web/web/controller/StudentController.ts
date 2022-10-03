@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { ParamsDictionary } from "express-serve-static-core";
 import { Component } from "j-spring";
 import { ApiMiddleWare, Controller, ExpressMiddleWare, Get, Json, MiddleWare, Param, PathVariable, RequestParam, ResponseBody, SessionAttribute } from "../../src";
 
