@@ -1,7 +1,7 @@
 import { Autowired, Clazz, Component, spring } from 'j-spring'
 import path from 'path'
 import { DataSource } from 'typeorm'
-import {SqliteStarter} from '../src/starter'
+import {SqliteStarter} from '../src'
 
 describe('test sqlite starter is ok',()=>{
 
