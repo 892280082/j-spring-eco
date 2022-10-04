@@ -1,2 +1,6 @@
+import {SqliteStarter} from './starter'
+import {TxParamInteceptor} from './interceptor'
+
 export * from './annotation'
-export * from './starter'
+
+export const SqliteStarterConfiguration = [SqliteStarter,TxParamInteceptor]

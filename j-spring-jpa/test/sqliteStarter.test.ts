@@ -1,7 +1,7 @@
 import { Autowired, Clazz, Component, spring } from 'j-spring'
 import path from 'path'
 import { DataSource } from 'typeorm'
-import {SqliteStarter} from '../src'
+import {SqliteStarterConfiguration} from '../src'
 
 describe('test sqlite starter is ok',()=>{
 
@@ -29,7 +29,7 @@ describe('test sqlite starter is ok',()=>{
 
     }
 
-    await spring.bind(SqliteStarter).loadConfig(baseConfig).invokeStarter();
+    await spring.bindModule([SqliteStarterConfiguration]).loadConfig(baseConfig).invokeStarter();
 
     const app = spring.getBean(Application);
 
