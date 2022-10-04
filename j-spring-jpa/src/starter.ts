@@ -42,14 +42,20 @@ export class SqliteStarter extends BaseDataSourceConnect {
     @Value({path:`${sqliteOptionsPrefx}.database`,type:String,force:false})
     database:string = './data.db';
 
+    @Value({path:`${sqliteOptionsPrefx}.logging`,type:Boolean,force:false})
+    logging:boolean = true;
+
+    @Value({path:`${sqliteOptionsPrefx}.synchronize`,type:Boolean,force:false})
+    synchronize:boolean = true;
+
     getOptions(entities:Function[]): DataSourceOptions {
-        const {name,database} = this;
+        const {name,database,logging,synchronize} = this;
         const options: DataSourceOptions = {
             name,
             type: "sqlite",
             database,
-            logging: true,
-            synchronize: true,
+            logging,
+            synchronize,
             entities
         }
         return options;

@@ -7,7 +7,8 @@ describe('test sqlite starter is ok',()=>{
 
 
   const baseConfig = {
-    'j-spring-jpa.sqlite.database':path.join(__dirname,'./data.db')
+    'j-spring-jpa.sqlite.database':path.join(__dirname,'./data.db'),
+    'j-spring-jpa.sqlite.logging':false
   }
 
 
