@@ -39,8 +39,6 @@ export class BaseSearch<T extends BasePojo<any>,S extends BaseSearch<any,any>> {
 
     pageSize:number = 20;
 
-    allCount:number = 0;
-
     of(prop?:PostSearchOption<S>){
         if(prop){
             Object.assign(this,prop);
@@ -61,7 +59,7 @@ export class BaseSearch<T extends BasePojo<any>,S extends BaseSearch<any,any>> {
 
 function convertOption(search:BaseSearch<any,any>):any {
     const option = {};
-    const innerKeyList = ['entityTarget','curPage','pageSize','allCount'];
+    const innerKeyList = ['entityTarget','curPage','pageSize'];
     for(const p in search){
 
         if(search[p] !== null && search[p] !== void 0 && innerKeyList.indexOf(p) === -1){
