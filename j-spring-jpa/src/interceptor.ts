@@ -25,9 +25,11 @@ export class TxParamInteceptor implements SpringWebParamInteceptor<EntityManager
     }
     error(bean: EntityManager): void {
         bean.queryRunner?.rollbackTransaction();
+        bean.queryRunner?.release();
     }
     success(bean: EntityManager): void {
         bean.queryRunner?.commitTransaction();
+        bean.queryRunner?.release();
     }
     
 }

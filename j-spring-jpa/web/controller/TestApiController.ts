@@ -2,7 +2,7 @@ import { Autowired, Clazz } from 'j-spring'
 import { Controller,Get,Json } from 'j-spring-web'
 import { DataSource, EntityManager ,ObjectLiteral,EntityTarget,Repository} from 'typeorm'
 import { Tx } from '../../src'
-import { Post } from '../entity/Post'
+import { Post, PostSearch } from '../entity/Post'
 import { SpringTx } from '../springOrm/SpringEntity'
 
 
@@ -69,13 +69,12 @@ export class TestApiController {
         post.text= '333hel';
         post.title = '443333';
 
-        const findPost2 = await e.find(Post,{where:{id:25}})
-
         const findPost = await springTx.e.getRepository(Post).findBy({id:25});
 
         for (const p of findPost) {
             //await p.remove(springTx);
             p.likesCount = 100;
+            p.title = 'changeTitle';
             await p.update(springTx);
         }
 
@@ -84,7 +83,24 @@ export class TestApiController {
         return post;
     }
 
+    @Get()
+    async testSearch(@Tx() tx:EntityManager){
 
+        const springTx = new SpringTx(tx);
+
+        const result = await new PostSearch().of({likesCount:1000}).find(springTx)
+
+        for (const p of result) {
+
+            await p.of({
+                likesCount:1000,
+                title:'this is change!'
+            }).update(springTx);
+        }
+
+        return result;
+
+    }
 
 
 

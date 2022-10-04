@@ -1,7 +1,7 @@
-import { PrimaryColumn,Generated,EntityManager, Repository } from 'typeorm'
+import { PrimaryColumn,Generated,EntityManager, Repository, EntityTarget } from 'typeorm'
 import { Tx } from '../../src';
 
-export class BasePojo  {
+export class BasePojo<T>  {
 
     @PrimaryColumn()
     @Generated()
@@ -18,10 +18,22 @@ export class BasePojo  {
     update(tx:SpringTx){
         return tx.update(this);
     }
+
+    of(prop?:PostSearchOption<T>){
+        if(prop){
+            Object.assign(this,prop);
+        }
+        return this;
+    }
 }
 
+type PostSearchOption<T> = {
+    [P in keyof T]?: number|string|Array<any>
+}
 
-export class BaseSearch<T extends BasePojo> {
+export class BaseSearch<T extends BasePojo<any>,S extends BaseSearch<any,any>> {
+
+    constructor(private readonly entityTarget:EntityTarget<T>){}
 
     curPage:number = 1;
 
@@ -29,10 +41,39 @@ export class BaseSearch<T extends BasePojo> {
 
     allCount:number = 0;
 
+    of(prop?:PostSearchOption<S>){
+        if(prop){
+            Object.assign(this,prop);
+        }
+        return this;
+    }
 
-    
+    find(tx:SpringTx):Promise<T[]>{
+        const option = convertOption(this);
+        return tx.e.find(this.entityTarget,{where:option});
+    }
+
+    static ofId(id:number){
+
+    }
 
 }
+
+function convertOption(search:BaseSearch<any,any>):any {
+    const option = {};
+    const innerKeyList = ['entityTarget','curPage','pageSize','allCount'];
+    for(const p in search){
+
+        if(search[p] !== null && search[p] !== void 0 && innerKeyList.indexOf(p) === -1){
+
+            option[p] = search[p];
+
+        }
+
+    }
+    return option;
+}
+
 
 export class SpringTx {
 
@@ -40,30 +81,30 @@ export class SpringTx {
 
     }
 
-    private getRepository(entity:BasePojo):Repository<any>{
+    getRepository(entity:BasePojo<any>):Repository<any>{
         const clazz = (entity as any).constructor;
         return this.e.getRepository(clazz);
     }
 
-    save(entity:BasePojo){
+    save(entity:BasePojo<any>){
        return this.getRepository(entity).save(entity);
     }
 
-    remove(entity:BasePojo){
+    remove(entity:BasePojo<any>){
         return this.getRepository(entity).remove(entity);
     }
 
-    async update(entity:BasePojo){
+    async update(entity:BasePojo<any>){
         const repository = this.getRepository(entity);
         const oldEntity = await repository.findOneBy({id:entity.id});
         if(!oldEntity)
             throw `data ${entity} not exist!`
         Object.assign(oldEntity,entity);
 
-        const colMeta = repository.metadata.columns
+        await repository.update({id:oldEntity.id},oldEntity);
 
-        const a = colMeta;
     }
 
 
 }
+
