@@ -7,7 +7,11 @@ class Student {
     @Value({path:'student.age',type:Number})
     age:20;
     @Value({path:'student.city',type:String})
-    city:String
+    city:String;
+    @Value({path:'student.isStuding',type:Boolean})
+    isStuding:Boolean;
+    @Value({path:'student.isBoy',type:Boolean})
+    isBoy:Boolean;
     
     getMsg(){
         return ''+this.name+this.age+this.city;
@@ -25,7 +29,7 @@ class Application {
     student:Student;
 
     public main(){
-        return `${this.appMsg}! my name is ${this.student.name} and ${this.student.age} years old!`;
+        return `${this.appMsg}! my name is ${this.student.name} and ${this.student.age} years old! ${this.student.isStuding} ${this.student.isBoy}`;
     }
 
 }
@@ -39,11 +43,13 @@ describe('resource config load test',()=>{
             student:{
                 name:'lina',
                 age:20,
-                city:'youda'
+                city:'youda',
+                isStuding:'true',
+                isBoy:'false'
             }
         })
 
-        expect(spring.launch(Application)).toEqual(`hello! my name is lina and 20 years old!`)
+        expect(spring.launch(Application)).toEqual(`hello! my name is lina and 20 years old! true false`)
 
     })
 
@@ -57,7 +63,9 @@ describe('resource config load test',()=>{
             student:{
                 name:'a',
                 age:'nihao',
-                city:'sh'
+                city:'sh',
+                isStuding:'true',
+                isBody:'false'
             }
         })
 
