@@ -2,9 +2,6 @@ import { Component, Value } from 'j-spring';
 import path from 'path';
 import { ExpressConfiguration } from './springWebExtends'
 import {errorInfo,SpringWebExceptionHandler} from './springWebExtends'
-import session from 'express-session'
-import bodyParser from 'body-parser'
-
 
 /**
  * ejs页面配置
@@ -39,6 +36,7 @@ export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
     maxAge:number = 60000;
 
     load(app: any): void {
+        const session = require('express-session')
         app.use(session({
             secret:this.secret,
             cookie:{
@@ -54,6 +52,7 @@ export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
 @Component()
 export class BodyParseConfiguration implements ExpressConfiguration {
     load(app: any): void {
+        const bodyParser = require('body-parser')
         // parse application/x-www-form-urlencoded
         app.use(bodyParser.urlencoded({ extended: false }))
         // parse application/json
