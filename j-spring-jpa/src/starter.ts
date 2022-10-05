@@ -1,6 +1,6 @@
 import {  SpringStarter,SpringContainer, Clazz,Component, Value  } from 'j-spring'
 import { DataSource, DataSourceOptions } from 'typeorm'
-import { Table } from './annotation'
+import { SpringEntity } from './annotation'
 
 
 abstract class BaseDataSourceConnect extends SpringContainer implements SpringStarter {
@@ -15,7 +15,7 @@ abstract class BaseDataSourceConnect extends SpringContainer implements SpringSt
 
         this.getBeanDefineMap().forEach( (_bean,bd) => {
 
-            if(bd.hasAnnotation(Table)){
+            if(bd.hasAnnotation(SpringEntity)){
                 entities.push(bd.clazz)
             }
 

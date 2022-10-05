@@ -1,19 +1,23 @@
-import { Column, Entity } from "typeorm"
-import { Table } from "../../src"
+import { Column, Entity, JoinColumn, OneToOne } from "typeorm"
 import { BasePojo, BaseSearch } from '../springOrm/SpringEntity'
+import { Image } from "./Image"
+import {SpringEntity } from '../../src'
 
-@Table()
-@Entity("sample01_post")
+@SpringEntity('Post')
 export class Post extends BasePojo<Post> {
 
     @Column()
-    title: string
+    title:string
 
     @Column()
-    text: string
+    text:string
 
     @Column({ nullable: false })
-    likesCount: number
+    likesCount:number
+
+    @JoinColumn()
+    @OneToOne(()=>Image,{cascade:true})
+    image:Image;
 }
 
 

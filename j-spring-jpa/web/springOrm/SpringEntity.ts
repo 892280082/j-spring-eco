@@ -1,4 +1,4 @@
-import { PrimaryColumn,Generated,EntityManager, Repository, EntityTarget } from 'typeorm'
+import { FindOptionsWhere,PrimaryColumn,Generated,EntityManager, Repository, EntityTarget } from 'typeorm'
 import { Tx } from '../../src';
 
 export class BasePojo<T>  {
@@ -28,7 +28,7 @@ export class BasePojo<T>  {
 }
 
 type PostSearchOption<T> = {
-    [P in keyof T]?: number|string|Array<any>
+    [P in keyof T]?: T[P]
 }
 
 export class BaseSearch<T extends BasePojo<any>,S extends BaseSearch<any,any>> {

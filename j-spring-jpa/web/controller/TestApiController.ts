@@ -2,6 +2,7 @@ import { Autowired, Clazz } from 'j-spring'
 import { Controller,Get,Json } from 'j-spring-web'
 import { DataSource, EntityManager ,ObjectLiteral,EntityTarget,Repository} from 'typeorm'
 import { Tx } from '../../src'
+import { Image } from '../entity/Image'
 import { Post, PostSearch } from '../entity/Post'
 import { SpringTx } from '../springOrm/SpringEntity'
 
@@ -100,6 +101,41 @@ export class TestApiController {
 
         return result;
 
+    }
+
+    @Get()
+    async toTestJoin(@Tx() tx:EntityManager){
+
+        const stx = new SpringTx(tx);
+
+        const image = new Image().of({
+            name:'this is image'
+        })
+        const post = new Post().of({
+            image,
+            title:'hello',
+            likesCount:100,
+            text:'a lot str'
+        })
+
+        await post.save(stx);
+
+        return {post};
+    }
+
+    @Get()
+    async toSearchJoin(@Tx() tx:EntityManager){
+
+        const postList = await tx.getRepository(Post).find({
+            relations:['image'],
+            where:{
+                image:{
+                    name:'this is image'
+                }
+            }
+        })
+
+        return postList;
     }
 
 
