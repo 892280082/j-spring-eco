@@ -2,9 +2,9 @@ import { Autowired, Clazz } from 'j-spring'
 import { Controller,Get,Json } from 'j-spring-web'
 import { DataSource, EntityManager ,ObjectLiteral,EntityTarget,Repository} from 'typeorm'
 import { Tx } from '../../src'
+import { SpringTx } from '../../src/springTx'
 import { Image } from '../entity/Image'
 import { Post, PostSearch } from '../entity/Post'
-import { SpringTx } from '../springOrm/SpringEntity'
 
 
 
@@ -21,123 +21,84 @@ export class TestApiController {
         return 'hello'
     }
 
-    @Get()
-    async toTxSave(@Tx() e:EntityManager){
-
-        const post = new Post();
-
-        post.likesCount = 20;
-        post.text= 'hel';
-        post.title = '111111';
-
-        const s = (post as any).constructor;
-
-        await e.getRepository(Post).save(post);
-
-        return post;
-    }
 
     @Get()
-    async waitSave(@Tx() e:EntityManager){
+    async toTestJoin(@Tx() tx:SpringTx){
 
-        const post = new Post();
+        const postList:Post[] = [];
 
-        post.likesCount = 20;
-        post.text= 'hel';
-        post.title = '33333';
-
-        const s = (post as any).constructor;
-
-        await e.getRepository(Post).save(post);
-
-        const waitSave = ()=> new Promise( (ok,_error)=>{
-            setTimeout(ok,5000)
-        })
-
-        await waitSave();
-
-        return post;
-
-    }
-
-    @Get()
-    async saveDiyTx(@Tx() e:EntityManager){
-
-        const springTx = new SpringTx(e);
-
-        const post = new Post();
-        post.likesCount = 20;
-        post.text= '333hel';
-        post.title = '443333';
-
-        const findPost = await springTx.e.getRepository(Post).findBy({id:25});
-
-        for (const p of findPost) {
-            //await p.remove(springTx);
-            p.likesCount = 100;
-            p.title = 'changeTitle';
-            await p.update(springTx);
+        for(let i =0 ;i<100;i++){
+            const post = new Post().of({
+                image:new Image().of({
+                    name:'heloa'
+                }),
+                title:'hello',
+                likesCount:100,
+                text:'a lot str'
+            })
+            postList.push(post);
         }
 
-        await post.save(springTx);
-
-        return post;
-    }
-
-    @Get()
-    async testSearch(@Tx() tx:EntityManager){
-
-        const springTx = new SpringTx(tx);
-
-        const result = await new PostSearch().of({likesCount:1000}).find(springTx)
-
-        for (const p of result) {
-
-            await p.of({
-                likesCount:1000,
-                title:'this is change!'
-            }).update(springTx);
-        }
-
-        return result;
-
-    }
-
-    @Get()
-    async toTestJoin(@Tx() tx:EntityManager){
-
-        const stx = new SpringTx(tx);
-
-        const image = new Image().of({
-            name:'this is image'
-        })
-        const post = new Post().of({
-            image,
-            title:'hello',
-            likesCount:100,
-            text:'a lot str'
-        })
-
-        await post.save(stx);
-
-        return {post};
-    }
-
-    @Get()
-    async toSearchJoin(@Tx() tx:EntityManager){
-
-        const postList = await tx.getRepository(Post).find({
-            relations:['image'],
-            where:{
-                image:{
-                    name:'this is image'
-                }
-            }
-        })
+        await tx.save(postList);
 
         return postList;
     }
 
+    @Get()
+    async toUseSearch(@Tx() tx:SpringTx){
+        const s = new PostSearch().of({
+            likesCount:100,
+            image$name:'heloa'
+        });
+        return await tx.find(s);
+    }
+
+    @Get()
+    async updateData(@Tx() tx:SpringTx){
+        const s = new PostSearch().of({
+            likesCount:-1,
+            image$name:'heloa'
+        });
+        const postList = await tx.find(s);
+
+        postList.forEach(p => p.likesCount=-1);
+
+        await tx.update(postList);
+
+        return postList;
+
+    }
+
+    @Get()
+    async batchUpdate(@Tx() tx:SpringTx) {
+
+        const updateSize = await tx.batchUpdate(new PostSearch().of({
+            image$name:'heloa'
+        }),{
+            text:'helalala'
+        });
+
+        return updateSize;
+
+    }
+
+    @Get()
+    async getPost(@Tx() tx:SpringTx){
+        return await tx.e.find(Post,{
+            take:5,
+            where:{
+                image:{
+                    name:'heloa'
+                }
+            },
+            relationLoadStrategy:'query',
+            relations:{
+                image:true,
+            },
+            comment:'this is test query',
+            cache:60*1000
+        })
+    }
 
 
 }

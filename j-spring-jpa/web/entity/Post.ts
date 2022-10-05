@@ -1,10 +1,9 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm"
-import { BasePojo, BaseSearch } from '../springOrm/SpringEntity'
+import { Column, JoinColumn, OneToOne } from "typeorm"
 import { Image } from "./Image"
-import {SpringEntity } from '../../src'
+import {SpringEntity,BaseEntity,BaseSearch } from '../../src'
 
 @SpringEntity('Post')
-export class Post extends BasePojo<Post> {
+export class Post extends BaseEntity<Post> {
 
     @Column()
     title:string
@@ -30,8 +29,8 @@ export class PostSearch extends BaseSearch<Post,PostSearch> {
 
     title:string;
 
-    title_fuzzy:string;
-
     likesCount:number;
 
+    image$name:string;
+    
 }

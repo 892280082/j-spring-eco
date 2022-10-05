@@ -34,6 +34,4 @@ export function SpringEntity(
     }
 }
 
-export const Table = () => spring.classAnnotationGenerator('sqlite-jdbc.Table',{},Table);
-
 export const Tx = () => spring.paramterAnnotationGenerator('sqlite-jdbc.Table','NoName',{},Tx);

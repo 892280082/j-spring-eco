@@ -1,12 +1,12 @@
-
 import { Component,Autowired, Clazz,Anntation } from 'j-spring'
 import {SpringWebParamInteceptor} from 'j-spring-web'
 import {EntityManager,DataSource,QueryRunner} from 'typeorm'
 import {Tx} from './annotation'
+import {SpringTx} from './springTx'
 
 
 @Component()
-export class TxParamInteceptor implements SpringWebParamInteceptor<EntityManager> {
+export class TxParamInteceptor implements SpringWebParamInteceptor<SpringTx> {
 
     @Autowired({clazz:DataSource as Clazz})
     dataSource:DataSource;
@@ -17,19 +17,19 @@ export class TxParamInteceptor implements SpringWebParamInteceptor<EntityManager
     getAnnotation(): Function {
         return Tx;
     }
-    async getBean(_req: any, _res: any, _paramterAnnotation: Anntation): Promise<EntityManager> {
+    async getBean(_req: any, _res: any, _paramterAnnotation: Anntation): Promise<SpringTx> {
         const queryRunner:QueryRunner = this.dataSource.createQueryRunner()
         const manager:EntityManager = queryRunner.manager;
         await queryRunner.startTransaction();
-        return manager;
+        return new SpringTx(manager);
     }
-    error(bean: EntityManager): void {
-        bean.queryRunner?.rollbackTransaction();
-        bean.queryRunner?.release();
+    error(bean: SpringTx): void {
+        bean.e.queryRunner?.rollbackTransaction();
+        bean.e.queryRunner?.release();
     }
-    success(bean: EntityManager): void {
-        bean.queryRunner?.commitTransaction();
-        bean.queryRunner?.release();
+    success(bean: SpringTx): void {
+        bean.e.queryRunner?.commitTransaction();
+        bean.e.queryRunner?.release();
     }
     
 }

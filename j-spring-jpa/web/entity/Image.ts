@@ -1,10 +1,9 @@
-import { Column, Entity } from "typeorm";
-import { SpringEntity } from "../../src";
-import { BasePojo } from "../springOrm/SpringEntity";
+import { Column } from "typeorm";
+import { SpringEntity,BaseEntity } from "../../src";
 
 
 @SpringEntity('Image')
-export class Image extends BasePojo<Image>{
+export class Image extends BaseEntity<Image>{
 
     @Column()
     name:string;
