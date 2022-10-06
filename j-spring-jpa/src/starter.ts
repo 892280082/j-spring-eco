@@ -1,27 +1,21 @@
 import {  SpringStarter,SpringContainer, Clazz,Component, Value  } from 'j-spring'
 import { DataSource, DataSourceOptions } from 'typeorm'
-import { SpringEntity } from './annotation'
 
+const entityList:any[]= [];
+
+export function loadEntity(entities:any[]):void{
+    entities.forEach(e => entityList.push(e))
+} 
 
 abstract class BaseDataSourceConnect extends SpringContainer implements SpringStarter {
     isSpringStater(): boolean {
         return true;
     }
-    abstract getOptions(entities:Function[]):DataSourceOptions;
+    abstract getOptions():DataSourceOptions;
     
     async doStart(clazzMap: Map<Clazz, any>): Promise<any> {
 
-        const entities:Function[] = [];
-
-        this.getBeanDefineMap().forEach( (_bean,bd) => {
-
-            if(bd.hasAnnotation(SpringEntity)){
-                entities.push(bd.clazz)
-            }
-
-        })
-
-        const options = this.getOptions(entities);
+        const options = this.getOptions();
 
         const dataSource = new DataSource(options)
 
@@ -48,7 +42,7 @@ export class SqliteStarter extends BaseDataSourceConnect {
     @Value({path:`${sqliteOptionsPrefx}.synchronize`,type:Boolean,force:false})
     synchronize:boolean = true;
 
-    getOptions(entities:Function[]): DataSourceOptions {
+    getOptions(): DataSourceOptions {
         const {name,database,logging,synchronize} = this;
         const options: DataSourceOptions = {
             name,
@@ -56,7 +50,7 @@ export class SqliteStarter extends BaseDataSourceConnect {
             database,
             logging,
             synchronize,
-            entities
+            entities:entityList
         }
         return options;
     }

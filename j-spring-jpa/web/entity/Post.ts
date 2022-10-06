@@ -1,8 +1,8 @@
-import { Column, JoinColumn, OneToOne } from "typeorm"
+import { Column, Entity, JoinColumn, OneToOne } from "typeorm"
 import { Image } from "./Image"
-import {SpringEntity,BaseEntity,BaseSearch } from '../../src'
+import {BaseEntity,BaseSearch } from '../../src'
 
-@SpringEntity('Post')
+@Entity('Post')
 export class Post extends BaseEntity<Post> {
 
     @Column()

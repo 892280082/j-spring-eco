@@ -7,8 +7,8 @@ specifiers:
   babel-jest: ^29.1.2
   express: ^4.18.1
   husky: ^8.0.1
-  j-spring: file:.yalc/j-spring
   jest: ^29.1.2
+  reflect-metadata: ^0.1.13
   size-limit: ^8.1.0
   sqlite3: ^5.1.2
   ts-jest: ^29.0.3
@@ -19,7 +19,7 @@ specifiers:
   typescript: 4.8.4
 
 dependencies:
-  j-spring: file:.yalc/j-spring
+  reflect-metadata: 0.1.13
   typeorm: 0.3.10_pmxns7ckow5hp64uzurbpl2oxu
 
 devDependencies:
@@ -9348,10 +9348,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-  file:.yalc/j-spring:
-    resolution: {directory: .yalc/j-spring, type: directory}
-    name: j-spring
-    version: 2.0.35
-    engines: {node: '>=10'}
-    dev: false

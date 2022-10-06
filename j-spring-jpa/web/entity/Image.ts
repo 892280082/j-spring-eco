@@ -1,8 +1,8 @@
-import { Column } from "typeorm";
-import { SpringEntity,BaseEntity } from "../../src";
+import { Column, Entity } from "typeorm";
+import { BaseEntity } from "../../src";
 
 
-@SpringEntity('Image')
+@Entity('Image')
 export class Image extends BaseEntity<Image>{
 
     @Column()
