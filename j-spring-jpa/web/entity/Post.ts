@@ -25,15 +25,25 @@ export class PostSearch extends BaseSearch<Post,PostSearch> {
 
     constructor(){
         super(Post)
-        this.$relations = {
+        this.relation({
             image:true
-        }
+        })
+        this.order({
+            id:'DESC'
+        })
+        this.relatirelationLoadStrategy('query')
     }
 
     title:string;
 
     likesCount:number;
 
+    likesCount_not:number;
+
     image$name:string;
+
+    image$name_like:string;
+
+    likesCount_between:number[];
 
 }

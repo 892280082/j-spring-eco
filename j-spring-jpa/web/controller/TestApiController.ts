@@ -1,6 +1,6 @@
 import { Autowired, Clazz } from 'j-spring'
 import { Controller,Get,Json } from 'j-spring-web'
-import { DataSource, EntityManager ,ObjectLiteral,EntityTarget,Repository} from 'typeorm'
+import { DataSource} from 'typeorm'
 import { Tx } from '../../src'
 import { SpringTx } from '../../src/springTx'
 import { Image } from '../entity/Image'
@@ -50,8 +50,10 @@ export class TestApiController {
     @Get()
     async toUseSearch(@Tx() tx:SpringTx){
         const s = new PostSearch().of({
-            likesCount:100,
-            pageSize:2
+            likesCount_not:-1,
+            image$name_like:'he%',
+            pageSize:5,
+            likesCount_between:[-50,2]
         });
         return await tx.find(s.usePagin());
     }

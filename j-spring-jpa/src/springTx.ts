@@ -168,7 +168,8 @@ export class SpringTx {
     }
 
     find<T extends BaseEntity<T>>(search:BaseSearch<T,any>):Promise<T[]>{
-        return this.e.find(search.entityTarget,convertSearch(search));
+        const searchParam = convertSearch(search);
+        return this.e.find(search.entityTarget,searchParam);
     }
 
 
