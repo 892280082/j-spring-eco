@@ -8,6 +8,10 @@ export type AnnoParam = {
     [key:string]:any
 }
 
+export type ReflectParam = {
+    reflectType:any
+}
+
 export class Anntation {
     constructor(remark:string,clazz:Function,_params?:AnnoParam){
         this.remark = remark;

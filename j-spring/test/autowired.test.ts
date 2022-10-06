@@ -19,7 +19,7 @@ class A2 {
 @Component()
 class Deep1 {
 
-  @Autowired({clazz:A})
+  @Autowired()
   A:A;
 
 }
@@ -27,10 +27,10 @@ class Deep1 {
 @Component()
 class Deep2 {
 
-  @Autowired({clazz:A2})
+  @Autowired()
   A2:A2;
 
-  @Autowired({clazz:Deep1})
+  @Autowired()
   Deep1:Deep1;
 
 }
@@ -38,7 +38,7 @@ class Deep2 {
 @Component()
 class Deep3 {
 
-  @Autowired({clazz:Deep2})
+  @Autowired()
   Deep2:Deep2;
 
 }
@@ -52,7 +52,7 @@ describe('test autowired', () => {
     @Component()
     class Application {
 
-      @Autowired({clazz:A})
+      @Autowired()
       A:A;
 
       main(){
@@ -69,13 +69,13 @@ describe('test autowired', () => {
     @Component()
     class Application {
 
-      @Autowired({clazz:A})
+      @Autowired()
       a:A;
 
-      @Autowired({clazz:A})
+      @Autowired()
       a1:A;
 
-      @Autowired({clazz:A2})
+      @Autowired()
       a2:A2;
 
       main(){
@@ -93,10 +93,10 @@ describe('test autowired', () => {
     @Component()
     class Application {
 
-      @Autowired({clazz:Deep2})
+      @Autowired()
       Deep2:Deep2;
 
-      @Autowired({clazz:Deep3})
+      @Autowired()
       Deep3:Deep3;
 
       main(){

@@ -24,7 +24,7 @@ describe('test custom annotation',()=>{
             pigBank:String;
         
             @Get('/say')
-            async say(@Query('user') user:string){
+            async say(@Query('user') user:string,@Query('num') _num:number){
                 return user;
             }
 
@@ -77,14 +77,19 @@ describe('test custom annotation',()=>{
                 'field-list':[{
                     'name':'pigBank',
                     'anno-list':[Inject],
-                    'anno-param-list':[{path:'small pigBank'}]
+                    'anno-param-list':[{path:'small pigBank',reflectType:String}]
                 }],
                 'method-list':[
                     {
                         'name':'say',
                         'anno-list':[Get],
-                        'anno-params':[{path:'/say'}],
+                        'anno-params':[{path:'/say',reflectType:Promise}],
                         'field-list':[
+                            {
+                                name:'num',
+                                index:1,
+                                'anno-list':[Query]
+                            },
                             {
                                 name:'user',
                                 index:0,

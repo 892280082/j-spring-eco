@@ -4,11 +4,15 @@ specifiers:
   '@size-limit/preset-small-lib': ^8.1.0
   '@types/jest': ^29.1.1
   husky: ^8.0.1
+  reflect-metadata: ^0.1.13
   size-limit: ^8.1.0
   ts-node: ^10.9.1
   tsdx: ^0.14.1
   tslib: ^2.4.0
   typescript: ^3.9.10
+
+dependencies:
+  reflect-metadata: 0.1.13
 
 devDependencies:
   '@size-limit/preset-small-lib': 8.1.0_size-limit@8.1.0
@@ -5929,6 +5933,10 @@ packages:
     dependencies:
       resolve: 1.22.1
     dev: true
+
+  /reflect-metadata/0.1.13:
+    resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
+    dev: false
 
   /regenerate-unicode-properties/10.1.0:
     resolution: {integrity: sha512-d1VudCLoIGitcU/hEg2QqvyGZQmdC0Lf8BqdOMXGFSvJP4bNV1+XqbPQeHHLD51Jh4QJJ225dlIFvY4Ly6MXmQ==}

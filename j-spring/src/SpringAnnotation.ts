@@ -1,6 +1,7 @@
 import {triggerClassAnnotation,triggerFieldAnnotation,triggerMethodAnnotation,triggerParamterAnnotation} from './SpringContext'
-import { Clazz,Anntation, AnnoParam } from './SpringType';
+import { Clazz,Anntation, AnnoParam,ReflectParam } from './SpringType';
 import { vlidateTypeAndThrowError } from './SpringResource'
+import "reflect-metadata"
 
 
 
@@ -23,6 +24,7 @@ export function classAnnotationGenerator(annoName:string,param?:AnnoParam,ref?:F
 
 export function fieldAnnotationGenerator(annoName:string,param:AnnoParam,ref?:Function):Function{
     return function temp(_target:any,key:string){
+        (param as ReflectParam).reflectType = Reflect.getMetadata("design:type",_target,key);
         triggerFieldAnnotation(key,new Anntation(annoName,ref?ref:temp,param))
     }
 }
@@ -30,12 +32,14 @@ export function fieldAnnotationGenerator(annoName:string,param:AnnoParam,ref?:Fu
 
 export function methodAnnotationGenerator(annoName:string,param:AnnoParam,ref?:Function):Function{
     return function temp(_target: any, name: string, _descriptor: PropertyDescriptor){
+        (param as ReflectParam).reflectType = Reflect.getMetadata("design:returntype", _target, name);
         triggerMethodAnnotation(name,new Anntation(annoName,ref?ref:temp,param));
     }
 }
 
 export function paramterAnnotationGenerator(annoName:string,paramterName:string,param:AnnoParam,ref?:Function):Function{
     return function temp(_target: Object, _methodName: string, index: number){
+        (param as ReflectParam).reflectType =  Reflect.getMetadata("design:paramtypes",_target,_methodName)[index];
         triggerParamterAnnotation(paramterName,index,new Anntation(annoName,ref?ref:temp,param));
     }
 }
@@ -63,10 +67,11 @@ function setForceDefaultValue(param:{force?:boolean}){
         param.force = true;
 }
 
-export const Autowired = <T>(param:AutowiredParam<T>) => {
-    if(! (param.clazz || param.type) ){
-        throw `Autowired must be parameters clazz or type!`
-    }
+export const Autowired = <T>(param?:AutowiredParam<T>) => {
+    param = param  ||{};
+    // if(! (param.clazz || param.type) ){
+    //     throw `Autowired must be parameters clazz or type!`
+    // }
     setForceDefaultValue(param);
     return fieldAnnotationGenerator('j-spring.Autowired',param,Autowired);
 }

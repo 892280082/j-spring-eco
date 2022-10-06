@@ -1,4 +1,4 @@
-import {Anntation, BeanDefine, Clazz, FieldDefine}  from './SpringType'
+import {Anntation, BeanDefine, Clazz, FieldDefine, ReflectParam}  from './SpringType'
 import { Autowired,AutowiredParam,Value, ValueParam } from './SpringAnnotation'
 import { geFormatValue, hasConfig } from './SpringResource'
 import { isFunction } from './shared';
@@ -284,7 +284,8 @@ function assembleBeanDefine(bd:BeanDefine):any{
             //处理装配 依据class类型
             if(anno.clazz === Autowired){
                 const param = anno.params as AutowiredParam<Clazz>;
-                const {clazz,force,type} = param;
+                const {force,type} = param;
+                let {clazz} = param;
                 let subApp;
                 
                 //处理装配 依据id
@@ -311,21 +312,9 @@ function assembleBeanDefine(bd:BeanDefine):any{
                     return;
                 }
                 
+                clazz = clazz || (param as ReflectParam).reflectType;
+
                 if(clazz){
-                    //强制装配
-                    // if(force){
-                    //     subApp = assemble(clazz);
-                    // }else{
-                    //     const oldValue = (bean as any)[fieldName]
-                    //     if(!isPlainObject(oldValue))
-                    //         throw Error(`[NOT_FORCE] class[${bd.clazz}] field[${fieldName}] autowired.force=false must be set object!`)
-                    //     const fieldClazzBd = getBeanDefineByClass(clazz)
-                    //     if(fieldClazzBd){
-                    //         subApp = assembleBeanDefine(fieldClazzBd);
-                    //     }else{
-                    //         return;
-                    //     }
-                    // }
                     const subBeanDefine = getBeanDefineByClass(clazz)
                     if(subBeanDefine){
                         subApp = assembleBeanDefine(subBeanDefine);
