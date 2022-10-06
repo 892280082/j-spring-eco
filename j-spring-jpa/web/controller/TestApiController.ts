@@ -23,7 +23,7 @@ export class TestApiController {
 
 
     @Get()
-    async toTestJoin(@Tx() tx:SpringTx){
+    async toTestTx(@Tx() tx:SpringTx){
 
         const postList:Post[] = [];
 
@@ -40,6 +40,9 @@ export class TestApiController {
         }
 
         await tx.save(postList);
+
+        if(Math.random()>0.5)
+            throw 'occur error!'
 
         return postList;
     }

@@ -1,5 +1,5 @@
 import { EntityOptions,getMetadataArgsStorage } from 'typeorm'
-import { spring,triggerClassAnnotation,Anntation, Clazz } from 'j-spring'
+import { spring,triggerClassAnnotation,Anntation } from 'j-spring'
 
 function isObject(val: any): val is Object {
     return val !== null && typeof val === "object"
