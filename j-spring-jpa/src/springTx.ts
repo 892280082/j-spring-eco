@@ -1,5 +1,5 @@
-import { convertOption } from './springTxUtil'
-import { EntityManager,Repository,PrimaryColumn,Generated, EntityTarget,CreateDateColumn } from 'typeorm'
+import { convertToWhere,convertSearch } from './springTxUtil'
+import { EntityManager,Repository,PrimaryColumn,Generated, EntityTarget,CreateDateColumn,FindOptionsRelations,FindOptionsOrder } from 'typeorm'
 
 type EntityOption<T> = {
     [P in keyof T]?: T[P]
@@ -42,10 +42,63 @@ export abstract class BaseSearch<T extends BaseEntity<T>,S extends BaseSearch<T,
     }
 
     find(tx:SpringTx):Promise<T[]>{
-        const option = convertOption(this);
-        return tx.e.find(this.entityTarget,{ where:option });
+        return tx.e.find(this.entityTarget,{ where:convertToWhere(this) });
     }
 
+    //关联对象
+    $relations:FindOptionsRelations<T> = {};
+
+    //级联查询策略
+    $relatirelationLoadStrategy?: "join" | "query" = 'query';
+
+    //缓存策略
+    $cache?: boolean | number | {
+        id: any;
+        milliseconds: number;
+    };
+
+    //sql注释
+    $comment:string;
+
+    //排序
+    $order?: FindOptionsOrder<T>;
+
+    //是否分页
+    $isUsePagin:boolean = false;
+
+
+    order(r:FindOptionsOrder<T>){
+        this.$order = r;
+        return this;
+    }
+
+    comment(r:string){
+        this.$comment = r;
+        return this;
+    }
+
+    cache(r: boolean | number | {
+        id: any;
+        milliseconds: number;
+    }){
+        this.$cache = r;
+        return this;
+    }
+
+    relation(r:FindOptionsRelations<T>){
+        this.$relations = r;
+        return this;
+    }
+
+    relatirelationLoadStrategy(r?: "join" | "query"){
+        this.$relatirelationLoadStrategy = r;
+        return this;
+    }
+
+    usePagin(){
+        this.$isUsePagin = true;
+        return this;
+    }
 }
 
 export class SpringTx {
@@ -90,8 +143,7 @@ export class SpringTx {
 
     //获取id集合
     async getIds<T extends BaseEntity<T>>(search:BaseSearch<T,any>):Promise<number[]>{
-        const option = convertOption(search);
-        const entityList = await this.e.find(search.entityTarget,{ where:option,select:['id'] });
+        const entityList = await this.e.find(search.entityTarget,{ where:convertToWhere(search),select:['id'] });
         return entityList.map(e => e.id);
     }
 
@@ -116,8 +168,7 @@ export class SpringTx {
     }
 
     find<T extends BaseEntity<T>>(search:BaseSearch<T,any>):Promise<T[]>{
-        const option = convertOption(search);
-        return this.e.find(search.entityTarget,{ where:option });
+        return this.e.find(search.entityTarget,convertSearch(search));
     }
 
 

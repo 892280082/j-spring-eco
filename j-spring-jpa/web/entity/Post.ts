@@ -25,6 +25,9 @@ export class PostSearch extends BaseSearch<Post,PostSearch> {
 
     constructor(){
         super(Post)
+        this.$relations = {
+            image:true
+        }
     }
 
     title:string;
@@ -32,5 +35,5 @@ export class PostSearch extends BaseSearch<Post,PostSearch> {
     likesCount:number;
 
     image$name:string;
-    
+
 }

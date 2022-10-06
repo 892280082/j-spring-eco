@@ -1,12 +1,24 @@
+import { isFunction } from "j-spring";
+import { BaseSearch,BaseEntity } from "./springTx";
+import {FindManyOptions}  from 'typeorm'
 
 
 
-export function convertOption(search:any):any {
+export function convertToWhere(search:any):any {
     const option:any = {};
-    const innerKeyList = ['entityTarget','curPage','pageSize'];
+    const innerKeyList = [
+      'entityTarget',
+      'curPage',
+      'pageSize',
+      '$relatirelationLoadStrategy',
+      '$relations',
+      '$cache',
+      '$order',
+      '$isUsePagin',
+      '$comment'];
     //初次过滤属性
     for(const p in search){
-        if(search[p] !== null && search[p] !== void 0 && innerKeyList.indexOf(p) === -1){
+        if(search[p] !== null && search[p] !== void 0 && innerKeyList.indexOf(p) === -1 && !isFunction(search[p])){
             option[p] = search[p];
         }
     }
@@ -37,3 +49,26 @@ export function convertOption(search:any):any {
     return option;
 }
 
+
+function convertSkip(search:BaseSearch<any,any>){
+  return search.$isUsePagin ? (search.curPage-1)*search.curPage : undefined;
+}
+
+export function convertSearch<T extends BaseEntity<T>>(search:BaseSearch<T,any>):FindManyOptions<T>{
+
+
+  const options:FindManyOptions<T> = {
+    where:convertToWhere(search),
+    skip:convertSkip(search),
+    take:search.$isUsePagin ? search.curPage : undefined,
+    relations:search.$relations,
+    relationLoadStrategy:search.$relatirelationLoadStrategy,
+    order:search.$order,
+    cache:search.$cache,
+    comment:search.$comment
+  };
+
+
+  return options;
+  
+}

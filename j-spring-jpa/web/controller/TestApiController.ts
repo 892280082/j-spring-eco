@@ -48,9 +48,9 @@ export class TestApiController {
     async toUseSearch(@Tx() tx:SpringTx){
         const s = new PostSearch().of({
             likesCount:100,
-            image$name:'heloa'
+            pageSize:2
         });
-        return await tx.find(s);
+        return await tx.find(s.usePagin());
     }
 
     @Get()
