@@ -43,6 +43,9 @@
       "limit": "10 KB"
     }
   ],
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^8.1.0",
     "@types/jest": "^29.1.1",
