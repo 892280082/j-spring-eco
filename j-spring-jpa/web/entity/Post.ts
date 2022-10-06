@@ -1,21 +1,49 @@
-import { Column, Entity } from "typeorm"
-import { PrimaryColumn } from "typeorm"
-import { Generated } from "typeorm"
-import { Table } from "../../src"
+import { Column, JoinColumn, OneToOne } from "typeorm"
+import { Image } from "./Image"
+import {SpringEntity,BaseEntity,BaseSearch } from '../../src'
 
-@Table()
-@Entity("sample01_post")
-export class Post {
-    @PrimaryColumn()
-    @Generated()
-    id: number
+@SpringEntity('Post')
+export class Post extends BaseEntity<Post> {
 
     @Column()
-    title: string
+    title:string
 
     @Column()
-    text: string
+    text:string
 
     @Column({ nullable: false })
-    likesCount: number
+    likesCount:number
+
+    @JoinColumn()
+    @OneToOne(()=>Image,{cascade:true})
+    image:Image;
+}
+
+
+
+export class PostSearch extends BaseSearch<Post,PostSearch> {
+
+    constructor(){
+        super(Post)
+        this.relation({
+            image:true
+        })
+        this.order({
+            id:'DESC'
+        })
+        this.relatirelationLoadStrategy('query')
+    }
+
+    title:string;
+
+    likesCount:number;
+
+    likesCount_not:number;
+
+    image$name:string;
+
+    image$name_like:string;
+
+    likesCount_between:number[];
+
 }
