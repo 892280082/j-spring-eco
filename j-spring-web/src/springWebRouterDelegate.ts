@@ -1,6 +1,6 @@
 import { Anntation, assemble, BeanDefine, Clazz, getBeanDefineByClass, MethodDefine } from "j-spring";
 import path from "path";
-import { Controller, Get, Json,ResponseBody,ParamterParamType, PathVariable, Post, RequestMapping, RequestParam, ExpressMiddleWare, MappingParam, Param,SessionAttribute, ApiMiddleWare, MiddleWareParam, MiddleWare } from "./springWebAnnotation";
+import { Controller, Get, Json,ResponseBody,ParamterParamType, PathVariable, Post, RequestMapping, RequestParam, ExpressMiddleWare, MappingParam, Param,SessionAttribute, ApiMiddleWare, MiddleWareParam, MiddleWare, Shuttle } from "./springWebAnnotation";
 import {ExpressLoad,SpringWebParamInteceptor,SpringWebExceptionHandler} from './springWebExtends'
 //参数处理器
 export const paramInterceptor:SpringWebParamInteceptor<any>[] = [];
@@ -113,6 +113,7 @@ paramInterceptor.push(new SessionAttributeInteceptor());
 
 class MethodRouter {
 
+    hasShuttle:boolean;
     hasGet:boolean;
     hasPost:boolean;
     hasRequestMapping:boolean;
@@ -223,7 +224,8 @@ class MethodRouter {
     }
 
     constructor(public option:MethodRouterParm){
-        const {md} = option;
+        const {md,bd} = option;
+        this.hasShuttle = bd.hasAnnotation(Shuttle); 
         this.hasGet = md.hasAnnotation(Get);
         this.hasPost = md.hasAnnotation(Post);
         this.hasRequestMapping = md.hasAnnotation(RequestMapping);
@@ -234,9 +236,7 @@ class MethodRouter {
         this.maxParamLength = this.resolvePamaterLength();
     }
 
-
-    loadExpressApp(app:any){
-
+    loadNormalApi(app:any){
         const {md,bean,exceptionHandler} = this.option;
         const { invokeMethod,sendType,reqPath,middleWareFunction } =this;
 
@@ -293,6 +293,41 @@ class MethodRouter {
         const appMethod = app[invokeMethod];
 
         appMethod.apply(app,[reqPath,...middleWareFunction,proxyFunction])
+    }
+
+    /**
+     * 只支持post请求，将body中的参数
+     * 
+     */
+    loadShuttleApi(app:any){
+
+        const {md,bean,exceptionHandler} = this.option;
+        const {reqPath,middleWareFunction } =this;
+
+        const proxyFunction =async (req:any,res:any) => {
+            if(req.body === void 0){
+                throw 'please use body-parse middleWare or add BodyParseConfiguration'
+            }
+            const {args} = req.body;
+            try{
+                const result = await bean[md.name].apply(bean,[...args,{req,res}]);
+                res.json(result);
+            }catch(e){
+                exceptionHandler().hanlder(req,res,{code:500,sendType:'POST',error:`[SHUTTILE] ${e}`})
+            }
+        }
+
+        app.post(reqPath,[...middleWareFunction,proxyFunction])
+
+    }
+
+    loadExpressApp(app:any){
+
+        if(this.hasShuttle){
+            this.loadShuttleApi(app);
+        }else{
+            this.loadNormalApi(app);
+        }
         
     }
 

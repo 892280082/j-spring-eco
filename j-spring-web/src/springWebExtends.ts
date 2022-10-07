@@ -67,3 +67,12 @@ export function isSpringWebExceptionHandler(bean:any):boolean{
     const t= bean as SpringWebExceptionHandler;
     return t && isFunction(t.hanlder) && isFunction(t.isSpringWebExceptionHandler) && t.isSpringWebExceptionHandler();
 }
+
+export class ExpressApp {
+
+    async off(){}
+}
+
+export class ExpressServer {
+    close(_done:Function){}
+}

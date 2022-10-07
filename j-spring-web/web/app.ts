@@ -1,15 +1,15 @@
 import { Component, spring } from 'j-spring';
 import { springWebModule,EjsViewConfigruation,BodyParseConfiguration,ExpressMemorySessionConfiguration,SpringWebExceptionHandler } from '../src'
-import { errorInfo } from '../src/springWebExtends';
-import { IndexController } from "./controller/IndexController";
+import { errorInfo, ExpressServer } from '../src/springWebExtends';
 import { StudentController,XiaoAiController } from './controller/StudentController'
+import { ShuttleApi } from './controller/ShuttleApi'
 
 @Component()
 class CustomSpringWebExceptionHandler implements SpringWebExceptionHandler {
     isSpringWebExceptionHandler(): boolean {
         return true;
     }
-    hanlder(req: any, res: any, errorInfo: errorInfo): void {
+    hanlder(_req: any, res: any, errorInfo: errorInfo): void {
        console.log(`this is diy error info`)
        res.json(errorInfo.error)
     }
@@ -28,8 +28,24 @@ const springWebConfig = [
 const controllerClassList = [
     //IndexController,
     StudentController,
-    XiaoAiController
+    XiaoAiController,
+    ShuttleApi
 ]
 
+export async function start(port:number){
+    const config = {
+        'j-spring-web':{
+            port
+        },
+        'indexMsg':'j-spring',
+        'root':__dirname
+    }
+    await spring.bindModule([springWebModule,springWebConfig,controllerClassList]).loadConfig(config).invokeStarter();
+}
 
-spring.bindModule([springWebModule,springWebConfig,controllerClassList]).loadConfig({'indexMsg':'j-spring','root':__dirname}).invokeStarter();
+export function end(done:Function){
+    const server = spring.getBeanWithCache(ExpressServer)
+    if(server){
+        server.close(done);
+    }
+}

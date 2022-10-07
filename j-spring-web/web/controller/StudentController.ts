@@ -1,12 +1,24 @@
-import { Request, Response } from "express";
 import { Component } from "j-spring";
-import { ApiMiddleWare, Controller, ExpressMiddleWare, Get, Json, MiddleWare, Param, PathVariable, RequestParam, ResponseBody, SessionAttribute } from "../../src";
+import { ApiMiddleWare, Controller, ExpressMiddleWare, Get, Param, PathVariable, RequestParam, ResponseBody, SessionAttribute } from "../../src";
 
 
 
 //定义控制器
-@Controller('/student')
+@Controller('student')
 export class StudentController {
+
+    //测试链接
+    @Get()
+    @ResponseBody()
+    async getConnectMsg(){
+        return 'is-ok';
+    }
+
+    @Get('/testParamter/:a')
+    @ResponseBody()
+    async testParamter(@PathVariable('a') a:string,@RequestParam('b') b:string){
+        return a+b;
+    }
 
     //页面渲染
     @Get()
@@ -45,7 +57,7 @@ class XiaoAiMustBeExist implements ExpressMiddleWare {
     isExpressMidldleWare(): boolean {
         return true;
     }
-    invoke(req: any, res: any, next: Function): void {
+    invoke(req: any, _res: any, next: Function): void {
         if(! req.session?.name){
             throw `xiaoai must be exist!`
         }

@@ -1,8 +1,22 @@
 import { launch,invokeStarter,launchAsync } from './SpringContext'
-import {  cleanBeanCache, replaceClazz,addExtBeanClazz,getBean,SpringStarterClazz,beanFactoryInit } from './SpringFactry'
 import { loadResourceConfig } from './SpringResource'
 import { Clazz } from './SpringType'
-import { classAnnotationGenerator,fieldAnnotationGenerator,methodAnnotationGenerator,paramterAnnotationGenerator } from './SpringAnnotation'
+import {  
+    cleanBeanCache, 
+    replaceClazz,
+    addExtBeanClazz,
+    getBean,
+    SpringStarterClazz,
+    beanFactoryInit,
+    getBeanWithCache 
+} from './SpringFactry'
+import { 
+    classAnnotationGenerator,
+    fieldAnnotationGenerator,
+    methodAnnotationGenerator,
+    paramterAnnotationGenerator
+} from './SpringAnnotation'
+
 
 export * from './shared'
 export * from './SpringAnnotation'
@@ -77,6 +91,10 @@ class SpringPanel {
 
     getBean<T>(clazz:new()=>T):T{
         return getBean(clazz);
+    }
+
+    getBeanWithCache<T>(clazz:new()=>T):T|undefined{
+        return getBeanWithCache(clazz);
     }
 
     invokeStarter():Promise<any>{

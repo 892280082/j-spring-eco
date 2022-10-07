@@ -14,6 +14,8 @@ export type MiddleWareParam = {
 
 export const Controller = (path:string,middleWareClassList?:middleWareType) => spring.classAnnotationGenerator('j-spring.Controller',{path,middleWareClassList},Controller);
 
+export const Shuttle = () => spring.classAnnotationGenerator('j-spring.Shuttle',{},Shuttle)
+
 export const ApiMiddleWare = (middleWareClassList:middleWareType) => spring.classAnnotationGenerator('j-spring.ApiMiddleWare',{middleWareClassList},ApiMiddleWare);
 
 //类 发送json控制器
@@ -66,3 +68,4 @@ export const RequestBody = (name:string,type?:Function) => spring.paramterAnnota
 export const SessionAttribute = (name:string,type?:Function) => spring.paramterAnnotationGenerator('j-spring.SessionAttribute',name,{name,type:type||String},SessionAttribute);
 
 export const Param = (name:string) => spring.paramterAnnotationGenerator('j-spring.SessionAttribute',name,{name},Param);
+
