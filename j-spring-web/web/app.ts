@@ -3,6 +3,7 @@ import { springWebModule,EjsViewConfigruation,BodyParseConfiguration,ExpressMemo
 import { errorInfo, ExpressServer } from '../src/springWebExtends';
 import { StudentController,XiaoAiController } from './controller/StudentController'
 import { ShuttleApi } from './controller/ShuttleApi'
+import { IndexController } from './controller/IndexController';
 
 @Component()
 class CustomSpringWebExceptionHandler implements SpringWebExceptionHandler {
@@ -26,7 +27,7 @@ const springWebConfig = [
 
 //请求控制器
 const controllerClassList = [
-    //IndexController,
+    IndexController,
     StudentController,
     XiaoAiController,
     ShuttleApi
@@ -44,7 +45,7 @@ export async function start(port:number){
 }
 
 export function end(done:Function){
-    const server = spring.getBeanWithCache(ExpressServer)
+    const server = spring.getBeanFromContainer(ExpressServer)
     if(server){
         server.close(done);
     }

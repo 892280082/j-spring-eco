@@ -186,7 +186,7 @@ class MethodRouter {
                 invoke.bind(bean);
                 return invoke;
             }
-            return  clazz;
+            throw `clazz:${clazz} not found @Compoent()`
         });
     }
 

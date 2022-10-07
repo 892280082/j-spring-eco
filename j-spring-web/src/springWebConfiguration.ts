@@ -1,5 +1,6 @@
 import { Component, Value } from 'j-spring';
 import path from 'path';
+import { ExpressMiddleWare } from './springWebAnnotation';
 import { ExpressConfiguration } from './springWebExtends'
 import {errorInfo,SpringWebExceptionHandler} from './springWebExtends'
 
@@ -62,6 +63,24 @@ export class BodyParseConfiguration implements ExpressConfiguration {
         return true;        
     }
 
+}
+
+/**
+ * 跨域中间件
+ */
+@Component()
+export class CorresDomainMiidleWare implements ExpressMiddleWare {
+    isExpressMidldleWare(): boolean {
+        return  true;
+    }
+    invoke(_req: any, res: any, next: Function): void {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+        res.header("X-Powered-By",' 3.2.1')
+        res.header("Content-Type", "application/json;charset=utf-8");
+        next();
+    }
 }
 
 /**

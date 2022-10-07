@@ -1,8 +1,10 @@
 import {  Value } from 'j-spring';
-import {Controller,Get, Post, RequestMapping, PathVariable, RequestParam} from '../../src/springWebAnnotation'
+import { CorresDomainMiidleWare } from '../../src';
+import {Controller,Get, Post, RequestMapping, PathVariable, RequestParam, ApiMiddleWare, ResponseBody} from '../../src/springWebAnnotation'
 
 
 @Controller('/')
+@ApiMiddleWare([CorresDomainMiidleWare])
 export class IndexController {
 
     @Value({path:'indexMsg',type:String})
@@ -10,6 +12,7 @@ export class IndexController {
 
     //测试1: 首页
     @Get('/')
+    @ResponseBody()
     async index(){
         return `${this.indexMsg} => hello world!`
     }

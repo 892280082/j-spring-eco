@@ -1,7 +1,7 @@
 import { ControllerBeanProcessor,ExpressAppEnhanceBeanProcessor,SpringParamterBeanPostProcessor } from "./springWebBeanProcessor";
 import { SpringWebStarter } from './springWebContainer'
 
-export { SpringWebExceptionHandler,SpringWebParamInteceptor,isSpringWebParamInteceptor,isSpringWebExceptionHandler } from './springWebExtends'
+export { SpringWebExceptionHandler,SpringWebParamInteceptor,isSpringWebParamInteceptor,isSpringWebExceptionHandler,ExpressApp,ExpressServer } from './springWebExtends'
 export * from './springWebConfiguration'
 export * from './springWebAnnotation'
 

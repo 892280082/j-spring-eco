@@ -421,7 +421,7 @@ export function getBean<T>(clazz:new()=>T):T{
     return b;
 }
 
-export function getBeanWithCache<T>(clazz:new()=>T):T|undefined{
+export function getBeanFromContainer<T>(clazz:new()=>T):T|undefined{
     const bd = getBeanDefineByClass(clazz);
     if(bd){
         return beanDefineMap.get(bd);

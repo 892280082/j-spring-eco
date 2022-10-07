@@ -8,7 +8,7 @@ import {
     getBean,
     SpringStarterClazz,
     beanFactoryInit,
-    getBeanWithCache 
+    getBeanFromContainer 
 } from './SpringFactry'
 import { 
     classAnnotationGenerator,
@@ -93,8 +93,8 @@ class SpringPanel {
         return getBean(clazz);
     }
 
-    getBeanWithCache<T>(clazz:new()=>T):T|undefined{
-        return getBeanWithCache(clazz);
+    getBeanFromContainer<T>(clazz:new()=>T):T|undefined{
+        return getBeanFromContainer(clazz);
     }
 
     invokeStarter():Promise<any>{
