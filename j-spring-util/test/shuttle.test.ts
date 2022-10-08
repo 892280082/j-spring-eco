@@ -44,11 +44,16 @@ describe('测试shuttle', () => {
 
   it('test shuttle', async () => {
 
-    const testApi:TestApi = shuttle.createShuttle('testApi')
+    const testApi:TestApi = shuttle.createShuttle('testApi',{
+      format:v => {
+        console.log("vvv",v)
+        return "!"+v
+      }
+    })
   
     const result = await testApi.doCalculate(2,"hello")
 
-    expect((result as any).data).toEqual('hellohello')
+    expect((result as any).data).toEqual('!hellohello')
 
   });
 });

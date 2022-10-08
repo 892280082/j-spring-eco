@@ -1,4 +1,3 @@
-
 type ShuttleConfig = {
     host:string,
     request:{
@@ -34,21 +33,24 @@ type ShuttleConfig = {
   
     //校验配置
     validateConfig(config);
-  
+
     let proxy = new Proxy({},{
   
       get: function(_obj, prop) {
   
         const method = prop.toString();
   
-        return async function(...args:any[]){
+        return  async function(...args:any[]){
   
-          const url = `${config.host}/${controllerApi}/${method}`
-  
-          const reqResult =  await config.request?.post(url,{args})
+            const url = `${config.host}/${controllerApi}/${method}`
 
-          return config.format ? config.format(reqResult) : reqResult;
-  
+            const reqResult = await config.request?.post(url,{args})
+
+            if(reqResult.data && config.format){
+                reqResult.data = config.format(reqResult.data)
+            }
+
+            return reqResult;
         }      
   
       }
