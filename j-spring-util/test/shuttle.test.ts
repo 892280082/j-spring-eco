@@ -17,6 +17,7 @@ class TestApi {
     return out;
   }
 
+
 }
 
 
@@ -24,7 +25,7 @@ describe('测试shuttle', () => {
 
   beforeAll(done=>{
 
-    shuttle.setShuttleConfig({
+    shuttle.setConfig({
       host:'http://localhost:3000',
       request:axios
     })
