@@ -40,6 +40,14 @@ describe('blah', () => {
 
   })
 
+  it('test testDiyMiddleWare api',async ()=>{
+
+    const result = await axios.get('http://localhost:2000/student/testDiyMiddleWare')
+
+    expect(result.data).toEqual(1)
+
+  })
+  
 
 
 });

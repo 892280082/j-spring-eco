@@ -1,10 +1,11 @@
 import { Component } from "j-spring";
-import { ApiMiddleWare, Controller, ExpressMiddleWare, Get, Param, PathVariable, RequestParam, ResponseBody, SessionAttribute } from "../../src";
+import { ApiMiddleWare, Controller, CorresDomainMiidleWare, ExpressMiddleWare, Get, MiddleWare, Param, PathVariable, RequestParam, ResponseBody, SessionAttribute } from "../../src";
 
 
 
 //定义控制器
 @Controller('student')
+@ApiMiddleWare([CorresDomainMiidleWare])
 export class StudentController {
 
     //测试链接
@@ -47,6 +48,13 @@ export class StudentController {
     @Get()
     async toError(){
         throw 'xxxx';
+    }
+
+    @Get()
+    @MiddleWare([ (a,_b,n) => {  a.query.bb=1;n()} ])
+    @ResponseBody()
+    async testDiyMiddleWare(@RequestParam("bb") bb:number){
+        return bb;
     }
 
 }

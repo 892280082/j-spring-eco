@@ -11,6 +11,7 @@ type ShuttleConfig = {
   }
   
   const GlobalConfig:ShuttleConfigAdd = {
+    format:(result:any) => result.data
   }
   
   function validateConfig(config:ShuttleConfigAdd){
@@ -46,12 +47,10 @@ type ShuttleConfig = {
 
             const reqResult = await config.request?.post(url,{args})
 
-            if(reqResult.data && config.format){
-                reqResult.data = config.format(reqResult.data)
-            }
+            const finalResult =  config.format?.(reqResult);
 
-            return reqResult;
-        }      
+            return finalResult;
+        }     
   
       }
   

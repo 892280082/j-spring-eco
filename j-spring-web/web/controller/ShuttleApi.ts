@@ -1,16 +1,14 @@
-import {  Controller,Shuttle,Post } from '../../src'
+import {  Controller,Shuttle,Post, ApiMiddleWare, CorresDomainMiidleWare } from '../../src'
 
 @Shuttle()
 @Controller('shuttleApi')
+@ApiMiddleWare([CorresDomainMiidleWare])
 export class ShuttleApi {
 
 
     @Post()
     say(n:number,str:string){
-        let out = "";
-        for(let i =0;i<n;i++)
-            out+=str;
-        return out;
+        return Array(n).fill(str).join('')
     }
 
 

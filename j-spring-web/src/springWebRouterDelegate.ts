@@ -1,6 +1,25 @@
 import { Anntation, assemble, BeanDefine, Clazz, getBeanDefineByClass, MethodDefine } from "j-spring";
 import path from "path";
-import { Controller, Get, Json,ResponseBody,ParamterParamType, PathVariable, Post, RequestMapping, RequestParam, ExpressMiddleWare, MappingParam, Param,SessionAttribute, ApiMiddleWare, MiddleWareParam, MiddleWare, Shuttle } from "./springWebAnnotation";
+import { 
+    Controller, 
+    Get,
+    Json,
+    ResponseBody,
+    ParamterParamType, 
+    PathVariable, 
+    Post, 
+    RequestMapping,
+    RequestParam, 
+    ExpressMiddleWare, 
+    MappingParam,
+    Param,
+    SessionAttribute,
+    ApiMiddleWare,
+    MiddleWareParam,
+    MiddleWare,
+    Shuttle ,
+    middleWareType
+} from "./springWebAnnotation";
 import {ExpressLoad,SpringWebParamInteceptor,SpringWebExceptionHandler} from './springWebExtends'
 //参数处理器
 export const paramInterceptor:SpringWebParamInteceptor<any>[] = [];
@@ -162,10 +181,13 @@ class MethodRouter {
         const ctrMiddleWare = (bd.getAnnotation(ApiMiddleWare)?.params as MiddleWareParam)?.middleWareClassList || [];
 
         const mp = (md.getAnnotation(Get) || md.getAnnotation(Post) || md.getAnnotation(RequestMapping))?.params as MappingParam
+       
         const mdPath = mp.path || md.name;
+
         const methodMiddleWare =( md.getAnnotation(MiddleWare)?.params as MiddleWareParam)?.middleWareClassList || [];
-        const temp = [...ctrMiddleWare,...methodMiddleWare];
-        this.middleWareFunction = Array.from(new Set<Function>(temp)); 
+
+        this.middleWareFunction = this.resolveMiddleWareFunction(ctrMiddleWare.concat(methodMiddleWare));
+
         return  path.join('/',ctrPath,mdPath).replace(/\\/g,`/`);
     }
 
@@ -177,17 +199,19 @@ class MethodRouter {
         return i+1;
     }
 
-    private resolveMiddleWareFunction():Function[]{
-        
-        return this.middleWareFunction.map(clazz => {
-            if(getBeanDefineByClass(clazz as Clazz)){
-                const bean = assemble(clazz as Clazz);
+    private resolveMiddleWareFunction(oriMiddleWare:middleWareType[]):Function[]{
+         const reuslt = oriMiddleWare.map(oriWare => {
+            if(getBeanDefineByClass(oriWare as Clazz)){
+                const bean = assemble(oriWare as Clazz);
                 const invoke = (bean as ExpressMiddleWare).invoke;
                 invoke.bind(bean);
                 return invoke;
+
+            }else{
+                return oriWare as Function;
             }
-            throw `clazz:${clazz} not found @Compoent()`
         });
+        return reuslt;
     }
 
     async getInvokeParams(req:any,res:any):Promise<paramContainer[]>{
@@ -232,7 +256,6 @@ class MethodRouter {
         this.invokeMethod = this.resolveInokeMethod();
         this.sendType = this.resolveSendType();
         this.reqPath = this.resolveReqPath();
-        this.middleWareFunction = this.resolveMiddleWareFunction();//解析中间件
         this.maxParamLength = this.resolvePamaterLength();
     }
 

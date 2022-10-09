@@ -2,15 +2,15 @@ import { Value,Component, Autowired,loadResourceConfig, launch,cleanBeanCache, s
 
 @Component()
 class Student {
-    @Value({path:'student.name',type:String})
+    @Value({path:'student.name'})
     name:String;
-    @Value({path:'student.age',type:Number})
+    @Value({path:'student.age'})
     age:20;
-    @Value({path:'student.city',type:String})
+    @Value({path:'student.city'})
     city:String;
-    @Value({path:'student.isStuding',type:Boolean})
+    @Value({path:'student.isStuding'})
     isStuding:Boolean;
-    @Value({path:'student.isBoy',type:Boolean})
+    @Value({path:'student.isBoy'})
     isBoy:Boolean;
     
     getMsg(){
@@ -22,7 +22,7 @@ class Student {
 @Component()
 class Application {
 
-    @Value({path:'app.msg',type:String})
+    @Value({path:'app.msg'})
     appMsg:string;
 
     @Autowired({clazz:Student})
@@ -79,7 +79,7 @@ describe('resource config load test',()=>{
         @Component()
         class Application {
         
-            @Value({path:'app.msg',type:Object})
+            @Value({path:'app.msg'})
             appMsg:string;
 
         
@@ -101,7 +101,7 @@ describe('resource config load test',()=>{
         @Component()
         class Application {
 
-            @Value({path:'port',type:Number,force:false})
+            @Value({path:'port',force:false})
             port=3000;
 
             main(){
@@ -118,7 +118,7 @@ describe('resource config load test',()=>{
         @Component()
         class Application {
 
-            @Value({path:'port',type:Number,force:false})
+            @Value({path:'port',force:false})
             port:any;
 
             main(){

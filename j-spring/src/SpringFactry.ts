@@ -357,7 +357,7 @@ function assembleBeanDefine(bd:BeanDefine):any{
                         throw Error(`class:${bd.clazz} field:${fieldName} must be set initial value!`)
                     }
 
-                }else if(!Reflect.set(bean,fieldName,geFormatValue(param.path,param.type))){
+                }else if(!Reflect.set(bean,fieldName,geFormatValue(param.path,(anno.params as ReflectParam).reflectType ))){
                     throw Error('annotation Value error')
                 }
             }

@@ -11,10 +11,7 @@ class TestApi {
 
   @Post()
   async doCalculate(n:number,b:string){
-    let out = "";
-    for(let i=0;i<n;i++)
-      out+=b;
-    return out;
+    return Array(n).fill(b).join('');
   }
 
 
@@ -27,7 +24,7 @@ describe('测试shuttle', () => {
 
     shuttle.setConfig({
       host:'http://localhost:3000',
-      request:axios
+      request:axios,
     })
 
     //启动服务器
@@ -46,14 +43,13 @@ describe('测试shuttle', () => {
 
     const testApi:TestApi = shuttle.createShuttle('testApi',{
       format:v => {
-        console.log("vvv",v)
-        return "!"+v
+        return "!"+v.data
       }
     })
   
     const result = await testApi.doCalculate(2,"hello")
 
-    expect((result as any).data).toEqual('!hellohello')
+    expect(result).toEqual('!hellohello')
 
   });
 });

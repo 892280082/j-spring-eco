@@ -1,6 +1,5 @@
 import {triggerClassAnnotation,triggerFieldAnnotation,triggerMethodAnnotation,triggerParamterAnnotation} from './SpringContext'
 import { Clazz,Anntation, AnnoParam,ReflectParam } from './SpringType';
-import { vlidateTypeAndThrowError } from './SpringResource'
 import "reflect-metadata"
 
 
@@ -56,8 +55,7 @@ export type AutowiredParam<T> = {
 
 export type ValueParam = {
     path:string,
-    force?:boolean,
-    type:Function
+    force?:boolean
 }
 
 export const Component = ()=>classAnnotationGenerator('j-spring.Component',{},Component);
@@ -69,16 +67,12 @@ function setForceDefaultValue(param:{force?:boolean}){
 
 export const Autowired = <T>(param?:AutowiredParam<T>) => {
     param = param  ||{};
-    // if(! (param.clazz || param.type) ){
-    //     throw `Autowired must be parameters clazz or type!`
-    // }
     setForceDefaultValue(param);
     return fieldAnnotationGenerator('j-spring.Autowired',param,Autowired);
 }
 
 export const Value = (param:ValueParam) => {
     setForceDefaultValue(param);
-    vlidateTypeAndThrowError(param.path,param.type);
     return fieldAnnotationGenerator('j-spring.Value',param,Value);
 }
 

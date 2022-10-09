@@ -2,21 +2,22 @@ import {spring} from 'j-spring'
 import { isFunction } from "j-spring";
 
 
-export type middleWareType = ((new()=>ExpressMiddleWare))[];
+export type middleWareType =  ( (req:any,res:any,next:()=>void) => void ) | (new()=>ExpressMiddleWare);
+
+export type MiddleWareParam = {
+    middleWareClassList:middleWareType[]
+}
 
 export type MappingParam = {
     path:string
 }
 
-export type MiddleWareParam = {
-    middleWareClassList:middleWareType
-}
 
-export const Controller = (path:string,middleWareClassList?:middleWareType) => spring.classAnnotationGenerator('j-spring.Controller',{path,middleWareClassList},Controller);
+export const Controller = (path:string) => spring.classAnnotationGenerator('j-spring.Controller',{path},Controller);
 
 export const Shuttle = () => spring.classAnnotationGenerator('j-spring.Shuttle',{},Shuttle)
 
-export const ApiMiddleWare = (middleWareClassList:middleWareType) => spring.classAnnotationGenerator('j-spring.ApiMiddleWare',{middleWareClassList},ApiMiddleWare);
+export const ApiMiddleWare = (middleWareClassList:middleWareType[]) => spring.classAnnotationGenerator('j-spring.ApiMiddleWare',{middleWareClassList},ApiMiddleWare);
 
 //类 发送json控制器
 export const Json = ()=> spring.classAnnotationGenerator('j-spring.Json',{},Json);
@@ -35,7 +36,7 @@ export const Post = (path?:string) => spring.methodAnnotationGenerator('j-spring
 
 export const RequestMapping = (path?:string) => spring.methodAnnotationGenerator('j-spring.RequestMapping',{path},RequestMapping);
 
-export const MiddleWare = (middleWareClassList:middleWareType)  => spring.methodAnnotationGenerator('j-spring.middleWareClassList',{middleWareClassList},MiddleWare);
+export const MiddleWare = (middleWareClassList:middleWareType[])  => spring.methodAnnotationGenerator('j-spring.middleWareClassList',{middleWareClassList},MiddleWare);
 
 export type ParamterParamType = {
     name:string,
