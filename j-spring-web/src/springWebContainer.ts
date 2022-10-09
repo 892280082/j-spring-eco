@@ -6,8 +6,8 @@ import {loadConfiguration} from './springWebBeanProcessor'
 @Component()
 export class SpringWebStarter implements SpringStarter{
 
-    @Value({path:'j-spring-web.port',type:Number,force:false})
-    port = 3000;
+    @Value({path:'j-spring-web.port',force:false})
+    port:number = 3000;
 
     async doStart(clazzMap: Map<Clazz, any>): Promise<any> {
         const app = express();

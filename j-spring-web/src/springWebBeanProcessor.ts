@@ -1,9 +1,10 @@
 import { Autowired, BeanDefine, BeanPostProcessor, Component } from "j-spring";
 import { Controller } from "./springWebAnnotation";
-import {ControllerBeanConfiguration,paramInterceptor} from './springWebRouterDelegate'
+import {ControllerBeanConfiguration} from './springWebRouterDelegate'
 import { ExpressLoad,isExpressConfiguration,SpringWebExceptionHandler,isSpringWebExceptionHandler} from './springWebExtends'
 import { SpringWebExceptionHandlerConfigration } from './springWebConfiguration'
 import {isSpringWebParamInteceptor} from './springWebExtends'
+import { paramInterceptor } from './springWebParamIntecepor'
 
 //解析的bean集合
 const configureBeanList = new Set<ExpressLoad>();

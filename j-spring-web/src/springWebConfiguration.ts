@@ -10,10 +10,10 @@ import {errorInfo,SpringWebExceptionHandler} from './springWebExtends'
 @Component()
 export class EjsViewConfigruation implements ExpressConfiguration {
 
-    @Value({path:'root',type:String})
+    @Value({path:'root'})
     root:string;
 
-    @Value({path:'express.viewPath',type:String,force:false})
+    @Value({path:'express.viewPath',force:false})
     viewPath:string = 'view';
 
     load(app: any): void {
@@ -31,9 +31,9 @@ export class EjsViewConfigruation implements ExpressConfiguration {
 @Component()
 export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
 
-    @Value({path:'express.session.secret',type:String,force:false})
+    @Value({path:'express.session.secret',force:false})
     secret:string = 'kity';
-    @Value({path:'express.session.maxAge',type:Number,force:false})
+    @Value({path:'express.session.maxAge',force:false})
     maxAge:number = 60000;
 
     load(app: any): void {

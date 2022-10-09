@@ -1,7 +1,7 @@
 import {Anntation, BeanDefine, Clazz, FieldDefine, ReflectParam}  from './SpringType'
 import { Autowired,AutowiredParam,Value, ValueParam } from './SpringAnnotation'
 import { geFormatValue, hasConfig } from './SpringResource'
-import { isFunction } from './shared';
+import { isFunction } from './util/shared';
 import { isSpringFactoryBean,loadFactoryBean, SpringFactoryBean } from './SpringFactoryBean'
 
 //对象缓存

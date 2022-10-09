@@ -1,8 +1,8 @@
 import {Clazz,BeanDefine,Anntation, MethodDefine,FieldDefine, ParamterDefine}  from './SpringType'
 
 import { beanDefineList,assemble,beanFactoryInit,starterBeanList, assemblelazyAutowiredList, validateassemblelazyAutowiredListIsSuccess} from './SpringFactry'
-import { isFunction } from './shared';
 import { extendClazzBeanMap } from './SpringFactry'
+import { isFunction } from './util/shared';
 
 
 //用于debug记录 注解启动顺序

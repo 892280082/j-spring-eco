@@ -1,6 +1,11 @@
 import { launch,invokeStarter,launchAsync } from './SpringContext'
 import { loadResourceConfig } from './SpringResource'
 import { Clazz } from './SpringType'
+export * from './util/shared'
+export * from './util/formatValue'
+export * from './SpringAnnotation'
+export * from './SpringContext'
+export * from './SpringType'
 import {  
     cleanBeanCache, 
     replaceClazz,
@@ -16,12 +21,6 @@ import {
     methodAnnotationGenerator,
     paramterAnnotationGenerator
 } from './SpringAnnotation'
-
-
-export * from './shared'
-export * from './SpringAnnotation'
-export * from './SpringContext'
-export * from './SpringType'
 export { 
     SpringBean,
     BeanPostProcessor,
@@ -33,7 +32,7 @@ export {
     SpringStarter,
     assemble,
     cleanBeanCache } from './SpringFactry'
-export { loadResourceConfig } from './SpringResource'
+export { loadResourceConfig,geFormatValue } from './SpringResource'
 export {SpringFactoryBean,isSpringFactoryBean } from './SpringFactoryBean'
 
 class SpringPanel {

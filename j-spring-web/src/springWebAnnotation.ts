@@ -1,5 +1,4 @@
 import {spring} from 'j-spring'
-import { isFunction } from "j-spring";
 
 
 export type middleWareType =  ( (req:any,res:any,next:()=>void) => void ) | (new()=>ExpressMiddleWare);
@@ -49,24 +48,17 @@ export interface ExpressMiddleWare {
     invoke(req:any,res:any,next:Function):void
 }
 
-//判断是否是中间件
-export function isExpressMiddleWare(obj:any){
-    const a = obj as ExpressMiddleWare;
-    return isFunction(a.invoke) && isFunction(a.isExpressMidldleWare) && a.isExpressMidldleWare();
-}
-
-
 
 
 //字段
-export const PathVariable = (name:string,type?:Function) => spring.paramterAnnotationGenerator('j-spring.PathVariable',name,{name,type:type||String},PathVariable);
+export const PathVariable = (name:string) => spring.paramterAnnotationGenerator('j-spring.PathVariable',name,{name},PathVariable);
 //字段
-export const RequestParam = (name:string,type?:Function) => spring.paramterAnnotationGenerator('j-spring.RequestParam',name,{name,type:type||String},RequestParam);
+export const RequestParam = (name:string) => spring.paramterAnnotationGenerator('j-spring.RequestParam',name,{name},RequestParam);
 
-export const RequestBody = (name:string,type?:Function) => spring.paramterAnnotationGenerator('j-spring.RequestBody',name,{name,type:type||String},RequestBody);
+export const RequestBody = (name:string) => spring.paramterAnnotationGenerator('j-spring.RequestBody',name,{},RequestBody);
 
 //获取session
-export const SessionAttribute = (name:string,type?:Function) => spring.paramterAnnotationGenerator('j-spring.SessionAttribute',name,{name,type:type||String},SessionAttribute);
+export const SessionAttribute = (name:string) => spring.paramterAnnotationGenerator('j-spring.SessionAttribute',name,{name},SessionAttribute);
 
 export const Param = (name:string) => spring.paramterAnnotationGenerator('j-spring.SessionAttribute',name,{name},Param);
 

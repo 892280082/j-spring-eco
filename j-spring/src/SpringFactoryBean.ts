@@ -1,4 +1,4 @@
-import { isFunction } from "./shared";
+import { isFunction } from "./util/shared";
 
 export interface  SpringFactoryBean<T> {
 

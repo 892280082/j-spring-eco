@@ -7,7 +7,7 @@ import {Controller,Get, Post, RequestMapping, PathVariable, RequestParam, ApiMid
 @ApiMiddleWare([CorresDomainMiidleWare])
 export class IndexController {
 
-    @Value({path:'indexMsg',type:String})
+    @Value({path:'indexMsg'})
     indexMsg:string;
 
     //测试1: 首页
@@ -44,13 +44,13 @@ export class IndexController {
 
     //测试6： 获取resful参数
     @Get('/query')
-    async query(@RequestParam('data',String) data:string){
+    async query(@RequestParam('data') data:string){
         return {data};        
     }
 
     //测试7 获取
     @Get('/path/:data')
-    async path(@PathVariable('data',Number) data:number){
+    async path(@PathVariable('data') data:number){
         return {data};        
     }
 

@@ -1,4 +1,4 @@
-
+import { isCanFormat,doForamtPlainValue } from './util/formatValue'
 
 //初始化配置文件
 let configMap = new Map<string,any>();
@@ -23,41 +23,6 @@ export const loadResourceConfig = function(data:any,prefixKey?:string){
 
 }
 
-type formatType = {
-    type:Function;
-    doFormat:(value:any,key:string)=>any;
-}
-
-const formTypeList:formatType[] = [
-    {
-        type:String,
-        doFormat:(value) => ""+value
-    },
-    {
-        type:Number,
-        doFormat:(value:any,key:string) => {
-            const n = +value;
-            if(Number.isNaN(n))
-                throwError(key,`value:${value} is NaN`)
-            return n;
-        }
-    },
-    {
-        type:Object,
-        doFormat:(v) => v
-    },
-    {
-        type:Boolean,
-        doFormat:(v:any) => {
-            if(typeof v === 'string' && v === 'true'){
-               return true;
-            }
-            return v === true;
-        }
-    }
-]
-
-
 //获取配置信息
 export const getConfigMap = ()=>configMap;
 
@@ -65,7 +30,7 @@ export const getConfigMap = ()=>configMap;
 export const hasConfig = (key:string):boolean => configMap.has(key);
 
 //验证配置
-export const validateType = (type:Function):boolean => formTypeList.map(f => f.type).indexOf(type) > -1;
+export const validateType = (type:Function) => isCanFormat(type);
 
 
 const throwError = (path:string,msg:string):void => { throw Error(`[SPRING_RESOURCE_ERROR: path[${path}] reason[${msg}] `) };
@@ -80,12 +45,10 @@ export const geFormatValue = (key:string,type:Function) => {
 
     const value = configMap.get(key);
 
-    const form = formTypeList.find(f => f.type === type)
-
-    if(form){
-        return form.doFormat(value,key);
-    }else{
-        return throwError(key,'type not support to convert')
+    try{
+        const formatValue = doForamtPlainValue(value,type);
+        return formatValue;
+    }catch(e){
+        return throwError(key,''+e)
     }
-  
 }
