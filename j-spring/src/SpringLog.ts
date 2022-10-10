@@ -44,9 +44,12 @@ const createMethod = (methodLevel:string)=>{
 
             const configLevelIndex = levelDic.indexOf(configLevel);
             const methodLevelIndex = levelDic.indexOf(methodLevel);
+            const m = (console as any)[methodLevel] || console.log;
 
-            if(methodLevelIndex<=configLevelIndex)
-                console.log.apply(console,[`${methodLevel} => `,...args]);
+            if(methodLevelIndex<=configLevelIndex && m){
+                m.apply(console,[`${methodLevel} => `,...args]);
+            }
+                
         }
 
         return springLog;

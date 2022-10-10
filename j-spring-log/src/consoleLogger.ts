@@ -11,3 +11,5 @@ export function consoleLogger(){
     })
 
 }
+
+console.trace('xx')
