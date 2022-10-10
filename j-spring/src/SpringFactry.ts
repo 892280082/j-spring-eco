@@ -3,6 +3,10 @@ import { Autowired,AutowiredParam,Value, ValueParam } from './SpringAnnotation'
 import { geFormatValue, hasConfig } from './SpringResource'
 import { isFunction } from './util/shared';
 import { isSpringFactoryBean,loadFactoryBean, SpringFactoryBean } from './SpringFactoryBean'
+import { createDebugLogger } from './SpringLog'
+
+const logger = createDebugLogger('SpringFactory:')
+
 
 //对象缓存
 const beanDefineMap = new Map<BeanDefine,any>()
@@ -54,7 +58,11 @@ export type SpringStarterClazz = new()=>SpringStarter;
 export  interface SpringStarter {
     isSpringStater():boolean;
     //启动
-    doStart(clazzMap:Map<Clazz,any>):Promise<any>;
+    doStart(clazzMap:ClazzExtendsMap):Promise<any>;
+}
+
+export type ClazzExtendsMap = {
+    addBean:(clazz:Clazz,bean:any,remark?:string)=>void
 }
 
 
@@ -108,7 +116,7 @@ export const getBeanDefineByBean = function(bean:any):BeanDefine|null{
     
     let bd:BeanDefine|null = null;
 
-    beanDefineMap.forEach((mapBd,mapBean) => {
+    beanDefineMap.forEach((mapBean,mapBd) => {
 
         if(mapBean === bean)
             bd = mapBd;
@@ -138,6 +146,10 @@ export function assemblelazyAutowiredList(){
 
     //获取需要装配的类
     const needAutowiredList = lazyAutowiredList.filter(a => a.state < 2);
+
+    logger(`延迟装配总量:${needAutowiredList.length}`)
+
+    let getCount=1;//命中数量
 
     // 将beanMap（Component注解装配）中的按需装配给type
     // 将extendBean（SpringStarter手动装配的）按需装配给clazz 和 type
@@ -186,6 +198,8 @@ export function assemblelazyAutowiredList(){
                 //普通对象则直接注入
                     Reflect.set(selfBean,fieldBd.name,findBean);
                 }
+
+                logger(`序号:${getCount++} 延迟装配 [命中] 类：${ clazz?.name } 字段：${ fieldBd.name }`)
     
                 //装配成功
                 at.state = 2;
@@ -195,6 +209,7 @@ export function assemblelazyAutowiredList(){
                 if(!force && selfBean[fieldBd.name] !== void 0){
                     //非强制状态 并且拥有默认值
                     at.state = 1;
+                    logger(`序号:${getCount++} 延迟装配 [默认值] 类:${ bd.clazz.name } 字段：${ fieldBd.name }`)
                 }
             }
     
@@ -218,6 +233,8 @@ export function validateassemblelazyAutowiredListIsSuccess(){
            return s + `class ${at.bd.clazz} field:${at.fieldBd.name} autowired by type error.not match.`
         },'')
 
+        logger('装配出错：存在未命中的延迟装配')
+
         throw(infos)
     }
 }
@@ -230,6 +247,8 @@ function invokeSpringBeanMethod(){
 
 //装配指定class
 export const assemble = function (clazz:Clazz){
+
+    logger(`装配类:${clazz.name}`)
 
     const bd = getBeanDefineByClass(clazz)
 
@@ -257,10 +276,12 @@ function getSoredBeanPostProcessorList():BeanPostProcessor[]{
 //装配指定beanDefine
 function assembleBeanDefine(bd:BeanDefine):any{
 
-    if(beanDefineMap.has(bd))
+    if(beanDefineMap.has(bd)){
+        logger(`<= 返回缓存`)
         return beanDefineMap.get(bd);
+    }
 
-        //防止循环引用 加入装配记录
+    //防止循环引用 加入装配记录
     if(assembleingClass.has(bd.clazz))
         throw Error(`clazz ${bd.clazz} already assemble`)
 
@@ -287,18 +308,6 @@ function assembleBeanDefine(bd:BeanDefine):any{
                 const {force,type} = param;
                 let {clazz} = param;
                 let subApp;
-                
-                //处理装配 依据id
-                // if(id){
-                //     const targetBd = idBeanDefineMap.get(id);
-                //     if(!targetBd){
-                //         throw Error(`[ID_NOT_FIND_ERROR] @Component()Id('${id}') not find!`)
-                //     }
-                //     if(clazz !== targetBd.clazz){
-                //         throw Error(`[CLAZZ_MATCH_ERROR] id '${id}' class must be ${clazz}` )
-                //     }
-                //     subApp = assembleBeanDefine(targetBd)
-                // }
 
                 //依据类型推断进行装配
                 if(type){
@@ -309,6 +318,7 @@ function assembleBeanDefine(bd:BeanDefine):any{
                         fieldBd,
                         state:0
                     })
+                    logger(`${bd.clazz.name} <= @Autowired[延迟] type:${type.name}`)
                     return;
                 }
                 
@@ -317,6 +327,7 @@ function assembleBeanDefine(bd:BeanDefine):any{
                 if(clazz){
                     const subBeanDefine = getBeanDefineByClass(clazz)
                     if(subBeanDefine){
+                        logger(`${bd.clazz.name} <= @Autowired  class:${clazz.name}`)
                         subApp = assembleBeanDefine(subBeanDefine);
                     }else{
                         lazyAutowiredList.push({
@@ -326,6 +337,7 @@ function assembleBeanDefine(bd:BeanDefine):any{
                             fieldBd,
                             state:0
                         })
+                        logger(`${bd.clazz.name} <= @Autowired[延迟] class:${clazz.name}`)
                         return;
                     }
                    
@@ -357,9 +369,17 @@ function assembleBeanDefine(bd:BeanDefine):any{
                         throw Error(`class:${bd.clazz} field:${fieldName} must be set initial value!`)
                     }
 
-                }else if(!Reflect.set(bean,fieldName,geFormatValue(param.path,(anno.params as ReflectParam).reflectType ))){
-                    throw Error('annotation Value error')
+                    logger(`${bd.clazz.name} <= @Value[默认值] 字段：${fieldName} 路径:${param.path} 值:${bean[fieldName]} `)
+
+                }else{
+                    const value = geFormatValue(param.path,(anno.params as ReflectParam).reflectType );
+                    if(!Reflect.set(bean,fieldName,value)){
+                        throw Error('annotation Value error')
+                    }
+                    logger(`${bd.clazz.name} <= @Value[配置] 字段：${fieldName} 路径:${param.path}  值:${value} `)
                 }
+                
+
             }
         })
     });
@@ -369,6 +389,7 @@ function assembleBeanDefine(bd:BeanDefine):any{
 
     if(isSpringStarter(bean)){
         starterBeanList.add(bean);
+        logger(`${bd.clazz.name} 装入启动器 目前数量:${starterBeanList.size}`)
     }
 
     //删除引用
@@ -405,12 +426,22 @@ export const addExtBeanClazz = (clazz:Clazz)=>{
 
 //实例化所有额外的class
 const instanceExtClazz = ()=>{
-    Array.from(bindBeanClazzList).map(assemble);
+    logger('实例化其它class。 数量：'+bindBeanClazzList.size+' (2/2)');
+    let index = 1;
+    Array.from(bindBeanClazzList).forEach(clazz => {
+        logger(`进度:(${index++}/${bindBeanClazzList.size}) `)
+        assemble(clazz);
+    });
 }
 
 //实例化后置处理器
 const instanceBeanPostProcessor = ()=>{
-    Array.from(bindBeanProcessorClazzList).map(assemble).forEach(b => beanPostProcessorList.add(b))
+    logger('实例化后置处理器。 数量：'+bindBeanProcessorClazzList.size+' (1/2) ')
+    let index = 1;
+    Array.from(bindBeanProcessorClazzList).map(clazz => {
+        logger(`进度:(${index++}/${bindBeanProcessorClazzList.size})`)
+        return assemble(clazz);
+    }).forEach(b => beanPostProcessorList.add(b))
 }
 
 //装配bean
@@ -432,10 +463,14 @@ export function getBeanFromContainer<T>(clazz:new()=>T):T|undefined{
 
 export const beanFactoryInit = ()=>{
 
+    logger('阶段一-------------------工厂初始化----------------------')
+
     //1.首先实例化后置处理器
     instanceBeanPostProcessor();
 
     //2.实例化额外绑定的类
     instanceExtClazz();
+
+    logger('工厂初始化结束')
 
 }

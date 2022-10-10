@@ -9,7 +9,7 @@
             "type": "node",
             "request": "launch",
             "args": [
-                "${relativeFile}"
+                "./test/_ts_/launcAsync.ts"
             ],
             "runtimeArgs": [
                 "-r",

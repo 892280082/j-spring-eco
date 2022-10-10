@@ -6,6 +6,7 @@ export * from './util/formatValue'
 export * from './SpringAnnotation'
 export * from './SpringContext'
 export * from './SpringType'
+import { loadLogger,LoadLoggerType } from './SpringLog'
 import {  
     cleanBeanCache, 
     replaceClazz,
@@ -99,6 +100,10 @@ class SpringPanel {
     invokeStarter():Promise<any>{
         beanFactoryInit();
         return invokeStarter();
+    }
+
+    loadLogger(op:LoadLoggerType) {
+        loadLogger(op);
     }
 }
 

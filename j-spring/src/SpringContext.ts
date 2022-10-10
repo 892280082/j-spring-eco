@@ -1,9 +1,11 @@
 import {Clazz,BeanDefine,Anntation, MethodDefine,FieldDefine, ParamterDefine}  from './SpringType'
 
-import { beanDefineList,assemble,beanFactoryInit,starterBeanList, assemblelazyAutowiredList, validateassemblelazyAutowiredListIsSuccess} from './SpringFactry'
-import { extendClazzBeanMap } from './SpringFactry'
+import { beanDefineList,assemble,beanFactoryInit,starterBeanList, assemblelazyAutowiredList, validateassemblelazyAutowiredListIsSuccess, getBeanDefineByBean} from './SpringFactry'
+import { extendClazzBeanMap,ClazzExtendsMap } from './SpringFactry'
 import { isFunction } from './util/shared';
+import { createDebugLogger } from './SpringLog'
 
+const logger = createDebugLogger('SpringContext:')
 
 //用于debug记录 注解启动顺序
 //let index=0;
@@ -152,15 +154,35 @@ function getBootAppBean (clazz:Clazz):BootApp{
 
 
 export async function invokeStarter():Promise<any>{
+ 
     const starterBeanArray = Array.from(starterBeanList);
+
+    logger(`阶段二、--------------执行异步启动器 数量:${ starterBeanArray.length }----------------`)
+
+    let startIndex = 1;
+
     for (let index = 0; index < starterBeanArray.length; index++) {
         const element = starterBeanArray[index];
-        await element.doStart(extendClazzBeanMap)
+        logger(`启动器:${ getBeanDefineByBean(element)?.clazz.name } 进度:(${startIndex++}/${starterBeanArray.length})`)
+        
+        //扩展类型 
+        let extendIndex = 1;
+        const clazzMap:ClazzExtendsMap = {
+            addBean:(clazz:Clazz,bean:any,remark?:string)=>{
+                extendClazzBeanMap.set(clazz,bean);
+                logger(`创建映射${extendIndex++}: ${clazz.name} 值:${ new String(bean).substring(0,20) } 类型:${ typeof bean }  备注:${remark}`)
+            }
+        }
+
+        await element.doStart(clazzMap);
         //每次启动结束一个starter 都尝试装配一次
         assemblelazyAutowiredList();
     }
+
     //最后校验 装配是否成功
     validateassemblelazyAutowiredListIsSuccess();
+
+    logger('执行结束')
 }
 
 export async function launchAsync(clazz:Clazz,args?:any[]):Promise<any> {
