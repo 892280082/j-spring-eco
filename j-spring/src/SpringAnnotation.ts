@@ -55,7 +55,8 @@ export type AutowiredParam<T> = {
 
 export type ValueParam = {
     path:string,
-    force?:boolean
+    force?:boolean,
+    remark?:string
 }
 
 export const Component = ()=>classAnnotationGenerator('j-spring.Component',{},Component);

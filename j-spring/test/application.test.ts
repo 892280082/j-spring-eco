@@ -20,7 +20,7 @@ describe('application test!', () => {
     @Component()
     class Calculate {
 
-      @Value({path:'n',type:Number})
+      @Value({path:'n'})
       n:number;
 
       doCalculate(inputN:number){
@@ -86,14 +86,14 @@ describe('application test!', () => {
       }
     }
 
-    expect(()=>launch(Application,[2])).toThrow(`can not find class ${Application},maybe you forgot to add @Component()!`)
+    expect(()=>launch(Application,[2])).toThrow(`找不到类:[${Application.name}]的BeanDefine信息,是否忘记在该类上添加 @Component() 装饰器?`)
   });
 
   it('launch application with no main function',()=>{
     @Component()
     class Application {
     }
-    expect(()=>launch(Application,[2])).toThrow(`not find main method from class ${Application}`)
+    expect(()=>launch(Application,[2])).toThrow(`类:${Application.name} 没有找到main方法`)
 
   })
 

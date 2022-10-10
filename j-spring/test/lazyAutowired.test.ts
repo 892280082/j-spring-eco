@@ -1,4 +1,5 @@
-import { Autowired, Clazz, Component, isFunctionList, launchAsync, spring, SpringStarter } from '../src'
+import { Autowired, Component, isFunctionList, launchAsync, spring, SpringStarter } from '../src'
+import { ClazzExtendsMap } from '../src/SpringFactry';
 
 
 describe('test lazy autowired',()=>{
@@ -39,6 +40,22 @@ describe('test lazy autowired',()=>{
 
     @Component()
     class Application  implements SpringStarter {
+        async doStart(clazzMap: ClazzExtendsMap): Promise<any> {
+            class RedisImpl implements Redis {
+                isRedis(): boolean {
+                    return true;
+                }
+                connect(): string {
+                    return 'redis-ok'
+                }
+                
+            }
+
+            clazzMap.addBean(RedisImpl,new RedisImpl())
+
+            clazzMap.addBean(DataSource,new DataSource());
+        }
+
 
         @Autowired({type:isExpress})
         expess:Express;
@@ -53,24 +70,7 @@ describe('test lazy autowired',()=>{
             return true;
         }
 
-        async doStart(clazzMap: Map<Clazz, any>): Promise<any> {
 
-   
-            class RedisImpl implements Redis {
-                isRedis(): boolean {
-                    return true;
-                }
-                connect(): string {
-                    return 'redis-ok'
-                }
-                
-            }
-
-            clazzMap.set(RedisImpl,new RedisImpl())
-
-            clazzMap.set(DataSource,new DataSource());
-
-        }
         main():string{
             return this.expess.star()+' '+this.dataSource.connect() +' '+this.redis.connect();
         }

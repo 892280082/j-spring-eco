@@ -1,18 +1,20 @@
 import express from "express";
-import { Component, Value,SpringStarter,Clazz } from "j-spring";
+import { Component, Value,SpringStarter } from "j-spring";
 import { ExpressApp, ExpressServer } from './springWebExtends'
 import {loadConfiguration} from './springWebBeanProcessor'
+import { ClazzExtendsMap } from "j-spring/dist/SpringFactry";
 
 @Component()
 export class SpringWebStarter implements SpringStarter{
 
+
     @Value({path:'j-spring-web.port',force:false})
     port:number = 3000;
 
-    async doStart(clazzMap: Map<Clazz, any>): Promise<any> {
+    async doStart(clazzMap: ClazzExtendsMap): Promise<any> {
         const app = express();
         
-        clazzMap.set(ExpressApp,app);
+        clazzMap.addBean(ExpressApp,app,"添加express实例")
 
         loadConfiguration(app);
         
@@ -22,7 +24,7 @@ export class SpringWebStarter implements SpringStarter{
                 console.log( `server started at http://localhost:${ this.port }` );
                 ok('ok')
             });
-            clazzMap.set(ExpressServer,expressServer);
+            clazzMap.addBean(ExpressServer,expressServer,"添加express-server实例")
         });
         await startWeb();
     }

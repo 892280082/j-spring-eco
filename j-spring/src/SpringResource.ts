@@ -33,14 +33,14 @@ export const hasConfig = (key:string):boolean => configMap.has(key);
 export const validateType = (type:Function) => isCanFormat(type);
 
 
-const throwError = (path:string,msg:string):void => { throw Error(`[SPRING_RESOURCE_ERROR: path[${path}] reason[${msg}] `) };
+const throwError = (path:string,msg:string):void => { throw Error(`[配置解析错误]: 路径:[${path}] 原因：[${msg}]`) };
 
 
 //格式化值
 export const geFormatValue = (key:string,type:Function) => {
 
     if(!hasConfig(key)){
-        throwError(key,'not find')
+        throwError(key,'不存在')
     }
 
     const value = configMap.get(key);

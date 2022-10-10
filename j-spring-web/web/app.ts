@@ -35,6 +35,11 @@ const controllerClassList = [
 
 export async function start(port:number){
     const config = {
+        'j-spring':{
+            log:{
+                level:'debug'
+            }
+        },
         'j-spring-web':{
             port
         },

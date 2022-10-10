@@ -69,7 +69,7 @@ describe('resource config load test',()=>{
             }
         })
 
-        expect(()=>launch(Application)).toThrow(`[SPRING_RESOURCE_ERROR: path[student.age] reason[value:nihao is NaN] `)
+        expect(()=>launch(Application)).toThrow(`[配置解析错误]: 路径:[student.age] 原因：[value:nihao is NaN]`)
 
     })
 
@@ -126,7 +126,7 @@ describe('resource config load test',()=>{
             }
         }
 
-        expect(()=>launch(Application)).toThrow(`class:${Application} field:port must be set initial value!`)
+        expect(()=>launch(Application)).toThrow(`类:[${Application.name}] 字段:port 若无配置则必须设置默认值!`)
 
     })
 

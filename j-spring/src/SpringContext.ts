@@ -146,7 +146,7 @@ function getBootAppBean (clazz:Clazz):BootApp{
     const bootApp = app as BootApp;
 
     if(!isFunction(bootApp.main)){
-        throw Error(`not find main method from class ${clazz}`)
+        throw Error(`类:${clazz.name} 没有找到main方法`)
     }
     
     return app;
@@ -157,7 +157,7 @@ export async function invokeStarter():Promise<any>{
  
     const starterBeanArray = Array.from(starterBeanList);
 
-    logger(`阶段二、--------------执行异步启动器 数量:${ starterBeanArray.length }----------------`)
+    logger(`阶段三--------------执行异步启动器 数量:${ starterBeanArray.length }----------------`)
 
     let startIndex = 1;
 
@@ -182,7 +182,7 @@ export async function invokeStarter():Promise<any>{
     //最后校验 装配是否成功
     validateassemblelazyAutowiredListIsSuccess();
 
-    logger('执行结束')
+    logger('启动成功')
 }
 
 export async function launchAsync(clazz:Clazz,args?:any[]):Promise<any> {
@@ -196,7 +196,7 @@ export function launch(clazz:Clazz,args?:any[]){
     const bootApp = getBootAppBean(clazz);
 
     if(starterBeanList.size > 0){
-        throw Error(`found starter bean.please use asyncLaunch method!`)
+        throw Error(`存在异步启动器,请调用asyncLaunch方法`)
     }
 
     validateassemblelazyAutowiredListIsSuccess();

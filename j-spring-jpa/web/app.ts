@@ -8,6 +8,11 @@ import { TestApiController } from './controller/TestApiController'
 
 
 const config = {
+    'j-spring':{
+        log:{
+            level:'debug'
+        }
+    },
     'j-spring-jpa.sqlite.database':path.join(__dirname,'./data.db'),
 }
 
