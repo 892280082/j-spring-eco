@@ -1,61 +1,62 @@
 type ShuttleConfig = {
-    host:string,
-    request:{
-      post:(url:string,data:any)=>Promise<any>
-    },
-    format?:(data:any)=>any
-  }
-  
-  type ShuttleConfigAdd = {
-    [p in keyof ShuttleConfig]?:ShuttleConfig[p]
-  }
-  
-  const GlobalConfig:ShuttleConfigAdd = {
-    format:(result:any) => result.data
-  }
-  
-  function validateConfig(config:ShuttleConfigAdd){
-    if(!config.host){
-        throw `[SHUTTLE] host must be set`
-    }
-    if(!config.request){
-        throw `[SHUTTLE] request must be set`
-    }
-  }
+  host: string,
+  request: {
+    post: (url: string, data: any) => Promise<any>
+  },
+  format: (data: any) => any
+}
 
-  export function setConfig(config:ShuttleConfig){
-    Object.assign(GlobalConfig,config);
+const GlobalConfig: Partial<ShuttleConfig> = {
+  format: (result: any) => result.data
+}
+
+function isValidateConfig(config: Partial<ShuttleConfig>): config is ShuttleConfig {
+  if (!config.host) {
+    throw `[SHUTTLE] host must be set`
   }
+  if (!config.request) {
+    throw `[SHUTTLE] request must be set`
+  }
+  return true;
+}
 
-  export function createShuttle(controllerApi:string,diyOption?:ShuttleConfigAdd):any{
+export function setConfig(config: ShuttleConfig) {
+  Object.assign(GlobalConfig, config);
+}
 
-    //获取配置
-    let config = {...GlobalConfig,...diyOption};
-  
-    //校验配置
-    validateConfig(config);
+export function createShuttle(controllerApi: string, diyOption?: Partial<ShuttleConfig>): any {
 
-    let proxy = new Proxy({},{
-  
-      get: function(_obj, prop) {
-  
+  //获取配置
+  let config = { ...GlobalConfig, ...diyOption };
+
+  if (isValidateConfig(config)) {
+
+    let c:ShuttleConfig = config;
+
+    let proxy = new Proxy({}, {
+
+      get: function (_obj, prop) {
+
         const method = prop.toString();
-  
-        return  async function(...args:any[]){
-  
-            const url = `${config.host}/${controllerApi}/${method}`
 
-            const reqResult = await config.request?.post(url,{args})
+        return async function (...args: any[]) {
 
-            const finalResult =  config.format?.(reqResult);
+          const url = `${config.host}/${controllerApi}/${method}`
 
-            return finalResult;
-        }     
-  
+          const reqResult = await c.request.post(url, { args })
+
+          const finalResult = c.format(reqResult);
+
+          return finalResult;
+        }
+
       }
-  
+
     })
-  
+
     return proxy;
-  
+
   }
+
+
+}
