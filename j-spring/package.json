@@ -5,7 +5,7 @@
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
-    "src"
+    "app.logo"
   ],
   "engines": {
     "node": ">=10"
