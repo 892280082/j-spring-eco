@@ -4,6 +4,7 @@ import { geFormatValue, hasConfig } from './SpringResource'
 import { isFunction } from './util/shared';
 import { isSpringFactoryBean, loadFactoryBean, SpringFactoryBean } from './SpringFactoryBean'
 import { createDebugLogger,springLog } from './SpringLog'
+import { printLogo } from './util/printLogo';
 
 const logger = createDebugLogger('SpringFactory:')
 
@@ -523,6 +524,8 @@ function printConfig(){
 }
 
 export const beanFactoryInit = () => {
+
+    printLogo();
 
     logger(`阶段一-------------检查打印所有配置项----------------------`)
     logger(`内置:j-spring.log.on     备注:开启日志 值:on|off 强制：否 默认值:on `)

@@ -3,7 +3,7 @@ import { geFormatValue,loadResourceConfig } from './SpringResource'
 //设置默认配置
 loadResourceConfig({
     'j-spring':{
-        on:{
+        log:{
             state:'on',
             level:'debug'
         }
