@@ -43,7 +43,6 @@
     }
   ],
   "dependencies": {
-    "j-spring": "file:.yalc/j-spring",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.8.2"
   },
@@ -53,6 +52,7 @@
     "@types/node": "^18.8.0",
     "babel-jest": "^29.1.2",
     "husky": "^8.0.1",
+    "j-spring": "file:.yalc/j-spring",
     "jest": "^29.1.2",
     "size-limit": "^8.1.0",
     "ts-jest": "^29.0.3",
