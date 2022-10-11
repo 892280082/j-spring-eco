@@ -1,4 +1,14 @@
-import { geFormatValue,hasConfig } from './SpringResource'
+import { geFormatValue,loadResourceConfig } from './SpringResource'
+
+//设置默认配置
+loadResourceConfig({
+    'j-spring':{
+        on:{
+            state:'on',
+            level:'debug'
+        }
+    }
+})
 
 type LogCallback = (
     error?: any,
@@ -16,7 +26,7 @@ type LeveledLogMethod = {
     (infoObject: object): Logger;
 }
 
-type Logger = {
+export type Logger = {
     error: LeveledLogMethod;
     warn: LeveledLogMethod;
     help: LeveledLogMethod;
@@ -31,15 +41,18 @@ type Logger = {
 }
 
 
+const isOpenLog = () => {
+    return geFormatValue('j-spring.log.state',String) !== 'off';
+}
+
 const createMethod = (methodLevel:string)=>{
 
     return (...args:any[]):Logger=>{
 
-        const openState = hasConfig('j-spring.log.state') ? ''+geFormatValue('j-spring.log.state',String) : 'on';
 
-        if(openState === 'on'){
+        if(isOpenLog()){
 
-            const configLevel = hasConfig('j-spring.log.level') ? ''+geFormatValue('j-spring.log.level',String) : 'info';
+            const configLevel = geFormatValue('j-spring.log.level',String);
             const levelDic = ['error','warn','help','data','info','debug','prompt','http','verbose','input','silly'];
 
             const configLevelIndex = levelDic.indexOf(configLevel);
@@ -70,16 +83,13 @@ export let springLog:Logger = {
     silly: createMethod('silly'),
 }
 
-export type LoadLoggerType = {
-    load(has:(key:string)=>boolean,format:(key:string)=>string):Logger
+
+export const setLogger = (log:Logger) => {
+    if(isOpenLog())
+        springLog = log;
 }
 
-export const loadLogger = (thirdModule:LoadLoggerType):void => {
-    const formatStr = (key:string) => ''+geFormatValue(key,String); 
-    springLog = thirdModule.load(hasConfig,formatStr);
-}
 
-export const createDebugLogger = (prefix:string) => (...data:any[]) => {
-    const m:Function = springLog.debug;
-    m.apply(springLog,[prefix,...data]);
+export const createDebugLogger = (prefix:string) => (msg:string) => {
+    springLog.debug(prefix+msg)
 }

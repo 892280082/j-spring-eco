@@ -1,12 +1,15 @@
 import { launch,invokeStarter,launchAsync } from './SpringContext'
-import { loadResourceConfig } from './SpringResource'
+import { loadResourceConfig, resourceOperate, ResourceOperate } from './SpringResource'
 import { Clazz } from './SpringType'
+import { Logger,setLogger  } from './SpringLog'
 export * from './util/shared'
 export * from './util/formatValue'
 export * from './SpringAnnotation'
 export * from './SpringContext'
 export * from './SpringType'
-import { loadLogger,LoadLoggerType } from './SpringLog'
+export * from './SpringLog'
+
+
 import {  
     cleanBeanCache, 
     replaceClazz,
@@ -33,7 +36,7 @@ export {
     SpringStarter,
     assemble,
     cleanBeanCache } from './SpringFactry'
-export { loadResourceConfig,geFormatValue } from './SpringResource'
+export { loadResourceConfig,geFormatValue,resourceOperate,ResourceOperate } from './SpringResource'
 export {SpringFactoryBean,isSpringFactoryBean } from './SpringFactoryBean'
 
 class SpringPanel {
@@ -102,8 +105,9 @@ class SpringPanel {
         return invokeStarter();
     }
 
-    loadLogger(op:LoadLoggerType) {
-        loadLogger(op);
+    loadLogger(op:(r:ResourceOperate)=>Logger) {
+        setLogger(op(resourceOperate));
+        return this;
     }
 }
 

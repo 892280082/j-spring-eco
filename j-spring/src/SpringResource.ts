@@ -52,3 +52,13 @@ export const geFormatValue = (key:string,type:Function) => {
         return throwError(key,''+e)
     }
 }
+
+export type ResourceOperate = {
+    hasConfig:(key:string) => boolean;
+    geFormatValue:(key:string) => string;
+}
+
+export const resourceOperate:ResourceOperate = {
+    hasConfig,
+    geFormatValue:(key:string) => geFormatValue(key,String)+''
+}

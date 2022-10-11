@@ -525,7 +525,9 @@ function printConfig(){
 export const beanFactoryInit = () => {
 
     logger(`阶段一-------------检查打印所有配置项----------------------`)
-
+    logger(`内置:j-spring.log.on     备注:开启日志 值:on|off 强制：否 默认值:on `)
+    logger(`内置:j-spring.log.level  备注:日志级别 值:根据加载插件 强制：否 默认值:debug `)
+    logger(`内置:j-spring.log.fileName  备注:winston日志输出文件 值:否 强制：否 默认值:无 `)
     printConfig();
 
     logger('阶段二-------------------工厂初始化----------------------')

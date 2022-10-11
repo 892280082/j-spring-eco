@@ -44,6 +44,7 @@
     }
   ],
   "dependencies": {
+    "j-spring": "file:.yalc/j-spring",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.8.2"
   },
