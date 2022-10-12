@@ -39,7 +39,7 @@ export async function start(port:number){
     const config = {
         'j-spring':{
             log:{
-                level:'info,http'
+                level:'debug,http'
             }
         },
         'j-spring-web':{
