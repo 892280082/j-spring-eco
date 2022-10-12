@@ -64,6 +64,8 @@ const createMethod = (methodLevel:string)=>{
                     const m = (thridLog as any)[methodLevel];
                     if(isFunction(m)){
                         m.apply(thridLog,[arg])
+                    }else{
+                        throw `第三方日志不支持${methodLevel}方法`
                     }
                 }else{
                     const m = (console as any)[methodLevel] || console.log;

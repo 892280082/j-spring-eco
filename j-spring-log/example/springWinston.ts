@@ -23,7 +23,7 @@ class Application implements SpringStarter {
 const config = {
     'j-spring': {
         log: {
-            level: 'info',
+            level: 'debug',
             fileName:'ww.log'
         }
     }
