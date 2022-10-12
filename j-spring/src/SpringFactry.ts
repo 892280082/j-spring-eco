@@ -247,13 +247,20 @@ function invokeSpringBeanMethod() {
 //装配指定class
 export const assemble = function (clazz: Clazz) {
 
-    logger(`装配类:${clazz.name}`)
+ 
 
     const bd = getBeanDefineByClass(clazz)
 
     if (!bd) {
         throw Error(`找不到类:[${clazz.name}]的BeanDefine信息,是否忘记在该类上添加 @Component() 装饰器?`)
     }
+
+    if(beanDefineMap.has(bd)){
+        logger(`装配类:${clazz.name}  <= 缓存`)
+    }else{
+        logger(`装配类:${clazz.name}`)
+    }
+
 
     const app = assembleBeanDefine(bd);
 
@@ -276,7 +283,6 @@ function getSoredBeanPostProcessorList(): BeanPostProcessor[] {
 function assembleBeanDefine(bd: BeanDefine): any {
 
     if (beanDefineMap.has(bd)) {
-        logger(`<= 返回缓存`)
         return beanDefineMap.get(bd);
     }
 
