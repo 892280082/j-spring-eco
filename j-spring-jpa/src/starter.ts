@@ -1,8 +1,11 @@
 import {  SpringStarter,SpringContainer, Clazz,Component, Value  } from 'j-spring'
 import { ClazzExtendsMap } from 'j-spring/dist/SpringFactry';
-import { DataSource, DataSourceOptions } from 'typeorm'
+import { DataSource, DataSourceOptions  } from 'typeorm'
+import {LoggerAdaptor } from './LoggerAdaptor'
 
 const entityList:any[]= [];
+
+const logger = new LoggerAdaptor();
 
 export function loadEntity(entities:any[]):void{
     entities.forEach(e => entityList.push(e))
@@ -25,6 +28,8 @@ abstract class BaseDataSourceConnect extends SpringContainer implements SpringSt
     
 
 }
+
+
 
 const sqliteOptionsPrefx = 'j-spring-jpa.sqlite'
 
@@ -51,7 +56,8 @@ export class SqliteStarter extends BaseDataSourceConnect {
             database,
             logging,
             synchronize,
-            entities:entityList
+            entities:entityList,
+            logger
         }
         return options;
     }

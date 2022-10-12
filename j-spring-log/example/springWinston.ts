@@ -1,4 +1,4 @@
-import { spring, Component, SpringStarter, Value } from 'j-spring'
+import { spring, Component, SpringStarter } from 'j-spring'
 import { ClazzExtendsMap } from 'j-spring/dist/SpringFactry'
 import { WinstonLog } from '../src'
 

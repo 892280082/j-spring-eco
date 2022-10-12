@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "web-debug",
+            "name": "web-sqlite-debug",
             "type": "node",
             "request": "launch",
             "args": [
