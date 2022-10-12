@@ -1,10 +1,9 @@
 import {  Value } from 'j-spring';
 import { CorresDomainMiidleWare } from '../../src';
-import {Controller,Get, Post, RequestMapping, PathVariable, RequestParam, ApiMiddleWare, ResponseBody} from '../../src/springWebAnnotation'
+import {Controller,Get, Post, RequestMapping, PathVariable, RequestParam, ApiMiddleWare, ResponseBody, Render, MiddleWare} from '../../src/springWebAnnotation'
 
 
 @Controller('/')
-@ApiMiddleWare([CorresDomainMiidleWare])
 export class IndexController {
 
     @Value({path:'indexMsg'})
@@ -12,13 +11,14 @@ export class IndexController {
 
     //测试1: 首页
     @Get('/')
-    @ResponseBody()
+    @Render('index.ejs')
     async index(){
-        return `${this.indexMsg} => hello world!`
+        return {msg:`${this.indexMsg} => hello world!`}
     }
 
     //测试2: @Get 方法不加参数 默认使用方法名作为路径
     @Get()
+    @MiddleWare([CorresDomainMiidleWare])
     async getMsg(){
         return 'Get msg ok'
     }

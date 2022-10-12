@@ -35,6 +35,8 @@ export const Post = (path?:string) => spring.methodAnnotationGenerator('j-spring
 
 export const RequestMapping = (path?:string) => spring.methodAnnotationGenerator('j-spring.RequestMapping',{path},RequestMapping);
 
+export const Render = (path:string) => spring.methodAnnotationGenerator('j-spring.Render',{path},Render);
+
 export const MiddleWare = (middleWareClassList:middleWareType[])  => spring.methodAnnotationGenerator('j-spring.middleWareClassList',{middleWareClassList},MiddleWare);
 
 export type ParamterParamType = {

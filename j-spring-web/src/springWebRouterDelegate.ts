@@ -1,10 +1,9 @@
+import { existsSync } from "fs";
 import { Anntation, assemble, BeanDefine, Clazz, getBeanDefineByClass, MethodDefine } from "j-spring";
 import path from "path";
 import { 
     Controller, 
     Get,
-    Json,
-    ResponseBody,
     Post, 
     RequestMapping,
     ExpressMiddleWare, 
@@ -13,7 +12,8 @@ import {
     MiddleWareParam,
     MiddleWare,
     Shuttle ,
-    middleWareType
+    middleWareType,
+    Render
 } from "./springWebAnnotation";
 import {ExpressLoad,SpringWebParamInteceptor,SpringWebExceptionHandler} from './springWebExtends'
 import { paramInterceptor } from './springWebParamIntecepor'
@@ -39,7 +39,7 @@ class MethodRouter {
 
     invokeMethod:string;//get post use 
 
-    sendType:string;//json html
+    sendType:string = 'json';// 默认都是发送json
 
     reqPath:string;//请求路径
 
@@ -64,11 +64,13 @@ class MethodRouter {
         return '';
     }
 
-    private resolveSendType():string {
-        const {bd,md} = this.option;
-        if(bd.hasAnnotation(Json) || md.hasAnnotation(ResponseBody))
-            return 'json';
-        return 'html';
+    private resolveSendType(app:any):void {
+        const {md,bd} = this.option;
+        if(md.hasAnnotation(Render)){
+            if(!existsSync(path.join(app.get('views'),md.getAnnotation(Render)?.params.path)))
+                throw `类:${bd.clazz.name} 方法:${md.name} Render 设置页面不存在`
+            this.sendType = 'html'
+        }
     }
     
     private resolveReqPath():string {
@@ -154,12 +156,12 @@ class MethodRouter {
         this.hasPost = md.hasAnnotation(Post);
         this.hasRequestMapping = md.hasAnnotation(RequestMapping);
         this.invokeMethod = this.resolveInokeMethod();
-        this.sendType = this.resolveSendType();
         this.reqPath = this.resolveReqPath();
         this.maxParamLength = this.resolvePamaterLength();
     }
 
     loadNormalApi(app:any){
+        this.resolveSendType(app);
         const {md,bean,exceptionHandler} = this.option;
         const { invokeMethod,sendType,reqPath,middleWareFunction } =this;
 
@@ -188,20 +190,19 @@ class MethodRouter {
                 const paramBeans = params.map(p => p.bean);
                 result = await bean[md.name].apply(bean,paramBeans);
 
-                //3.渲染阶段
-                switch(sendType){
-                    case 'json':
-                         res.json(result);
-                        break;
-                    case 'html':
-                        if(Array.isArray(result)){
-                            res.render(result[0],result[1]||{})
-                        }else{
-                            wrapHandler(500,'sendType:html only support array');
-                        }
-                        break;
-                    default:
-                        wrapHandler(500,`sendType error:${sendType}`);
+                if(result !== void 0){
+                    //3.渲染阶段
+                    switch(sendType){
+                        case 'json':
+                            res.json(result);
+                            break;
+                        case 'html':
+                            const filePath = md.getAnnotation(Render)?.params.path;
+                            res.render(`${filePath}`,result);
+                            break;
+                        default:
+                            wrapHandler(500,`sendType error:${sendType}`);
+                    }
                 }
 
                 params.forEach(p => p.inteceptor?.success(p.bean));

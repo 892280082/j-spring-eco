@@ -1,10 +1,10 @@
 import { geFormatValue,loadResourceConfig } from './SpringResource'
+import { isFunction } from './util/shared';
 
 //设置默认配置
 loadResourceConfig({
     'j-spring':{
         log:{
-            state:'on',
             level:'debug'
         }
     }
@@ -42,25 +42,34 @@ export type Logger = {
 
 
 const isOpenLog = () => {
-    return geFormatValue('j-spring.log.state',String) !== 'off';
+    return geFormatValue('j-spring.log.level',String) !== 'off';
 }
+
+let configLevel:string;
+const levelDic = ['error','warn','help','data','info','debug','prompt','http','verbose','input','silly'];
 
 const createMethod = (methodLevel:string)=>{
 
-    return (...args:any[]):Logger=>{
+    return (arg:any):Logger=>{
 
 
         if(isOpenLog()){
 
-            const configLevel = geFormatValue('j-spring.log.level',String);
-            const levelDic = ['error','warn','help','data','info','debug','prompt','http','verbose','input','silly'];
+            if(!configLevel)
+                configLevel = geFormatValue('j-spring.log.level',String);
+            
+            if(configLevel.indexOf(methodLevel)>-1 || levelDic.indexOf(methodLevel)<=levelDic.indexOf(configLevel)){
 
-            const configLevelIndex = levelDic.indexOf(configLevel);
-            const methodLevelIndex = levelDic.indexOf(methodLevel);
-            const m = (console as any)[methodLevel] || console.log;
-
-            if(methodLevelIndex<=configLevelIndex && m){
-                m.apply(console,[`${methodLevel} => `,...args]);
+                if(thridLog){
+                    const m = (thridLog as any)[methodLevel];
+                    if(isFunction(m)){
+                        m.apply(thridLog,[arg])
+                    }
+                }else{
+                    const m = (console as any)[methodLevel] || console.log;
+                    m.apply(console,[`${methodLevel} => ${arg}`]);
+                }
+               
             }
                 
         }
@@ -83,10 +92,11 @@ export let springLog:Logger = {
     silly: createMethod('silly'),
 }
 
+let thridLog:Logger;
 
 export const setLogger = (log:Logger) => {
     if(isOpenLog())
-        springLog = log;
+        thridLog = log;
 }
 
 

@@ -6,8 +6,6 @@ export function WinstonLog(resource:ResourceOperate):Logger{
 
   const {hasConfig,geFormatValue} = resource;
 
-  const configLevel = geFormatValue('j-spring.log.level');
-
   const transports:winston.transport[] = [new winston.transports.Console()];
 
   //检查是否存在 日志文件 如果存在 添加配置
@@ -18,7 +16,7 @@ export function WinstonLog(resource:ResourceOperate):Logger{
   }
 
   const logger = winston.createLogger({
-    level: configLevel,
+    level: "silly",
     format: combine(
       colorize({ all: true }),
       timestamp({

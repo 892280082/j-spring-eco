@@ -509,7 +509,7 @@ function printConfig(){
 
                 //1.强制复制 2.没有默认值 3.没有配置
                 if(param.force && bean[fd.name] === void 0 && !hasConfig(param.path))
-                    warnings.push(printMsg);
+                    warnings.push(`类:${bd.clazz.name} `+printMsg);
 
                 logger(printMsg)
 
@@ -531,7 +531,7 @@ function printConfig(){
 
 export const beanFactoryInit = () => {
 
-    printLogo();
+    printLogo(console.log);
 
     logger(`阶段一-------------检查打印所有配置项----------------------`)
     logger(`内置:j-spring.log.on     备注:开启日志 值:on|off 强制：否 默认值:on `)

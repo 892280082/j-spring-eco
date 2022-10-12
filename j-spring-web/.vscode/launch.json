@@ -15,8 +15,12 @@
                 "-r",
                 "ts-node/register"
             ],
+            "env": {
+                "NODE_ENV": "development"
+            },
             "cwd": "${workspaceRoot}",
             "protocol": "inspector",
+            "outputCapture": "std",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {

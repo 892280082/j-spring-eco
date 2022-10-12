@@ -1,5 +1,7 @@
-import { Component, Value } from 'j-spring';
+import { Component, Value,springLog } from 'j-spring';
+import rootPath from 'app-root-path'
 import path from 'path';
+import morgan  from 'morgan';
 import { ExpressMiddleWare } from './springWebAnnotation';
 import { ExpressConfiguration } from './springWebExtends'
 import {errorInfo,SpringWebExceptionHandler} from './springWebExtends'
@@ -10,10 +12,10 @@ import {errorInfo,SpringWebExceptionHandler} from './springWebExtends'
 @Component()
 export class EjsViewConfigruation implements ExpressConfiguration {
 
-    @Value({path:'root'})
-    root:string;
+    @Value({path:'express.view.root',force:false})
+    root:string = rootPath.resolve('./')
 
-    @Value({path:'express.viewPath',force:false})
+    @Value({path:'express.view.dir',force:false})
     viewPath:string = 'view';
 
     load(app: any): void {
@@ -98,3 +100,36 @@ export class SpringWebExceptionHandlerConfigration implements SpringWebException
 
 }
 
+
+@Component()
+export class MorganLogConfigruation implements ExpressConfiguration {
+
+    // Define message format string (this is the default one).
+    // The message format is made from tokens, and each token is
+    // defined inside the Morgan library.
+    // You can create your custom token to show what do you want from a request.
+    @Value({path:'morgan.regular',force:false})
+    regular:string = ':remote-addr :method :url :status :res[content-length] - :response-time ms';
+
+    load(app: any): void {
+
+        const stream = {
+            // Use the http severity
+            write: (message:any) =>{
+                springLog.http(message)
+            }
+        };
+
+        const morganMiddleware = morgan(
+            this.regular,
+            { stream }
+        );
+
+        app.use(morganMiddleware);
+
+    }
+    isExpressConfiguration(): boolean {
+        return true;
+    }
+
+}
