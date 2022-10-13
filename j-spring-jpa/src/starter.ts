@@ -1,7 +1,7 @@
 import {  SpringStarter,SpringContainer, Clazz,Component, Value  } from 'j-spring'
 import { ClazzExtendsMap } from 'j-spring/dist/SpringFactry';
 import { DataSource, DataSourceOptions  } from 'typeorm'
-import {LoggerAdaptor } from './LoggerAdaptor'
+import {LoggerAdaptor } from './loggerAdaptor'
 
 const entityList:any[]= [];
 

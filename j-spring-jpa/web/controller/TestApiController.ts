@@ -1,5 +1,5 @@
 import { Autowired, Clazz } from 'j-spring'
-import { Controller,Get,Json } from 'j-spring-web'
+import { Controller,Get } from 'j-spring-web'
 import { DataSource} from 'typeorm'
 import { Tx } from '../../src'
 import { SpringTx } from '../../src/springTx'
@@ -10,7 +10,6 @@ import { Post, PostSearch } from '../entity/Post'
 
 
 @Controller('testApi')
-@Json()
 export class TestApiController {
 
     @Autowired({clazz:DataSource as Clazz})
