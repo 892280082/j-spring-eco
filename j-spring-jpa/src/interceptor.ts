@@ -1,7 +1,7 @@
 import { Component,Autowired, Clazz,Anntation } from 'j-spring'
 import {SpringWebParamInteceptor} from 'j-spring-web'
 import {EntityManager,DataSource,QueryRunner} from 'typeorm'
-import {Tx} from './annotation'
+import {Tx, TxParam} from './annotation'
 import {SpringTx} from './springTx'
 
 
@@ -17,18 +17,22 @@ export class TxParamInteceptor implements SpringWebParamInteceptor<SpringTx> {
     getAnnotation(): Function {
         return Tx;
     }
-    async getBean(_req: any, _res: any, _paramterAnnotation: Anntation): Promise<SpringTx> {
+    async getBean(_req: any, _res: any, paramterAnnotation: Anntation): Promise<SpringTx> {
+        const txParam = paramterAnnotation.params as TxParam;
         const queryRunner:QueryRunner = this.dataSource.createQueryRunner()
         const manager:EntityManager = queryRunner.manager;
-        await queryRunner.startTransaction();
-        return new SpringTx(manager);
+        if(txParam.isStartTx)
+            await queryRunner.startTransaction();
+        return new SpringTx(manager,txParam);
     }
     error(bean: SpringTx): void {
-        bean.e.queryRunner?.rollbackTransaction();
+        if(bean.txParam.isStartTx)
+            bean.e.queryRunner?.rollbackTransaction();
         bean.e.queryRunner?.release();
     }
     success(bean: SpringTx): void {
-        bean.e.queryRunner?.commitTransaction();
+        if(bean.txParam.isStartTx)
+            bean.e.queryRunner?.commitTransaction();
         bean.e.queryRunner?.release();
     }
     

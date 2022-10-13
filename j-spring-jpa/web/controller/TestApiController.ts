@@ -22,7 +22,7 @@ export class TestApiController {
 
 
     @Get()
-    async toTestTx(@Tx() tx:SpringTx){
+    async toTestTx(@Tx(false) tx:SpringTx){
 
         const postList:Post[] = [];
 
@@ -44,6 +44,30 @@ export class TestApiController {
             throw 'occur error!'
 
         return postList;
+    }
+
+    
+    @Get()
+    async toTestNoTx(@Tx(false) tx:SpringTx){
+
+
+        for(let i =0;i<10;i++){
+
+            const p = new Post().of({
+                image:new Image().of({
+                    name:'heloa'+i
+                }),
+                title:'hello',
+                likesCount:100,
+                text:'a lot str'
+            })
+            await tx.save(p);
+            if(i ==5){
+                throw 'occur error!'
+            }
+        }
+
+        return '已经添加';
     }
 
     @Get()

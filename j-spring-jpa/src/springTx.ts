@@ -1,5 +1,6 @@
 import { convertToWhere,convertSearch } from './springTxUtil'
 import { EntityManager,Repository,PrimaryColumn,Generated, EntityTarget,CreateDateColumn,FindOptionsRelations,FindOptionsOrder } from 'typeorm'
+import { TxParam } from './annotation';
 
 type EntityOption<T> = {
     [P in keyof T]?: T[P]
@@ -103,7 +104,7 @@ export abstract class BaseSearch<T extends BaseEntity<T>,S extends BaseSearch<T,
 
 export class SpringTx {
 
-    constructor(public readonly e:EntityManager){
+    constructor(public readonly e:EntityManager,public readonly txParam:TxParam){
 
     }
 

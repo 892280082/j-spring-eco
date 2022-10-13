@@ -1,4 +1,7 @@
 import { spring } from 'j-spring'
 
+export type TxParam = {
+    isStartTx:boolean
+}
 
-export const Tx = () => spring.paramterAnnotationGenerator('sqlite-jdbc.Table','NoName',{},Tx);
+export const Tx = (isStartTx?:boolean) => spring.paramterAnnotationGenerator('sqlite-jdbc.Table','NoName',{isStartTx:!!isStartTx},Tx);

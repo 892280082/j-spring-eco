@@ -1,4 +1,4 @@
-import { spring, Component, SpringStarter } from 'j-spring'
+import { spring, Component, SpringStarter, Logger, Autowired } from 'j-spring'
 import { ClazzExtendsMap } from 'j-spring/dist/SpringFactry'
 import { WinstonLog } from '../src'
 
@@ -6,6 +6,8 @@ import { WinstonLog } from '../src'
 @Component()
 class Application implements SpringStarter {
 
+    @Autowired()
+    log:Logger;
 
 
     isSpringStater(): boolean {
@@ -13,6 +15,10 @@ class Application implements SpringStarter {
     }
 
     async doStart(clazzMap: ClazzExtendsMap): Promise<any> {
+
+        this.log.info('我启动成功了哦');
+
+        this.log.warn('这样其实不太好吧')
 
         console.log("启动了");
 
