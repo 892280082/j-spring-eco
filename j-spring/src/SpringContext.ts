@@ -170,7 +170,7 @@ export async function invokeStarter():Promise<any>{
         const clazzMap:ClazzExtendsMap = {
             addBean:(clazz:Clazz,bean:any,remark?:string)=>{
                 extendClazzBeanMap.set(clazz,bean);
-                logger(`创建映射${extendIndex++}: ${clazz.name} 值:${ new String(bean).substring(0,20) } 类型:${ typeof bean }  备注:${remark}`)
+                logger(`创建装配映射${extendIndex++}: ${clazz.name} 值:${ new String(bean).substring(0,20) } 类型:${ typeof bean }  备注:${remark}`)
             }
         }
 

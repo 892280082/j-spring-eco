@@ -12,32 +12,38 @@ export type MappingParam = {
 }
 
 
-export const Controller = (path:string) => spring.classAnnotationGenerator('j-spring.Controller',{path},Controller);
+export const Controller = (path:string) => spring.classAnnotationGenerator('j-spring-web.Controller',{path},Controller);
 
-export const Shuttle = () => spring.classAnnotationGenerator('j-spring.Shuttle',{},Shuttle)
+export const Shuttle = () => spring.classAnnotationGenerator('j-spring-web.Shuttle',{},Shuttle)
 
-export const ApiMiddleWare = (middleWareClassList:middleWareType[]) => spring.classAnnotationGenerator('j-spring.ApiMiddleWare',{middleWareClassList},ApiMiddleWare);
+export const ApiMiddleWare = (middleWareClassList:middleWareType[]) => spring.classAnnotationGenerator('j-spring-web.ApiMiddleWare',{middleWareClassList},ApiMiddleWare);
 
 //类 发送json控制器
-export const Json = ()=> spring.classAnnotationGenerator('j-spring.Json',{},Json);
+//export const Json = ()=> spring.classAnnotationGenerator('j-spring-web.Json',{},Json);
 
 //方法控制器 get请求
 
-export const Get = (path?:string) => spring.methodAnnotationGenerator('j-spring.Get',{path},Get);
+export const Get = (path?:string) => spring.methodAnnotationGenerator('j-spring-web.Get',{path},Get);
 
-export const ResponseBody = () => spring.methodAnnotationGenerator('j-spring.ResponseBody',{},ResponseBody);
+export type ApiRemarkParam = {
+    remark:String
+}
+
+export const ApiRemark = (remark:string) => spring.methodAnnotationGenerator('j-spring-web.Get',{remark} as ApiRemarkParam,ApiRemark);
+
+//export const ResponseBody = () => spring.methodAnnotationGenerator('j-spring-web.ResponseBody',{},ResponseBody);
 
 //方法控制器 Post请求
 
-export const Post = (path?:string) => spring.methodAnnotationGenerator('j-spring.Post',{path},Post);
+export const Post = (path?:string) => spring.methodAnnotationGenerator('j-spring-web.Post',{path},Post);
 
 //方法控制器 RequestMapping
 
-export const RequestMapping = (path?:string) => spring.methodAnnotationGenerator('j-spring.RequestMapping',{path},RequestMapping);
+export const RequestMapping = (path?:string) => spring.methodAnnotationGenerator('j-spring-web.RequestMapping',{path},RequestMapping);
 
-export const Render = (path:string) => spring.methodAnnotationGenerator('j-spring.Render',{path},Render);
+export const Render = (path:string) => spring.methodAnnotationGenerator('j-spring-web.Render',{path},Render);
 
-export const MiddleWare = (middleWareClassList:middleWareType[])  => spring.methodAnnotationGenerator('j-spring.middleWareClassList',{middleWareClassList},MiddleWare);
+export const MiddleWare = (middleWareClassList:middleWareType[])  => spring.methodAnnotationGenerator('j-spring-web.middleWareClassList',{middleWareClassList},MiddleWare);
 
 export type ParamterParamType = {
     name:string,
@@ -53,14 +59,14 @@ export interface ExpressMiddleWare {
 
 
 //字段
-export const PathVariable = (name:string) => spring.paramterAnnotationGenerator('j-spring.PathVariable',name,{name},PathVariable);
+export const PathVariable = (name:string) => spring.paramterAnnotationGenerator('j-spring-web.PathVariable',name,{name},PathVariable);
 //字段
-export const RequestParam = (name:string) => spring.paramterAnnotationGenerator('j-spring.RequestParam',name,{name},RequestParam);
+export const RequestParam = (name:string) => spring.paramterAnnotationGenerator('j-spring-web.RequestParam',name,{name},RequestParam);
 
-export const RequestBody = (name:string) => spring.paramterAnnotationGenerator('j-spring.RequestBody',name,{},RequestBody);
+export const RequestBody = (name:string) => spring.paramterAnnotationGenerator('j-spring-web.RequestBody',name,{},RequestBody);
 
 //获取session
-export const SessionAttribute = (name:string) => spring.paramterAnnotationGenerator('j-spring.SessionAttribute',name,{name},SessionAttribute);
+export const SessionAttribute = (name:string) => spring.paramterAnnotationGenerator('j-spring-web.SessionAttribute',name,{name},SessionAttribute);
 
-export const Param = (name:string) => spring.paramterAnnotationGenerator('j-spring.SessionAttribute',name,{name},Param);
+export const Param = (name:string) => spring.paramterAnnotationGenerator('j-spring-web.SessionAttribute',name,{name},Param);
 

@@ -1,5 +1,5 @@
 import { Component } from "j-spring";
-import { ApiMiddleWare, Controller, CorresDomainMiidleWare, ExpressMiddleWare, Get, MiddleWare, Param, PathVariable, RequestParam, ResponseBody, SessionAttribute } from "../../src";
+import { ApiMiddleWare, ApiRemark, Controller, CorresDomainMiidleWare, ExpressMiddleWare, Get, MiddleWare, Param, PathVariable, RequestParam, SessionAttribute } from "../../src";
 
 
 
@@ -9,14 +9,13 @@ import { ApiMiddleWare, Controller, CorresDomainMiidleWare, ExpressMiddleWare, G
 export class StudentController {
 
     //测试链接
+    @ApiRemark('测试链接')
     @Get()
-    @ResponseBody()
     async getConnectMsg(){
         return 'is-ok';
     }
 
     @Get('/testParamter/:a')
-    @ResponseBody()
     async testParamter(@PathVariable('a') a:string,@RequestParam('b') b:string){
         return a+b;
     }
@@ -29,7 +28,6 @@ export class StudentController {
 
     //接口返回
     @Get('/getStudentInfo/:id')
-    @ResponseBody()
     async getStudentInfo(
         @PathVariable('id') id:string,
         @RequestParam('name') name:string){
@@ -38,7 +36,6 @@ export class StudentController {
 
 
     @Get()
-    @ResponseBody()
     async addSessionName(@Param('session') session:any){
         session['name'] = 'xiaoAi'
         return {msg:'add success!'}
@@ -52,7 +49,6 @@ export class StudentController {
 
     @Get()
     @MiddleWare([ (a,_b,n) => {  a.query.bb=1;n()} ])
-    @ResponseBody()
     async testDiyMiddleWare(@RequestParam("bb") bb:number){
         return bb;
     }
@@ -80,7 +76,6 @@ class XiaoAiMustBeExist implements ExpressMiddleWare {
 export class XiaoAiController {
 
     @Get()
-    @ResponseBody()
     async getXiaoAiName(@SessionAttribute('name') name:string){
         return {name}
     }

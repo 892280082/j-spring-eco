@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import { Anntation, assemble, BeanDefine, Clazz, getBeanDefineByClass, MethodDefine } from "j-spring";
+import { Anntation, assemble, BeanDefine, Clazz, getBeanDefineByClass, MethodDefine,createDebugLogger } from "j-spring";
 import path from "path";
 import { 
     Controller, 
@@ -13,10 +13,14 @@ import {
     MiddleWare,
     Shuttle ,
     middleWareType,
-    Render
+    Render,
+    ApiRemark,
+    ApiRemarkParam
 } from "./springWebAnnotation";
 import {ExpressLoad,SpringWebParamInteceptor,SpringWebExceptionHandler} from './springWebExtends'
 import { paramInterceptor } from './springWebParamIntecepor'
+
+const logger = createDebugLogger('WebRouteDelegate:')
 
 type paramContainer = {
     inteceptor:SpringWebParamInteceptor<any>|undefined,
@@ -24,6 +28,7 @@ type paramContainer = {
 }
 
 type MethodRouterParm = {
+    index:number,
     bean:any,
     bd:BeanDefine,
     md:MethodDefine
@@ -32,6 +37,7 @@ type MethodRouterParm = {
 
 class MethodRouter {
 
+    index:number;
     hasShuttle:boolean;
     hasGet:boolean;
     hasPost:boolean;
@@ -46,6 +52,8 @@ class MethodRouter {
     maxParamLength:number;//最大参数数量
 
     middleWareFunction:Function[];//中间件函数
+
+    apiRemark:string ='';//备注
 
     error(msg:string){
         throw new Error(`class:${this.option.bd.clazz} method:${this.option.md.name} router analysis error:${msg}`);
@@ -151,6 +159,7 @@ class MethodRouter {
 
     constructor(public option:MethodRouterParm){
         const {md,bd} = option;
+        this.index = option.index;
         this.hasShuttle = bd.hasAnnotation(Shuttle); 
         this.hasGet = md.hasAnnotation(Get);
         this.hasPost = md.hasAnnotation(Post);
@@ -158,6 +167,10 @@ class MethodRouter {
         this.invokeMethod = this.resolveInokeMethod();
         this.reqPath = this.resolveReqPath();
         this.maxParamLength = this.resolvePamaterLength();
+
+        if(md.hasAnnotation(ApiRemark)){
+            this.apiRemark = `//${ (md.getAnnotation(ApiRemark)?.params as ApiRemarkParam)?.remark}`
+        }
     }
 
     loadNormalApi(app:any){
@@ -216,7 +229,11 @@ class MethodRouter {
         //执行的方法
         const appMethod = app[invokeMethod];
 
+        logger(`${this.index}: api ${invokeMethod} ${reqPath} => ${sendType} ${this.apiRemark}`)
+
         appMethod.apply(app,[reqPath,...middleWareFunction,proxyFunction])
+
+
     }
 
     /**
@@ -240,6 +257,8 @@ class MethodRouter {
                 exceptionHandler().hanlder(req,res,{code:500,sendType:'POST',error:`[SHUTTILE] ${e}`})
             }
         }
+
+        logger(`${this.index}: shuttle post ${reqPath} => json ${this.apiRemark}`)
 
         app.post(reqPath,[...middleWareFunction,proxyFunction])
 
@@ -271,9 +290,11 @@ export class ControllerBeanConfiguration implements ExpressLoad {
 
     constructor(public bean:any,public bd:BeanDefine,public exceptionHandler:()=>SpringWebExceptionHandler){
 
+        let i =0;
+
         bd.methodList.filter(hasTargetAnnotation).forEach(md => {
 
-            this.methodRouter.push(new MethodRouter({bean,bd,md,exceptionHandler}))
+            this.methodRouter.push(new MethodRouter({index:++i,bean,bd,md,exceptionHandler}))
 
         })
 
