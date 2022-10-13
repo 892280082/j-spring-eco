@@ -1,5 +1,5 @@
 import express from "express";
-import { Component, Value,SpringStarter } from "j-spring";
+import { Component, Value,SpringStarter,Logger } from "j-spring";
 import { ExpressApp, ExpressServer } from './springWebExtends'
 import {loadConfiguration} from './springWebBeanProcessor'
 import { ClazzExtendsMap } from "j-spring/dist/SpringFactry";
@@ -10,6 +10,9 @@ export class SpringWebStarter implements SpringStarter{
 
     @Value({path:'j-spring-web.port',force:false})
     port:number = 3000;
+
+    //日志
+    log:Logger;
 
     async doStart(clazzMap: ClazzExtendsMap): Promise<any> {
         const app = express();

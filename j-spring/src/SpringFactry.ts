@@ -3,7 +3,7 @@ import { Autowired, AutowiredParam, Value, ValueParam } from './SpringAnnotation
 import { geFormatValue, hasConfig } from './SpringResource'
 import { isFunction } from './util/shared';
 import { isSpringFactoryBean, loadFactoryBean, SpringFactoryBean } from './SpringFactoryBean'
-import { createDebugLogger,springLog } from './SpringLog'
+import { createDebugLogger,createLogBean,Logger,springLog } from './SpringLog'
 import { printLogo } from './util/printLogo';
 
 const logger = createDebugLogger('SpringFactory:')
@@ -228,11 +228,15 @@ export function validateassemblelazyAutowiredListIsSuccess() {
     const needAutowiredList = lazyAutowiredList.filter(a => a.state === 0);
     if (needAutowiredList.length > 0) {
 
-        const infos = needAutowiredList.reduce((s, at) => {
-            return s + `class ${at.bd.clazz} field:${at.fieldBd.name} autowired by type error.not match.`
-        }, '')
+        let i =0;
 
-        logger('装配出错：存在未命中的延迟装配')
+        springLog.error('启动失败,装配出错,存在未能注入的字段');
+
+        const infos = needAutowiredList.reduce((s, at) => {
+            return s + `序号${++i}: 类 ${at.bd.clazz.name} 字段:${at.fieldBd.name} 未找到匹配项 \n`
+        }, '');
+
+        springLog.error(infos);
 
         throw (infos)
     }
@@ -330,6 +334,13 @@ function assembleBeanDefine(bd: BeanDefine): any {
                 clazz = clazz || (param as ReflectParam).reflectType;
 
                 if (clazz) {
+                    if( (clazz as any) === Logger){
+                        if (!Reflect.set(bean, fieldName, createLogBean(bd.clazz))) {
+                            throw Error(`[反射装配错误] 类:${clazz?.name} 字段:${fieldName}`)
+                        }
+                        return;
+                    }
+
                     const subBeanDefine = getBeanDefineByClass(clazz)
                     if (subBeanDefine) {
                         logger(`${bd.clazz.name} <= @Autowired  class:${clazz.name}`)

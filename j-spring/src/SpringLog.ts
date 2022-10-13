@@ -1,4 +1,5 @@
 import { geFormatValue,loadResourceConfig } from './SpringResource'
+import { Clazz } from './SpringType';
 import { isFunction } from './util/shared';
 
 //设置默认配置
@@ -26,7 +27,7 @@ type LeveledLogMethod = {
     (infoObject: object): Logger;
 }
 
-export type Logger = {
+export class Logger {
     error: LeveledLogMethod;
     warn: LeveledLogMethod;
     help: LeveledLogMethod;
@@ -104,4 +105,16 @@ export const setLogger = (log:Logger) => {
 
 export const createDebugLogger = (prefix:string) => (msg:string) => {
     springLog.debug(prefix+msg)
+}
+
+export function createLogBean(clazz:Clazz):Logger {
+    const log = new Proxy({},{
+        get:function(_obj,prop){
+            const target = springLog as any;
+            return function(arg:any){
+                target[prop](`${clazz.name}.class: ${arg}`);
+            }
+        }
+    });
+    return log as Logger;
 }

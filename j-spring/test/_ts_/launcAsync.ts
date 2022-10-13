@@ -1,4 +1,4 @@
-import { Component,SpringStarter,launchAsync, spring, BeanPostProcessor, BeanDefine, Autowired, Value } from "../../src";
+import { Component,SpringStarter,launchAsync, spring, BeanPostProcessor, BeanDefine, Autowired, Value, Logger } from "../../src";
 import { ClazzExtendsMap } from "../../src/SpringFactry";
 
 @Component()
@@ -36,10 +36,15 @@ class Db implements SpringStarter{
   async doStart(clazzMap: ClazzExtendsMap): Promise<any> {
     clazzMap.addBean(LazyBean,new LazyBean(),"延迟加载bean")
     count=100;
+
+    this.log.info('我注入logger了');
   }
 
   @Autowired()
   lazyBean:LazyBean;
+
+  @Autowired()
+  log:Logger;
 
   @Value({path:'j-spring.log.level'})
   level:string;
