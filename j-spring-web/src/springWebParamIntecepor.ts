@@ -1,113 +1,146 @@
-import { Anntation,doForamtPlainValue, ReflectParam } from "j-spring";
-import { 
-    ParamterParamType, 
-    PathVariable, 
-    RequestParam, 
-    Param,
-    SessionAttribute,
-} from "./springWebAnnotation";
-import {SpringWebParamInteceptor} from './springWebExtends'
+import { Anntation, doForamtPlainValue, ReflectParam } from 'j-spring';
+import {
+  ArrayNumber,
+  ArrayString,
+  Request,
+  Response,
+  Session,
+} from './springReflectType';
+import {
+  ParamterParamType,
+  PathVariable,
+  RequestParam,
+  Param,
+  SessionAttribute,
+} from './springWebAnnotation';
+import { SpringWebParamInteceptor } from './springWebExtends';
 
 //参数处理器集合
-export const paramInterceptor:SpringWebParamInteceptor<any>[] = [];
+export const paramInterceptor: SpringWebParamInteceptor<any>[] = [];
 
+function simpleFormat(value: any, type: Function) {
+  if (type === String) return '' + value;
+  if (type === Number) return +value;
+  if (type === Array) return Array.of(value);
+  if (type === Boolean) {
+    if (typeof value === 'string') {
+      return value.toUpperCase() === 'TRUE';
+    }
+    return !!value;
+  }
+  return void 0;
+}
+
+function checkConvertValue(paramterName: string, value: any, type: Function) {
+  if (value === void 0)
+    throw `paramter:${paramterName} not support reflect type:${type}`;
+  if (Number.isNaN(value)) throw `paramter:${paramterName} the value is Nan`;
+}
 
 //query拦截器
 class RequestParamParamInteceptor implements SpringWebParamInteceptor<any> {
-    error(_bean: any): void {
+  error(_bean: any): void {}
+  success(_bean: any): void {}
+  isSpringWebParamInteceptor(): boolean {
+    return true;
+  }
+  getAnnotation(): Function {
+    return RequestParam;
+  }
+  getBean(req: any, _res: any, pa: Anntation): Promise<any> | any {
+    const { name, force } = pa.params as ParamterParamType;
+    const reflectType = (pa.params as ReflectParam).reflectType;
+    const resutlt = req.query[name];
+    if (resutlt === void 0 && !force) {
+      return undefined;
     }
-    success(_bean: any): void {
+    if (resutlt === void 0 && force) {
+      throw `paramter ${name} must be exist`;
     }
-    isSpringWebParamInteceptor(): boolean {
-        return true;
-    }
-    getAnnotation(): Function {
-        return RequestParam;
-    }
-    getBean(req: any,_res:any,pa: Anntation): Promise<any> | any{
-        const {name} = pa.params as ParamterParamType;
-        const resutlt =  req.query[name];
-        if(!resutlt){
-            throw `paramter ${name} must be exist`
-        }
-        return doForamtPlainValue(resutlt,(pa.params as ReflectParam).reflectType);
-    }
+    if (reflectType === ArrayNumber)
+      return resutlt.split(',').map((v: string) => +v);
+
+    if (reflectType === ArrayString) return resutlt.split(',');
+
+    const convertResult = simpleFormat(resutlt, reflectType);
+    checkConvertValue(name, convertResult, reflectType);
+    return convertResult;
+  }
 }
 
 //params拦截器
 class PathVariableParamInteceptor implements SpringWebParamInteceptor<any> {
-    error(_bean: any): void {
-    }
-    success(_bean: any): void {
-    }
-    isSpringWebParamInteceptor(): boolean {
-        return true;
-    }
-    getAnnotation(): Function {
-        return PathVariable;
-    }
-    getBean(req: any,_res:any, pa: Anntation): Promise<any> | any{
-        const {name} = pa.params as ParamterParamType;
-        const resutlt =  req.params[name];
-        if(!resutlt){
-            throw `paramter ${name} must be exist`
-        }
-        return doForamtPlainValue(resutlt,(pa.params as ReflectParam).reflectType);
-    }
+  error(_bean: any): void {}
+  success(_bean: any): void {}
+  isSpringWebParamInteceptor(): boolean {
+    return true;
+  }
+  getAnnotation(): Function {
+    return PathVariable;
+  }
+  getBean(req: any, _res: any, pa: Anntation): Promise<any> | any {
+    const { name } = pa.params as ParamterParamType;
+    const reflectType = (pa.params as ReflectParam).reflectType;
+    const resutlt = req.query[name];
+    const convertResult = simpleFormat(resutlt, reflectType);
+    checkConvertValue(name, convertResult, reflectType);
+    return convertResult;
+  }
 }
 
 class ParamInteceptor implements SpringWebParamInteceptor<any> {
-    error(_bean: any): void {
-        throw new Error("Method not implemented.");
-    }
-    success(_bean: any): void {
-        throw new Error("Method not implemented.");
-    }
-    isSpringWebParamInteceptor(): boolean {
-        return true;
-    }
-    getAnnotation(): Function {
-       return Param;
-    }
-    getBean(req: any,res:any, pa: Anntation) {
-        const {name} = pa.params as ParamterParamType;
-        switch(name){
-            case 'req':return req;
-            case 'res':return res;
-            case 'session':return req.session;
-            default:
-                throw `no support name:${name}`
-        }
-    }
+  error(_bean: any): void {}
+  success(_bean: any): void {}
+  isSpringWebParamInteceptor(): boolean {
+    return true;
+  }
+  getAnnotation(): Function {
+    return Param;
+  }
+  getBean(req: any, res: any, pa: Anntation) {
+    const { reflectType } = pa.params as ReflectParam;
+    if (reflectType === Request) return req;
+    if (reflectType === Response) return res;
+    if (reflectType === Session) return new Session(req.session);
+    throw `not support [${reflectType}] reflect type.`;
+  }
 }
 
 class SessionAttributeInteceptor implements SpringWebParamInteceptor<any> {
-    error(_bean: any): void {
-        throw new Error("Method not implemented.");
+  error(_bean: any): void {}
+  success(_bean: any): void {}
+  isSpringWebParamInteceptor(): boolean {
+    return true;
+  }
+  getAnnotation(): Function {
+    return SessionAttribute;
+  }
+  getBean(req: any, _res: any, pa: Anntation) {
+    if (!req.session) {
+      throw 'not find session module';
     }
-    success(_bean: any): void {
-        throw new Error("Method not implemented.");
+    const { name, force } = pa.params as ParamterParamType;
+    const reflectType = (pa.params as ReflectParam).reflectType;
+    const resutlt = req.session[name];
+    if (resutlt === void 0 && !force) {
+      return undefined;
     }
-    isSpringWebParamInteceptor(): boolean {
-        return true;
+    if (resutlt === void 0 && force) {
+      throw `session ${name} must be exist`;
     }
-    getAnnotation(): Function {
-       return SessionAttribute;
-    }
-    getBean(req: any,_res:any, pa: Anntation) {
-        if(!req.session){
-            throw 'not find session module'
-        }
-        const apam = pa.params as ParamterParamType;
-        const v = req.session[apam.name];
-        if(v === void 0)
-            throw `get session error!`
-            
-        return doForamtPlainValue(v,(pa.params as ReflectParam).reflectType);
-    }
-    
-}
+    const convertValue = simpleFormat(resutlt, reflectType);
 
+    if (convertValue === void 0) {
+      const pojo = new reflectType();
+      Object.assign(pojo, resutlt);
+      return pojo;
+    }
+
+    checkConvertValue(`session.${name}`, convertValue, reflectType);
+
+    return convertValue;
+  }
+}
 
 paramInterceptor.push(new RequestParamParamInteceptor());
 paramInterceptor.push(new PathVariableParamInteceptor());

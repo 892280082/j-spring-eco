@@ -1,64 +1,59 @@
-import { isCanFormat,doForamtPlainValue } from './util/formatValue'
+import { isCanFormat, doForamtPlainValue } from './util/formatValue';
 
 //初始化配置文件
-let configMap = new Map<string,any>();
+let configMap = new Map<string, any>();
 
 //加载配置
-export const loadResourceConfig = function(data:any,prefixKey?:string){
-    
-    prefixKey = prefixKey ? `${prefixKey}.` : '';
+export const loadResourceConfig = function(data: any, prefixKey?: string) {
+  prefixKey = prefixKey ? `${prefixKey}.` : '';
 
-    for(let key of Object.keys(data)){
+  for (let key of Object.keys(data)) {
+    const value = data[key];
+    const setKey = prefixKey + key;
 
-        const value = data[key];
-        const setKey = prefixKey+key;
-
-        if(typeof value === 'object'){
-            loadResourceConfig(value,setKey)
-        }else{
-            configMap.set(setKey,value)
-        }
-
+    if (typeof value === 'object') {
+      loadResourceConfig(value, setKey);
+    } else {
+      configMap.set(setKey, value);
     }
-
-}
+  }
+};
 
 //获取配置信息
-export const getConfigMap = ()=>configMap;
+export const getConfigMap = () => configMap;
 
 //是否存在指定配置
-export const hasConfig = (key:string):boolean => configMap.has(key);
+export const hasConfig = (key: string): boolean => configMap.has(key);
 
 //验证配置
-export const validateType = (type:Function) => isCanFormat(type);
+export const validateType = (type: Function) => isCanFormat(type);
 
-
-const throwError = (path:string,msg:string):void => { throw Error(`[配置解析错误]: 路径:[${path}] 原因：[${msg}]`) };
-
+const throwError = (path: string, msg: string): void => {
+  throw Error(`[配置解析错误]: 路径:[${path}] 原因：[${msg}]`);
+};
 
 //格式化值
-export const geFormatValue = (key:string,type:Function) => {
+export const geFormatValue = (key: string, type: Function) => {
+  if (!hasConfig(key)) {
+    throwError(key, '不存在');
+  }
 
-    if(!hasConfig(key)){
-        throwError(key,'不存在')
-    }
+  const value = configMap.get(key);
 
-    const value = configMap.get(key);
-
-    try{
-        const formatValue = doForamtPlainValue(value,type);
-        return formatValue;
-    }catch(e){
-        return throwError(key,''+e)
-    }
-}
+  try {
+    const formatValue = doForamtPlainValue(value, type);
+    return formatValue;
+  } catch (e) {
+    return throwError(key, '' + e);
+  }
+};
 
 export type ResourceOperate = {
-    hasConfig:(key:string) => boolean;
-    geFormatValue:(key:string) => string;
-}
+  hasConfig: (key: string) => boolean;
+  geFormatValue: (key: string) => string;
+};
 
-export const resourceOperate:ResourceOperate = {
-    hasConfig,
-    geFormatValue:(key:string) => geFormatValue(key,String)+''
-}
+export const resourceOperate: ResourceOperate = {
+  hasConfig,
+  geFormatValue: (key: string) => geFormatValue(key, String) + '',
+};

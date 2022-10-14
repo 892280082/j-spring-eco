@@ -1,70 +1,68 @@
-import { Component, Value,springLog } from 'j-spring';
-import rootPath from 'app-root-path'
+import { Component, Value, springLog } from 'j-spring';
+import rootPath from 'app-root-path';
 import path from 'path';
-import morgan  from 'morgan';
+import morgan from 'morgan';
 import { ExpressMiddleWare } from './springWebAnnotation';
-import { ExpressConfiguration } from './springWebExtends'
-import {errorInfo,SpringWebExceptionHandler} from './springWebExtends'
+import { ExpressConfiguration } from './springWebExtends';
+import { errorInfo, SpringWebExceptionHandler } from './springWebExtends';
 
 /**
  * ejs页面配置
  */
 @Component()
 export class EjsViewConfigruation implements ExpressConfiguration {
+  @Value({ path: 'express.view.root', force: false })
+  root: string = rootPath.resolve('./');
 
-    @Value({path:'express.view.root',force:false})
-    root:string = rootPath.resolve('./')
+  @Value({ path: 'express.view.dir', force: false })
+  viewPath: string = 'view';
 
-    @Value({path:'express.view.dir',force:false})
-    viewPath:string = 'view';
+  load(app: any): void {
+    app.set('views', path.join(this.root, this.viewPath));
+    app.set('view engine', 'ejs');
+  }
 
-    load(app: any): void {
-        app.set('views', path.join(this.root,this.viewPath));
-        app.set('view engine', 'ejs');
-    }
-    
-    isExpressConfiguration(): boolean {
-        return true;
-    }
-
+  isExpressConfiguration(): boolean {
+    return true;
+  }
 }
 
 /** express 内存-session 仅适用于开发模式 */
 @Component()
 export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
+  @Value({ path: 'express.session.secret', force: false })
+  secret: string = 'kity';
+  @Value({ path: 'express.session.maxAge', force: false })
+  maxAge: number = 60000;
 
-    @Value({path:'express.session.secret',force:false})
-    secret:string = 'kity';
-    @Value({path:'express.session.maxAge',force:false})
-    maxAge:number = 60000;
-
-    load(app: any): void {
-        const session = require('express-session')
-        app.use(session({
-            secret:this.secret,
-            cookie:{
-                maxAge:this.maxAge
-            }
-        }))
-    }
-    isExpressConfiguration(): boolean {
-        return true;
-    }
+  load(app: any): void {
+    const session = require('express-session');
+    app.use(
+      session({
+        secret: this.secret,
+        cookie: {
+          maxAge: this.maxAge,
+        },
+      })
+    );
+  }
+  isExpressConfiguration(): boolean {
+    return true;
+  }
 }
 
 @Component()
 export class BodyParseConfiguration implements ExpressConfiguration {
-    load(app: any): void {
-        const bodyParser = require('body-parser')
-        // parse application/x-www-form-urlencoded
-        app.use(bodyParser.urlencoded({ extended: false }))
-        // parse application/json
-        app.use(bodyParser.json())
-    }
-    isExpressConfiguration(): boolean {
-        return true;        
-    }
-
+  load(app: any): void {
+    const bodyParser = require('body-parser');
+    // parse application/x-www-form-urlencoded
+    app.use(bodyParser.urlencoded({ extended: false }));
+    // parse application/json
+    app.use(bodyParser.json());
+  }
+  isExpressConfiguration(): boolean {
+    return true;
+  }
 }
 
 /**
@@ -72,64 +70,57 @@ export class BodyParseConfiguration implements ExpressConfiguration {
  */
 @Component()
 export class CorresDomainMiidleWare implements ExpressMiddleWare {
-    isExpressMidldleWare(): boolean {
-        return  true;
-    }
-    invoke(_req: any, res: any, next: Function): void {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With");
-        res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-        res.header("X-Powered-By",' 3.2.1')
-        res.header("Content-Type", "application/json;charset=utf-8");
-        next();
-    }
+  isExpressMidldleWare(): boolean {
+    return true;
+  }
+  invoke(_req: any, res: any, next: Function): void {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+    res.header('X-Powered-By', ' 3.2.1');
+    res.header('Content-Type', 'application/json;charset=utf-8');
+    next();
+  }
 }
 
 /**
  * 默认异常处理
  */
-export class SpringWebExceptionHandlerConfigration implements SpringWebExceptionHandler {
-    isSpringWebExceptionHandler(): boolean {
-        return true;
-    }
+export class SpringWebExceptionHandlerConfigration
+  implements SpringWebExceptionHandler {
+  isSpringWebExceptionHandler(): boolean {
+    return true;
+  }
 
-    hanlder(_req: any, res: any, errorInfo: errorInfo): void {
-        console.log(errorInfo.error)
-        res.status(500).json({error:errorInfo.error})
-    }
-
+  hanlder(_req: any, res: any, errorInfo: errorInfo): void {
+    console.log(errorInfo.error);
+    res.status(500).json({ error: errorInfo.error });
+  }
 }
-
 
 @Component()
 export class MorganLogConfigruation implements ExpressConfiguration {
+  // Define message format string (this is the default one).
+  // The message format is made from tokens, and each token is
+  // defined inside the Morgan library.
+  // You can create your custom token to show what do you want from a request.
+  @Value({ path: 'morgan.regular', force: false })
+  regular: string =
+    ':remote-addr :method :url :status :res[content-length] - :response-time ms';
 
-    // Define message format string (this is the default one).
-    // The message format is made from tokens, and each token is
-    // defined inside the Morgan library.
-    // You can create your custom token to show what do you want from a request.
-    @Value({path:'morgan.regular',force:false})
-    regular:string = ':remote-addr :method :url :status :res[content-length] - :response-time ms';
+  load(app: any): void {
+    const stream = {
+      // Use the http severity
+      write: (message: any) => {
+        springLog.http(message);
+      },
+    };
 
-    load(app: any): void {
+    const morganMiddleware = morgan(this.regular, { stream });
 
-        const stream = {
-            // Use the http severity
-            write: (message:any) =>{
-                springLog.http(message)
-            }
-        };
-
-        const morganMiddleware = morgan(
-            this.regular,
-            { stream }
-        );
-
-        app.use(morganMiddleware);
-
-    }
-    isExpressConfiguration(): boolean {
-        return true;
-    }
-
+    app.use(morganMiddleware);
+  }
+  isExpressConfiguration(): boolean {
+    return true;
+  }
 }

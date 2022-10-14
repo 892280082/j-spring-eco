@@ -13,7 +13,8 @@ class CustomSpringWebExceptionHandler implements SpringWebExceptionHandler {
     }
     hanlder(_req: any, res: any, errorInfo: errorInfo): void {
        console.log(`this is diy error info`)
-       res.json(errorInfo.error)
+       console.error(errorInfo);
+       res.json(errorInfo)
     }
     
 }
