@@ -19,8 +19,10 @@ export class ArrayNumber extends Array<number> {}
 
 export class Session {
   constructor(private data: any) {}
-  get(key: string) {
-    return this.data[key];
+  get(key: string, defaultValue?: any) {
+    const v = this.data[key];
+    if (v === void 0 && defaultValue !== void 0) return defaultValue;
+    return v;
   }
   set(key: string, value: any) {
     this.data[key] = value;
