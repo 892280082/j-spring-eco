@@ -15,6 +15,7 @@ import {
 } from './controller/StudentController';
 import { ShuttleApi } from './controller/ShuttleApi';
 import { IndexController } from './controller/IndexController';
+import { TestController } from './controller/TestController';
 import path from 'path';
 
 @Component()
@@ -44,6 +45,7 @@ const controllerClassList = [
   StudentController,
   XiaoAiController,
   ShuttleApi,
+  TestController,
 ];
 
 export async function start(port: number) {

@@ -74,6 +74,7 @@ class MethodRouter {
   }
 
   private resolveInokeMethod(): string {
+    if (this.option.md.hasAnnotation(Render)) return 'get';
     if (this.hasRequestMapping) return 'use';
     if (this.hasGet && this.hasPost) return 'use';
     if (this.hasGet) return 'get';
@@ -85,11 +86,8 @@ class MethodRouter {
   private resolveSendType(app: any): void {
     const { md, bd } = this.option;
     if (md.hasAnnotation(Render)) {
-      if (
-        !existsSync(
-          path.join(app.get('views'), md.getAnnotation(Render)?.params.path)
-        )
-      )
+      const p = md.getAnnotation(Render)?.params || {};
+      if (p.path && !existsSync(path.join(app.get('views'), p.path)))
         throw `类:${bd.clazz.name} 方法:${md.name} Render 设置页面不存在`;
       this.sendType = 'html';
     }
@@ -112,7 +110,8 @@ class MethodRouter {
       md.getAnnotation(RequestMapping)
     )?.params as MappingParam;
 
-    const mdPath = mp.path || md.name;
+    //如果只函授Render注解，则mp不存在 必须加以判断
+    const mdPath = mp?.path || md.name;
 
     const methodMiddleWare =
       (md.getAnnotation(MiddleWare)?.params as MiddleWareParam)
@@ -307,7 +306,8 @@ function hasTargetAnnotation(md: MethodDefine) {
   return (
     md.hasAnnotation(Get) ||
     md.hasAnnotation(Post) ||
-    md.hasAnnotation(RequestMapping)
+    md.hasAnnotation(RequestMapping) ||
+    md.hasAnnotation(Render)
   );
 }
 

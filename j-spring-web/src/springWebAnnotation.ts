@@ -64,7 +64,7 @@ export const RequestMapping = (path?: string) =>
     RequestMapping
   );
 
-export const Render = (path: string) =>
+export const Render = (path?: string) =>
   spring.methodAnnotationGenerator('j-spring-web.Render', { path }, Render);
 
 export const MiddleWare = (middleWareClassList: middleWareType[]) =>
