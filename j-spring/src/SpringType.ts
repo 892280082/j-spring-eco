@@ -73,7 +73,3 @@ export class BeanDefine extends BaseDefine {
   //字段定义集合
   fieldList: FieldDefine[] = [];
 }
-
-export enum SpringEnum {
-  __isPringBean__ = '__isPringBean__',
-}
