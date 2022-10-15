@@ -74,16 +74,15 @@ class MethodRouter {
   }
 
   private resolveInokeMethod(): string {
-    if (this.option.md.hasAnnotation(Render)) return 'get';
     if (this.hasRequestMapping) return 'use';
     if (this.hasGet && this.hasPost) return 'use';
-    if (this.hasGet) return 'get';
+    if (this.option.md.hasAnnotation(Render) || this.hasGet) return 'get';
     if (this.hasPost) return 'post';
     this.error('_resolveInokeMethod error');
     return '';
   }
 
-  private resolveSendType(app: any): void {
+  private resolveSendType(app: ExpressApp): void {
     const { md, bd } = this.option;
     if (md.hasAnnotation(Render)) {
       const p = md.getAnnotation(Render)?.params || {};
