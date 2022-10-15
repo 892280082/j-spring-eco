@@ -39,15 +39,7 @@ function checkConvertValue(paramterName: string, value: any, type: Function) {
 
 //query拦截器
 class RequestParamParamInteceptor implements SpringWebParamInteceptor<any> {
-  error(_bean: any): void {}
-  success(_bean: any): void {}
-  isSpringWebParamInteceptor(): boolean {
-    return true;
-  }
-  getAnnotation(): Function {
-    return RequestParam;
-  }
-  getBean(req: any, _res: any, pa: Anntation): Promise<any> | any {
+  getBean(req: Request, _res: Response, pa: Anntation) {
     const { name, force } = pa.params as ParamterParamType;
     const reflectType = (pa.params as ReflectParam).reflectType;
     const resutlt = req.query[name];
@@ -66,6 +58,14 @@ class RequestParamParamInteceptor implements SpringWebParamInteceptor<any> {
     checkConvertValue(name, convertResult, reflectType);
     return convertResult;
   }
+  error(_bean: any): void {}
+  success(_bean: any): void {}
+  isSpringWebParamInteceptor(): boolean {
+    return true;
+  }
+  getAnnotation(): Function {
+    return RequestParam;
+  }
 }
 
 //params拦截器
@@ -78,7 +78,7 @@ class PathVariableParamInteceptor implements SpringWebParamInteceptor<any> {
   getAnnotation(): Function {
     return PathVariable;
   }
-  getBean(req: any, _res: any, pa: Anntation): Promise<any> | any {
+  getBean(req: Request, _res: Response, pa: Anntation): Promise<any> | any {
     const { name } = pa.params as ParamterParamType;
     const reflectType = (pa.params as ReflectParam).reflectType;
     const resutlt = req.query[name];
@@ -97,11 +97,16 @@ class ParamInteceptor implements SpringWebParamInteceptor<any> {
   getAnnotation(): Function {
     return Param;
   }
-  getBean(req: any, res: any, pa: Anntation) {
+  getBean(req: Request, res: Response, pa: Anntation) {
     const { reflectType } = pa.params as ReflectParam;
     if (reflectType === Request) return req;
     if (reflectType === Response) return res;
-    if (reflectType === Session) return new Session(req.session);
+    if (reflectType === Session) {
+      if (req.session === void 0) {
+        throw '没有安装session插件';
+      }
+      return new Session(req.session);
+    }
     throw `not support [${reflectType}] reflect type.`;
   }
 }

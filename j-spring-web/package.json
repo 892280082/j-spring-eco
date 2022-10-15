@@ -73,6 +73,7 @@
     "express-session": "^1.17.3",
     "j-spring": "file:.yalc/j-spring",
     "j-spring-log": "file:.yalc/j-spring-log",
+    "j-spring-type-wrap": "0.1.4",
     "morgan": "^1.10.0",
     "reflect-metadata": "^0.1.13"
   }

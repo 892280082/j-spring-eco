@@ -1,15 +1,16 @@
 import { Anntation } from 'j-spring';
+import { ExpressApp, Request, Response } from './springReflectType';
 
 export const isFunction = (val: unknown): val is Function =>
   typeof val === 'function';
 
 export interface ExpressLoad {
-  load(app: any): void;
+  load(app: ExpressApp): void;
 }
 
 //express App 配置
 export interface ExpressConfiguration extends ExpressLoad {
-  load(app: any): void;
+  load(app: ExpressApp): void;
   isExpressConfiguration(): boolean;
 }
 
@@ -30,7 +31,11 @@ export interface SpringWebParamInteceptor<T> {
   getAnnotation(): Function;
 
   //导出bean
-  getBean(req: any, res: any, paramterAnnotation: Anntation): Promise<T> | T;
+  getBean(
+    req: Request,
+    res: Response,
+    paramterAnnotation: Anntation
+  ): Promise<T> | T;
 
   //业务执行出错  如何销毁bean
   error(bean: T): void;
@@ -64,7 +69,12 @@ export interface SpringWebExceptionHandler {
   isSpringWebExceptionHandler(): boolean;
 
   //异常处理
-  hanlder(req: any, res: any, errorInfo: errorInfo, next?: Function): void;
+  hanlder(
+    req: Request,
+    res: Response,
+    errorInfo: errorInfo,
+    next?: Function
+  ): void;
 }
 
 export function isSpringWebExceptionHandler(bean: any): boolean {
