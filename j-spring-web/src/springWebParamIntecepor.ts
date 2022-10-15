@@ -107,7 +107,7 @@ class ParamInteceptor implements SpringWebParamInteceptor<any> {
       }
       return new Session(req.session);
     }
-    throw `not support [${reflectType}] reflect type.`;
+    throw `不支持参数反射类型: [${reflectType}]`;
   }
 }
 

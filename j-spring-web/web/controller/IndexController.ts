@@ -60,6 +60,18 @@ export class IndexController {
     return { req: req ? 'yes' : 'no', a, sum, userName: user?.name };
   }
 
+  @Get()
+  @ApiRemark('测试反射')
+  async testQuery3(
+    @RequestParam('a') a: number,
+    @RequestParam('ids') ids: ArrayNumber,
+    @Param() req: Request,
+    @Param() res: Response,
+    @Param() session: Session
+  ) {
+    return {};
+  }
+
   //测试3: @Get 方法不加参数 默认使用方法名作为路径
   @Post()
   async postMsg() {

@@ -1,17 +1,11 @@
 import {
-  RequestAbs,
-  ResponseAbs,
-  ExpressAppAbs,
-  ExpressServerAbs,
+  RequestAbs as Request,
+  ResponseAbs as Response,
+  ExpressAppAbs as ExpressApp,
+  ExpressServerAbs as ExpressServer,
 } from 'j-spring-type-wrap';
 
-export class Request extends RequestAbs {}
-
-export class Response extends ResponseAbs {}
-
-export class ExpressApp extends ExpressAppAbs {}
-
-export class ExpressServer extends ExpressServerAbs {}
+export { Request, Response, ExpressApp, ExpressServer };
 
 export class ArrayString extends Array<string> {}
 
