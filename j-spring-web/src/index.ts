@@ -14,6 +14,7 @@ export {
 export * from './springWebConfiguration';
 export * from './springWebAnnotation';
 export * from './springReflectType';
+export * from './springWebExtends';
 
 /**
  * SpringWebStarter web启动器
