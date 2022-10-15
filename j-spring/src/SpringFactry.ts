@@ -12,7 +12,7 @@ import {
   ValueParam,
 } from './SpringAnnotation';
 import { geFormatValue, hasConfig } from './SpringResource';
-import { isFunction } from './util/shared';
+import { isFunction, isFunctionList } from './util/shared';
 import {
   isSpringFactoryBean,
   loadFactoryBean,
@@ -68,9 +68,17 @@ let lazyAutowiredList: LazyAutowired[] = [];
 
 //bean的生命周期函数
 export interface SpringBean {
-  // [SpringEnum.__isPringBean__]:true
-  //当属性装配完毕
-  onAttrMounted(): void;
+  isSpringBean(): boolean;
+  onBeanInit(): void; //初始化
+  onAttrMounted(): void; //当属性装配完毕 包括异步的
+}
+
+function isSpringBean(val: SpringBean): val is SpringBean {
+  return (
+    val &&
+    isFunctionList(val.isSpringBean, val.onAttrMounted, val.onBeanInit) &&
+    val.isSpringBean()
+  );
 }
 
 export type SpringStarterClazz = new () => SpringStarter;
@@ -276,8 +284,9 @@ export function validateassemblelazyAutowiredListIsSuccess() {
 
 //调用springBean的生命周期方法
 function invokeSpringBeanMethod() {
-  const allBeans = Array.from(beanDefineMap.values());
-  allBeans.forEach(bean => (bean as SpringBean).onAttrMounted?.());
+  Array.from(beanDefineMap.values())
+    .filter(isSpringBean)
+    .forEach(b => b.onAttrMounted());
 }
 
 //装配指定class
@@ -328,6 +337,8 @@ function assembleBeanDefine(bd: BeanDefine): any {
 
   //实例化对象 只支持无参构造器
   let bean = new bd.clazz();
+
+  if (isSpringBean(bean)) bean.onBeanInit();
 
   //获取后置处理器
   const beanPostProcessor = getSoredBeanPostProcessorList();
