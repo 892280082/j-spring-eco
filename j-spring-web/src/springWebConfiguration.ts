@@ -5,22 +5,22 @@ import morgan from 'morgan';
 import { ExpressMiddleWare } from './springWebAnnotation';
 import { ExpressConfiguration } from './springWebExtends';
 import { errorInfo, SpringWebExceptionHandler } from './springWebExtends';
+import { ExpressApp } from './springReflectType';
 
 /**
  * ejs页面配置
  */
 @Component()
 export class EjsViewConfigruation implements ExpressConfiguration {
+  load(app: ExpressApp): void {
+    app.set('views', path.join(this.root, this.viewPath));
+    app.set('view engine', 'ejs');
+  }
   @Value({ path: 'express.view.root', force: false })
   root: string = rootPath.resolve('./');
 
   @Value({ path: 'express.view.dir', force: false })
   viewPath: string = 'view';
-
-  load(app: any): void {
-    app.set('views', path.join(this.root, this.viewPath));
-    app.set('view engine', 'ejs');
-  }
 
   isExpressConfiguration(): boolean {
     return true;
@@ -30,12 +30,7 @@ export class EjsViewConfigruation implements ExpressConfiguration {
 /** express 内存-session 仅适用于开发模式 */
 @Component()
 export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
-  @Value({ path: 'express.session.secret', force: false })
-  secret: string = 'kity';
-  @Value({ path: 'express.session.maxAge', force: false })
-  maxAge: number = 60000;
-
-  load(app: any): void {
+  load(app: ExpressApp): void {
     const session = require('express-session');
     app.use(
       session({
@@ -46,6 +41,11 @@ export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
       })
     );
   }
+  @Value({ path: 'express.session.secret', force: false })
+  secret: string = 'kity';
+  @Value({ path: 'express.session.maxAge', force: false })
+  maxAge: number = 60000;
+
   isExpressConfiguration(): boolean {
     return true;
   }
@@ -53,7 +53,7 @@ export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
 
 @Component()
 export class BodyParseConfiguration implements ExpressConfiguration {
-  load(app: any): void {
+  load(app: ExpressApp): void {
     const bodyParser = require('body-parser');
     // parse application/x-www-form-urlencoded
     app.use(bodyParser.urlencoded({ extended: false }));
@@ -108,7 +108,7 @@ export class MorganLogConfigruation implements ExpressConfiguration {
   regular: string =
     ':remote-addr :method :url :status :res[content-length] - :response-time ms';
 
-  load(app: any): void {
+  load(app: ExpressApp): void {
     const stream = {
       // Use the http severity
       write: (message: any) => {

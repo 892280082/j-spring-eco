@@ -1,5 +1,5 @@
 import { Value } from 'j-spring';
-import { CorresDomainMiidleWare, Request, Session } from '../../src';
+import { CorresDomainMiidleWare, Request, Response, Session } from '../../src';
 import {
   Controller,
   Get,
@@ -42,13 +42,18 @@ export class IndexController {
 
   @Get()
   @ApiRemark('测试query参数解析,添加session')
-  async testQuery(
+  async testQuery2(
     @RequestParam('a') a: number,
     @RequestParam('ids') ids: ArrayNumber,
     @Param() req: Request,
+    @Param() res: Response,
     @Param() session: Session,
     @SessionAttribute('user', false) user?: User
   ) {
+    console.log(req);
+    console.log(res);
+    console.log('-------------------');
+    console.log(req.query);
     console.log('user', user);
     session.set('user', { name: 'harry' });
     const sum = ids.reduce((s, a) => (s += a), 0);

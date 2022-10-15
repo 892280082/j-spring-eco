@@ -9,6 +9,7 @@ import {
   createDebugLogger,
 } from 'j-spring';
 import path from 'path';
+import { ExpressApp, Request, Response } from './springReflectType';
 import {
   Controller,
   Get,
@@ -198,13 +199,13 @@ class MethodRouter {
     }
   }
 
-  loadNormalApi(app: any) {
+  loadNormalApi(app: ExpressApp) {
     this.resolveSendType(app);
     const { md, bean, exceptionHandler } = this.option;
     const { invokeMethod, sendType, reqPath, middleWareFunction } = this;
 
     //代理的函数
-    const proxyFunction = async (req: any, res: any) => {
+    const proxyFunction = async (req: Request, res: Response) => {
       let params: paramContainer[] = []; //参数
       let result: any; //业务计算结果
 
@@ -252,7 +253,7 @@ class MethodRouter {
     };
 
     //执行的方法
-    const appMethod = app[invokeMethod];
+    const appMethod = (app as any)[invokeMethod];
 
     logger(
       `${this.index}: api ${invokeMethod} ${reqPath} => ${sendType} ${this.apiRemark}`
@@ -265,11 +266,11 @@ class MethodRouter {
    * 只支持post请求，将body中的参数
    *
    */
-  loadShuttleApi(app: any) {
+  loadShuttleApi(app: ExpressApp) {
     const { md, bean, exceptionHandler } = this.option;
     const { reqPath, middleWareFunction } = this;
 
-    const proxyFunction = async (req: any, res: any) => {
+    const proxyFunction = async (req: Request, res: Response) => {
       if (req.body === void 0) {
         throw 'please use body-parse middleWare or add BodyParseConfiguration';
       }
@@ -288,10 +289,10 @@ class MethodRouter {
 
     logger(`${this.index}: shuttle post ${reqPath} => json ${this.apiRemark}`);
 
-    app.post(reqPath, [...middleWareFunction, proxyFunction]);
+    (app as any).post(reqPath, [...middleWareFunction, proxyFunction]);
   }
 
-  loadExpressApp(app: any) {
+  loadExpressApp(app: ExpressApp) {
     if (this.hasShuttle) {
       this.loadShuttleApi(app);
     } else {
@@ -329,11 +330,11 @@ export class ControllerBeanConfiguration implements ExpressLoad {
   }
 
   //加载express app
-  load(_app: any): void {
+  load(_app: ExpressApp): void {
     //注册所有路由
     this.methodRouter.forEach(m => m.loadExpressApp(_app));
     //注册错误处理路由
-    _app.use((err: any, req: any, res: any, next: Function) => {
+    _app.use((err: any, req: Request, res: Response, next: Function) => {
       this.exceptionHandler().hanlder(
         req,
         res,

@@ -715,7 +715,7 @@ export class ExpressAppAbs {
   locals: Record<string, any>;
   routes: any;
   _router: any;
-  use: (key: string | Function, fn: Function) => void;
+  use: (key: string | Function, fn?: Function) => void;
   on: (event: string, callback: (parent: Application) => void) => this;
   mountpath: string | string[];
 }
