@@ -1,4 +1,3 @@
-import { Anntation } from 'j-spring';
 import { ExpressApp, Request, Response } from './springReflectType';
 
 export const isFunction = (val: unknown): val is Function =>
@@ -20,40 +19,6 @@ export function isExpressConfiguration(bean: any) {
     isFunction(ec.load) &&
     isFunction(ec.isExpressConfiguration) &&
     ec.isExpressConfiguration()
-  );
-}
-
-//参数拦截操作操作
-export interface SpringWebParamInteceptor<T> {
-  isSpringWebParamInteceptor(): boolean;
-
-  //获取注解
-  getAnnotation(): Function;
-
-  //导出bean
-  getBean(
-    req: Request,
-    res: Response,
-    paramterAnnotation: Anntation
-  ): Promise<T> | T;
-
-  //业务执行出错  如何销毁bean
-  error(bean: T): void;
-
-  //业务执行成功
-  success(bean: T): void;
-}
-
-export function isSpringWebParamInteceptor(bean: any) {
-  const t = bean as SpringWebParamInteceptor<any>;
-  return (
-    t &&
-    isFunction(t.getAnnotation) &&
-    isFunction(t.getBean) &&
-    isFunction(t.success) &&
-    isFunction(t.error) &&
-    isFunction(t.isSpringWebParamInteceptor) &&
-    t.isSpringWebParamInteceptor()
   );
 }
 

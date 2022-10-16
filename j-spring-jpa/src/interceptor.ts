@@ -1,15 +1,16 @@
 import { Component, Autowired, Clazz, Anntation } from 'j-spring';
-import { SpringWebParamInteceptor } from 'j-spring-web';
+import { ParamEnhanceInterceptor } from 'j-spring-web';
 import { EntityManager, DataSource, QueryRunner } from 'typeorm';
 import { Tx, TxParam } from './annotation';
 import { SpringTx } from './springTx';
 
 @Component()
-export class TxParamInteceptor implements SpringWebParamInteceptor<SpringTx> {
+export class TxParamEnhanceInterceptor
+  implements ParamEnhanceInterceptor<SpringTx> {
   @Autowired({ clazz: DataSource as Clazz })
   dataSource: DataSource;
 
-  isSpringWebParamInteceptor(): boolean {
+  isParamEnhanceInterceptor(): boolean {
     return true;
   }
   getAnnotation(): Function {

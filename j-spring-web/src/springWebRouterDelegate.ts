@@ -1,4 +1,3 @@
-import { existsSync } from 'fs';
 import {
   Anntation,
   assemble,
@@ -20,23 +19,25 @@ import {
   ApiMiddleWare,
   MiddleWareParam,
   MiddleWare,
-  Shuttle,
   middleWareType,
   Render,
   ApiRemark,
   ApiRemarkParam,
 } from './springWebAnnotation';
+import { ExpressLoad, SpringWebExceptionHandler } from './springWebExtends';
 import {
-  ExpressLoad,
-  SpringWebParamInteceptor,
-  SpringWebExceptionHandler,
-} from './springWebExtends';
-import { paramInterceptor } from './springWebParamIntecepor';
+  paramEnhanceInterceptorList,
+  ParamEnhanceInterceptor,
+} from './paramEnhanceInterceptor';
+import {
+  routeEnhanceInterceptor,
+  RouterEnhanceInterceptor,
+} from './routerEnhanceInterceptor';
 
 const logger = createDebugLogger('WebRouteDelegate:');
 
 type paramContainer = {
-  inteceptor: SpringWebParamInteceptor<any> | undefined;
+  Interceptor: ParamEnhanceInterceptor<any> | undefined;
   bean: any;
 };
 
@@ -48,24 +49,19 @@ type MethodRouterParm = {
   exceptionHandler: () => SpringWebExceptionHandler;
 };
 
-class MethodRouter {
+export class MethodRouter {
   index: number;
-  hasShuttle: boolean;
   hasGet: boolean;
   hasPost: boolean;
   hasRequestMapping: boolean;
-
   invokeMethod: string; //get post use
-
   sendType: string = 'json'; // 默认都是发送json
-
   reqPath: string; //请求路径
-
   maxParamLength: number; //最大参数数量
-
   middleWareFunction: Function[]; //中间件函数
-
   apiRemark: string = ''; //备注
+  routerEnhance: RouterEnhanceInterceptor;
+  app: ExpressApp;
 
   error(msg: string) {
     throw new Error(
@@ -74,22 +70,20 @@ class MethodRouter {
   }
 
   private resolveInokeMethod(): string {
+    if (this.routerEnhance) {
+      return this.routerEnhance.getReqType({ app: this.app, ...this.option });
+    }
     if (this.hasRequestMapping) return 'use';
     if (this.hasGet && this.hasPost) return 'use';
-    if (this.option.md.hasAnnotation(Render) || this.hasGet) return 'get';
+    if (this.hasGet) return 'get';
     if (this.hasPost) return 'post';
     this.error('_resolveInokeMethod error');
     return '';
   }
 
   private resolveSendType(app: ExpressApp): void {
-    const { md, bd } = this.option;
-    if (md.hasAnnotation(Render)) {
-      const p = md.getAnnotation(Render)?.params || {};
-      if (p.path && !existsSync(path.join(app.get('views'), p.path)))
-        throw `类:${bd.clazz.name} 方法:${md.name} Render 设置页面不存在`;
-      this.sendType = 'html';
-    }
+    if (this.routerEnhance)
+      this.sendType = this.routerEnhance.getReqType({ app, ...this.option });
   }
 
   private resolveReqPath(): string {
@@ -153,14 +147,16 @@ class MethodRouter {
 
     //填充所有参数
     for (let i = 0; i < this.maxParamLength; i++)
-      params.push({ bean: undefined, inteceptor: undefined });
+      params.push({ bean: undefined, Interceptor: undefined });
 
     //每个字段匹配第一个可以处理的注解
     for (let pdi = 0; pdi < md.paramterDefineList.length; pdi++) {
       const paramterDefine = md.paramterDefineList[pdi];
       for (let ai = 0; ai < paramterDefine.annotationList.length; ai++) {
         const an: Anntation = paramterDefine.annotationList[ai];
-        const pi = paramInterceptor.find(pi => pi.getAnnotation() === an.clazz);
+        const pi = paramEnhanceInterceptorList.find(
+          pi => pi.getAnnotation() === an.clazz
+        );
         if (pi) {
           let bean;
           try {
@@ -168,10 +164,10 @@ class MethodRouter {
             bean = tempBean instanceof Promise ? await tempBean : tempBean;
           } catch (e) {
             //如果获取异常 则执行销毁
-            params.forEach(p => p.inteceptor?.error(p.bean));
+            params.forEach(p => p.Interceptor?.error(p.bean));
             throw e;
           }
-          params[paramterDefine.index] = { bean, inteceptor: pi };
+          params[paramterDefine.index] = { bean, Interceptor: pi };
         }
       }
     }
@@ -180,9 +176,16 @@ class MethodRouter {
   }
 
   constructor(public option: MethodRouterParm) {
+    const { app } = this;
     const { md, bd } = option;
+
+    //寻找匹配的路由增强处理器
+    const ro = routeEnhanceInterceptor.find(ro => ro.match({ app, bd, md }));
+    if (ro) {
+      this.routerEnhance = ro;
+    }
+
     this.index = option.index;
-    this.hasShuttle = bd.hasAnnotation(Shuttle);
     this.hasGet = md.hasAnnotation(Get);
     this.hasPost = md.hasAnnotation(Post);
     this.hasRequestMapping = md.hasAnnotation(RequestMapping);
@@ -199,17 +202,17 @@ class MethodRouter {
 
   loadNormalApi(app: ExpressApp) {
     this.resolveSendType(app);
-    const { md, bean, exceptionHandler } = this.option;
+    const { bd, md, bean, exceptionHandler } = this.option;
     const { invokeMethod, sendType, reqPath, middleWareFunction } = this;
 
-    //代理的函数
-    const proxyFunction = async (req: Request, res: Response) => {
+    //默认的代理的函数
+    const defaultProxyFunction = async (req: Request, res: Response) => {
       let params: paramContainer[] = []; //参数
       let result: any; //业务计算结果
 
       //统一错误处理
       const wrapHandler = (code: number, e: unknown) => {
-        params.forEach(p => p.inteceptor?.error(p.bean));
+        params.forEach(p => p.Interceptor?.error(p.bean));
         exceptionHandler().hanlder(req, res, {
           code,
           error: e as string,
@@ -217,7 +220,7 @@ class MethodRouter {
         });
       };
 
-      //1.处理参数反射阶段
+      //1.使用参数增强 获取处理后的参数结果集合
       try {
         params = await this.getInvokeParams(req, res);
       } catch (e) {
@@ -229,73 +232,39 @@ class MethodRouter {
         const paramBeans = params.map(p => p.bean);
         result = await bean[md.name].apply(bean, paramBeans);
 
-        if (result !== void 0) {
-          //3.渲染阶段
-          switch (sendType) {
-            case 'json':
-              res.json(result);
-              break;
-            case 'html':
-              const filePath = md.getAnnotation(Render)?.params.path;
-              res.render(`${filePath}`, result);
-              break;
-            default:
-              wrapHandler(500, `sendType error:${sendType}`);
-          }
-        }
+        //3.如果存在路由增强处理器 使用处理器处理 否则默认发送json数据
+        this.routerEnhance
+          ? this.routerEnhance.operate({ app, bd, md, req, res, result })
+          : res.json(result);
 
-        params.forEach(p => p.inteceptor?.success(p.bean));
+        params.forEach(p => p.Interceptor?.success(p.bean));
       } catch (e) {
         wrapHandler(500, e);
       }
     };
 
+    const invokeFunction =
+      this.routerEnhance?.getInvokeFunction(this) || defaultProxyFunction;
+
     //执行的方法
     const appMethod = (app as any)[invokeMethod];
 
     logger(
-      `${this.index}: api ${invokeMethod} ${reqPath} => ${sendType} ${this.apiRemark}`
+      `${
+        this.routerEnhance
+          ? ` 路由增强：${(this.routerEnhance as any).constructor?.name} `
+          : ''
+      }  ${this.index}: api ${invokeMethod} ${reqPath} => ${sendType} ${
+        this.apiRemark
+      }`
     );
 
-    appMethod.apply(app, [reqPath, ...middleWareFunction, proxyFunction]);
-  }
-
-  /**
-   * 只支持post请求，将body中的参数
-   *
-   */
-  loadShuttleApi(app: ExpressApp) {
-    const { md, bean, exceptionHandler } = this.option;
-    const { reqPath, middleWareFunction } = this;
-
-    const proxyFunction = async (req: Request, res: Response) => {
-      if (req.body === void 0) {
-        throw 'please use body-parse middleWare or add BodyParseConfiguration';
-      }
-      const { args } = req.body;
-      try {
-        const result = await bean[md.name].apply(bean, [...args, { req, res }]);
-        res.json(result);
-      } catch (e) {
-        exceptionHandler().hanlder(req, res, {
-          code: 500,
-          sendType: 'POST',
-          error: `[SHUTTILE] ${e}`,
-        });
-      }
-    };
-
-    logger(`${this.index}: shuttle post ${reqPath} => json ${this.apiRemark}`);
-
-    (app as any).post(reqPath, [...middleWareFunction, proxyFunction]);
+    appMethod.apply(app, [reqPath, ...middleWareFunction, invokeFunction]);
   }
 
   loadExpressApp(app: ExpressApp) {
-    if (this.hasShuttle) {
-      this.loadShuttleApi(app);
-    } else {
-      this.loadNormalApi(app);
-    }
+    this.app = app;
+    this.loadNormalApi(app);
   }
 }
 
@@ -329,11 +298,11 @@ export class ControllerBeanConfiguration implements ExpressLoad {
   }
 
   //加载express app
-  load(_app: ExpressApp): void {
+  load(app: ExpressApp): void {
     //注册所有路由
-    this.methodRouter.forEach(m => m.loadExpressApp(_app));
+    this.methodRouter.forEach(m => m.loadExpressApp(app));
     //注册错误处理路由
-    _app.use((err: any, req: Request, res: Response, next: Function) => {
+    app.use((err: any, req: Request, res: Response, next: Function) => {
       this.exceptionHandler().hanlder(
         req,
         res,

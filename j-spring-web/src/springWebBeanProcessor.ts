@@ -15,8 +15,14 @@ import {
   isSpringWebExceptionHandler,
 } from './springWebExtends';
 import { SpringWebExceptionHandlerConfigration } from './springWebConfiguration';
-import { isSpringWebParamInteceptor } from './springWebExtends';
-import { paramInterceptor } from './springWebParamIntecepor';
+import {
+  paramEnhanceInterceptorList,
+  isParamEnhanceInterceptor,
+} from './paramEnhanceInterceptor';
+import {
+  isRouterEnhanceInterceptor,
+  routeEnhanceInterceptor,
+} from './routerEnhanceInterceptor';
 
 const logger = createDebugLogger('WebBeanProcessor:');
 
@@ -106,8 +112,27 @@ export class SpringParamterBeanPostProcessor implements BeanPostProcessor {
     return bean;
   }
   postProcessAfterInitialization(bean: any, _beanDefine: BeanDefine): Object {
-    if (isSpringWebParamInteceptor(bean)) {
-      paramInterceptor.push(bean);
+    if (isParamEnhanceInterceptor(bean)) {
+      paramEnhanceInterceptorList.push(bean);
+    }
+    return bean;
+  }
+}
+/***
+ * 结果处理后置处理器
+ */
+
+@Component()
+export class SpringResultOperatePostProcessor implements BeanPostProcessor {
+  getSort(): number {
+    return 100;
+  }
+  postProcessBeforeInitialization(bean: any, _beanDefine: BeanDefine): Object {
+    return bean;
+  }
+  postProcessAfterInitialization(bean: any, _beanDefine: BeanDefine): Object {
+    if (isRouterEnhanceInterceptor(bean)) {
+      routeEnhanceInterceptor.push(bean);
     }
     return bean;
   }

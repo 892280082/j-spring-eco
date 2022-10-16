@@ -14,7 +14,6 @@ import {
   SessionAttribute,
 } from '../../src/springWebAnnotation';
 import { ArrayNumber } from '../../src';
-import { Agent } from 'http';
 
 class User {
   name: string;
@@ -69,7 +68,7 @@ export class IndexController {
     @Param() res: Response,
     @Param() session: Session
   ) {
-    return {};
+    return { a, ids, req, res, session };
   }
 
   //测试3: @Get 方法不加参数 默认使用方法名作为路径

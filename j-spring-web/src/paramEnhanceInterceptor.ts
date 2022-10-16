@@ -1,4 +1,12 @@
-import { Anntation, ReflectParam } from 'j-spring';
+/***
+ * 请求参数增强
+ * QueryParamEnhance 获取普通query增强
+ * PathVariableEnhance 路径参数获取增强
+ * ReflectParamEnhance 反射参数获取增强
+ * SessionAttributeEnhance session参数获取曾强
+ */
+
+import { Anntation, ReflectParam, isFunctionList } from 'j-spring';
 import {
   ArrayNumber,
   ArrayString,
@@ -13,10 +21,47 @@ import {
   Param,
   SessionAttribute,
 } from './springWebAnnotation';
-import { SpringWebParamInteceptor } from './springWebExtends';
+
+//参数拦截操作操作
+export interface ParamEnhanceInterceptor<T> {
+  isParamEnhanceInterceptor(): boolean;
+
+  //获取注解
+  getAnnotation(): Function;
+
+  //导出bean
+  getBean(
+    req: Request,
+    res: Response,
+    paramterAnnotation: Anntation
+  ): Promise<T> | T;
+
+  //业务执行出错  如何销毁bean
+  error(bean: T): void;
+
+  //业务执行成功
+  success(bean: T): void;
+}
+
+export function isParamEnhanceInterceptor(
+  bean: ParamEnhanceInterceptor<any>
+): bean is ParamEnhanceInterceptor<any> {
+  const t = bean as ParamEnhanceInterceptor<any>;
+  return (
+    t &&
+    isFunctionList(
+      t.getAnnotation,
+      t.getBean,
+      t.success,
+      t.error,
+      t.isParamEnhanceInterceptor
+    ) &&
+    t.isParamEnhanceInterceptor()
+  );
+}
 
 //参数处理器集合
-export const paramInterceptor: SpringWebParamInteceptor<any>[] = [];
+export const paramEnhanceInterceptorList: ParamEnhanceInterceptor<any>[] = [];
 
 function simpleFormat(value: any, type: Function) {
   if (type === String) return '' + value;
@@ -38,7 +83,7 @@ function checkConvertValue(paramterName: string, value: any, type: Function) {
 }
 
 //query拦截器
-class RequestParamParamInteceptor implements SpringWebParamInteceptor<any> {
+class QueryParamEnhance implements ParamEnhanceInterceptor<any> {
   getBean(req: Request, _res: Response, pa: Anntation) {
     const { name, force } = pa.params as ParamterParamType;
     const reflectType = (pa.params as ReflectParam).reflectType;
@@ -60,7 +105,7 @@ class RequestParamParamInteceptor implements SpringWebParamInteceptor<any> {
   }
   error(_bean: any): void {}
   success(_bean: any): void {}
-  isSpringWebParamInteceptor(): boolean {
+  isParamEnhanceInterceptor(): boolean {
     return true;
   }
   getAnnotation(): Function {
@@ -69,10 +114,10 @@ class RequestParamParamInteceptor implements SpringWebParamInteceptor<any> {
 }
 
 //params拦截器
-class PathVariableParamInteceptor implements SpringWebParamInteceptor<any> {
+class PathVariableEnhance implements ParamEnhanceInterceptor<any> {
   error(_bean: any): void {}
   success(_bean: any): void {}
-  isSpringWebParamInteceptor(): boolean {
+  isParamEnhanceInterceptor(): boolean {
     return true;
   }
   getAnnotation(): Function {
@@ -81,17 +126,17 @@ class PathVariableParamInteceptor implements SpringWebParamInteceptor<any> {
   getBean(req: Request, _res: Response, pa: Anntation): Promise<any> | any {
     const { name } = pa.params as ParamterParamType;
     const reflectType = (pa.params as ReflectParam).reflectType;
-    const resutlt = req.query[name];
+    const resutlt = req.params[name];
     const convertResult = simpleFormat(resutlt, reflectType);
     checkConvertValue(name, convertResult, reflectType);
     return convertResult;
   }
 }
 
-class ParamInteceptor implements SpringWebParamInteceptor<any> {
+class ReflectParamEnhance implements ParamEnhanceInterceptor<any> {
   error(_bean: any): void {}
   success(_bean: any): void {}
-  isSpringWebParamInteceptor(): boolean {
+  isParamEnhanceInterceptor(): boolean {
     return true;
   }
   getAnnotation(): Function {
@@ -111,10 +156,10 @@ class ParamInteceptor implements SpringWebParamInteceptor<any> {
   }
 }
 
-class SessionAttributeInteceptor implements SpringWebParamInteceptor<any> {
+class SessionAttributeEnhance implements ParamEnhanceInterceptor<any> {
   error(_bean: any): void {}
   success(_bean: any): void {}
-  isSpringWebParamInteceptor(): boolean {
+  isParamEnhanceInterceptor(): boolean {
     return true;
   }
   getAnnotation(): Function {
@@ -147,7 +192,7 @@ class SessionAttributeInteceptor implements SpringWebParamInteceptor<any> {
   }
 }
 
-paramInterceptor.push(new RequestParamParamInteceptor());
-paramInterceptor.push(new PathVariableParamInteceptor());
-paramInterceptor.push(new ParamInteceptor());
-paramInterceptor.push(new SessionAttributeInteceptor());
+paramEnhanceInterceptorList.push(new QueryParamEnhance());
+paramEnhanceInterceptorList.push(new PathVariableEnhance());
+paramEnhanceInterceptorList.push(new ReflectParamEnhance());
+paramEnhanceInterceptorList.push(new SessionAttributeEnhance());

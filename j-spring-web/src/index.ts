@@ -7,14 +7,23 @@ import { SpringWebStarter } from './springWebContainer';
 
 export {
   SpringWebExceptionHandler,
-  SpringWebParamInteceptor,
-  isSpringWebParamInteceptor,
   isSpringWebExceptionHandler,
 } from './springWebExtends';
 export * from './springWebConfiguration';
 export * from './springWebAnnotation';
 export * from './springReflectType';
 export * from './springWebExtends';
+export {
+  ParamEnhanceInterceptor,
+  isParamEnhanceInterceptor,
+} from './paramEnhanceInterceptor';
+export {
+  RouterEnhanceInterceptor,
+  isRouterEnhanceInterceptor,
+} from './routerEnhanceInterceptor';
+export * from './paramEnhanceInterceptor';
+
+import { SpringResultOperatePostProcessor } from './springWebBeanProcessor';
 
 /**
  * SpringWebStarter web启动器
@@ -26,4 +35,5 @@ export const springWebModule = [
   ExpressAppEnhanceBeanProcessor,
   ControllerBeanProcessor,
   SpringParamterBeanPostProcessor,
+  SpringResultOperatePostProcessor,
 ];
