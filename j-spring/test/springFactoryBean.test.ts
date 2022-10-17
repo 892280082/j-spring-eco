@@ -1,164 +1,157 @@
-import {Autowired, Component, isFunction, spring, SpringFactoryBean } from '../src'
+import {
+  Autowired,
+  Component,
+  isFunction,
+  spring,
+  SpringFactoryBean,
+} from '../src';
+spring.closeLog();
+describe('test factory bean', () => {
+  it('first sample', () => {
+    let realDbSource = { port: 20 };
 
-describe('test factory bean',()=>{
+    @Component()
+    class DataSource implements SpringFactoryBean<any> {
+      port: number;
 
+      isSpringFactoryBean(): boolean {
+        return true;
+      }
+      getBean() {
+        return realDbSource;
+      }
+    }
 
-    it('first sample',()=>{
+    @Component()
+    class Application {
+      @Autowired({ clazz: DataSource })
+      db: DataSource;
 
-        let realDbSource = {port:20};
+      public main() {
+        return this.db.port;
+      }
+    }
 
-        @Component()
-        class DataSource implements SpringFactoryBean<any> {
+    const result = spring.getBean(Application).main();
 
-            port:number;
+    expect(result).toBe(20);
+  });
 
-            isSpringFactoryBean(): boolean {
-                return true;
-            }
-            getBean() {
-                return realDbSource;
-            }
-        }
+  it('change the ref', () => {
+    let realDbSource = { port: 20 };
 
-        @Component()
-        class Application {
+    @Component()
+    class DataSource implements SpringFactoryBean<any> {
+      port: number;
 
-            @Autowired({clazz:DataSource})
-            db:DataSource;
+      isSpringFactoryBean(): boolean {
+        return true;
+      }
+      getBean() {
+        return realDbSource;
+      }
+    }
 
-            public main(){
-                return this.db.port;
-            }
+    @Component()
+    class Application {
+      @Autowired({ clazz: DataSource })
+      db: DataSource;
 
-        }
+      public main() {
+        return this.db.port;
+      }
+    }
 
-        const result =spring.getBean(Application).main();
+    const result = spring.getBean(Application).main();
 
-        expect(result).toBe(20);
-    })
+    realDbSource = { port: 30 };
 
-    it('change the ref',()=>{
+    const result2 = spring.getBean(Application).main();
 
-        let realDbSource = {port:20};
+    expect(result + result2).toBe(50);
+  });
 
-        @Component()
-        class DataSource implements SpringFactoryBean<any> {
+  it('autowired by type', () => {
+    interface SqlQuery {
+      query(): string[];
+      isSqlQuery(): boolean;
+    }
 
-            port:number;
+    function isSquery(bean: SqlQuery): boolean {
+      return (
+        isFunction(bean.query) &&
+        isFunction(bean.isSqlQuery) &&
+        bean.isSqlQuery()
+      );
+    }
 
-            isSpringFactoryBean(): boolean {
-                return true;
-            }
-            getBean() {
-                return realDbSource;
-            }
-        }
+    @Component()
+    class Application {
+      @Autowired({ type: isSquery })
+      db: SqlQuery;
 
-        @Component()
-        class Application {
+      public main() {
+        return this.db.query();
+      }
+    }
 
-            @Autowired({clazz:DataSource})
-            db:DataSource;
+    expect(() => {
+      spring.getBean(Application).main();
+    }).toThrowError();
+  });
 
-            public main(){
-                return this.db.port;
-            }
+  it('autowired by type', () => {
+    interface SqlQuery {
+      query(): string[];
+      isSqlQuery(): boolean;
+    }
 
-        }
+    function isSquery(bean: SqlQuery): boolean {
+      return (
+        isFunction(bean.query) &&
+        isFunction(bean.isSqlQuery) &&
+        bean.isSqlQuery()
+      );
+    }
 
-        const result =spring.getBean(Application).main();
+    class SqliteDb implements SqlQuery {
+      query() {
+        return ['query ok'];
+      }
+      isSqlQuery(): boolean {
+        return true;
+      }
+    }
 
-        realDbSource = {port:30};
+    //模拟这是从外部Module获取的实例
+    const instanceDb = new SqliteDb();
 
-        const result2 =spring.getBean(Application).main();
+    //导出外部的实例
+    @Component()
+    class SqliteQueryBeanFactory implements SpringFactoryBean<SqlQuery> {
+      isSpringFactoryBean(): boolean {
+        return true;
+      }
+      getBean(): SqlQuery {
+        return instanceDb;
+      }
+    }
 
-        expect(result+result2).toBe(50);
-    })
+    @Component()
+    class Application {
+      @Autowired({ type: isSquery })
+      db: SqlQuery;
 
+      public main() {
+        return this.db.query();
+      }
+    }
 
-    it('autowired by type',()=>{
+    const result = spring
+      .bind(SqliteQueryBeanFactory)
+      .getBean(Application)
+      .main();
 
-        interface SqlQuery {
-            query():string[];
-            isSqlQuery():boolean;
-        }
-
-        function isSquery(bean:SqlQuery):boolean {
-            return isFunction(bean.query) && isFunction(bean.isSqlQuery) && bean.isSqlQuery();
-        }
-
-
-        @Component()
-        class Application {
-
-            @Autowired({type:isSquery})
-            db:SqlQuery;
-
-            public main(){
-                return this.db.query();
-            }
-
-        }
-
-
-        expect(()=>{
-            spring.getBean(Application).main()
-        }).toThrowError();
-    })
-
-
-    it('autowired by type',()=>{
-
-        interface SqlQuery {
-            query():string[];
-            isSqlQuery():boolean;
-        }
-
-        function isSquery(bean:SqlQuery):boolean {
-            return isFunction(bean.query) && isFunction(bean.isSqlQuery) && bean.isSqlQuery();
-        }
-
-        class SqliteDb implements SqlQuery {
-            query(){
-                return ['query ok']
-            }
-            isSqlQuery(): boolean {
-              return true;
-            }
-        }
-
-        //模拟这是从外部Module获取的实例
-        const instanceDb = new SqliteDb();
-
-        //导出外部的实例
-        @Component()
-        class SqliteQueryBeanFactory implements SpringFactoryBean<SqlQuery> {
-            isSpringFactoryBean(): boolean {
-                return true;
-            }
-            getBean(): SqlQuery {
-                return instanceDb;
-            }
-            
-        }
-
-
-        @Component()
-        class Application {
-
-            @Autowired({type:isSquery})
-            db:SqlQuery;
-
-            public main(){
-                return this.db.query();
-            }
-
-        }
-
-        const result =spring.bind(SqliteQueryBeanFactory).getBean(Application).main();
-
-        expect(result).toEqual(['query ok'])
-    })
-    
-    
-})
+    expect(result).toEqual(['query ok']);
+  });
+});

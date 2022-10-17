@@ -118,6 +118,12 @@ class SpringPanel {
     setLogger(op(resourceOperate));
     return this;
   }
+
+  closeLog() {
+    this.loadConfig({
+      'j-spring.log.level': 'off',
+    });
+  }
 }
 
 export const spring = new SpringPanel();

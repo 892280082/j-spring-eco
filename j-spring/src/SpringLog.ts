@@ -125,3 +125,7 @@ export function createLogBean(clazz: Clazz): Logger {
   );
   return log as Logger;
 }
+
+export function isCloseLog(): boolean {
+  return geFormatValue('j-spring.log.level', String) === 'off';
+}

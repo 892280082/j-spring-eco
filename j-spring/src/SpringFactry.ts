@@ -21,6 +21,7 @@ import {
 import {
   createDebugLogger,
   createLogBean,
+  isCloseLog,
   Logger,
   springLog,
 } from './SpringLog';
@@ -586,12 +587,9 @@ function printConfig() {
 }
 
 export const beanFactoryInit = () => {
-  printLogo(console.log);
+  if (!isCloseLog()) printLogo(console.log);
 
   logger(`阶段一-------------检查打印所有配置项----------------------`);
-  logger(
-    `内置:j-spring.log.on     备注:开启日志 值:on|off 强制：否 默认值:on `
-  );
   logger(
     `内置:j-spring.log.level  备注:日志级别 值:根据加载插件 强制：否 默认值:debug `
   );

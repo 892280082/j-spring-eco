@@ -1,133 +1,125 @@
-import { Value,Component, Autowired,loadResourceConfig, launch,cleanBeanCache, spring } from '../src'
-
+import {
+  Value,
+  Component,
+  Autowired,
+  loadResourceConfig,
+  launch,
+  cleanBeanCache,
+  spring,
+} from '../src';
+spring.closeLog();
 @Component()
 class Student {
-    @Value({path:'student.name'})
-    name:String;
-    @Value({path:'student.age'})
-    age:20;
-    @Value({path:'student.city'})
-    city:String;
-    @Value({path:'student.isStuding'})
-    isStuding:Boolean;
-    @Value({path:'student.isBoy'})
-    isBoy:Boolean;
-    
-    getMsg(){
-        return ''+this.name+this.age+this.city;
-    }
-}
+  @Value({ path: 'student.name' })
+  name: String;
+  @Value({ path: 'student.age' })
+  age: 20;
+  @Value({ path: 'student.city' })
+  city: String;
+  @Value({ path: 'student.isStuding' })
+  isStuding: Boolean;
+  @Value({ path: 'student.isBoy' })
+  isBoy: Boolean;
 
+  getMsg() {
+    return '' + this.name + this.age + this.city;
+  }
+}
 
 @Component()
 class Application {
+  @Value({ path: 'app.msg' })
+  appMsg: string;
 
-    @Value({path:'app.msg'})
-    appMsg:string;
+  @Autowired({ clazz: Student })
+  student: Student;
 
-    @Autowired({clazz:Student})
-    student:Student;
-
-    public main(){
-        return `${this.appMsg}! my name is ${this.student.name} and ${this.student.age} years old! ${this.student.isStuding} ${this.student.isBoy}`;
-    }
-
+  public main() {
+    return `${this.appMsg}! my name is ${this.student.name} and ${this.student.age} years old! ${this.student.isStuding} ${this.student.isBoy}`;
+  }
 }
 
-describe('resource config load test',()=>{
+describe('resource config load test', () => {
+  it('A simple set value', () => {
+    spring.loadConfig({
+      'app.msg': 'hello',
+      student: {
+        name: 'lina',
+        age: 20,
+        city: 'youda',
+        isStuding: 'true',
+        isBoy: 'false',
+      },
+    });
 
-    it('A simple set value',()=>{
+    expect(spring.launch(Application)).toEqual(
+      `hello! my name is lina and 20 years old! true false`
+    );
+  });
 
-        spring.loadConfig({
-            'app.msg':'hello',
-            student:{
-                name:'lina',
-                age:20,
-                city:'youda',
-                isStuding:'true',
-                isBoy:'false'
-            }
-        })
+  it('number is NaN', () => {
+    cleanBeanCache();
 
-        expect(spring.launch(Application)).toEqual(`hello! my name is lina and 20 years old! true false`)
+    loadResourceConfig({
+      'app.msg': 'hello',
+      student: {
+        name: 'a',
+        age: 'nihao',
+        city: 'sh',
+        isStuding: 'true',
+        isBody: 'false',
+      },
+    });
 
-    })
+    expect(() => launch(Application)).toThrow(
+      `[配置解析错误]: 路径:[student.age] 原因：[value:nihao is NaN]`
+    );
+  });
 
+  it('value type not expect', () => {
+    @Component()
+    class Application {
+      @Value({ path: 'app.msg' })
+      appMsg: string;
 
-    it('number is NaN',()=>{
+      public main() {
+        return this.appMsg;
+      }
+    }
 
-        cleanBeanCache();
+    loadResourceConfig({ 'app.msg': 'hello' });
 
-        loadResourceConfig({
-            'app.msg':'hello',
-            student:{
-                name:'a',
-                age:'nihao',
-                city:'sh',
-                isStuding:'true',
-                isBody:'false'
-            }
-        })
+    const d = launch(Application);
+    expect(d).toEqual('hello');
+  });
 
-        expect(()=>launch(Application)).toThrow(`[配置解析错误]: 路径:[student.age] 原因：[value:nihao is NaN]`)
+  it('value set defualt value', () => {
+    @Component()
+    class Application {
+      @Value({ path: 'port', force: false })
+      port = 3000;
 
-    })
+      main() {
+        return this.port;
+      }
+    }
 
-    
-    it('value type not expect',()=>{
+    expect(launch(Application)).toBe(3000);
+  });
 
-        @Component()
-        class Application {
-        
-            @Value({path:'app.msg'})
-            appMsg:string;
+  it('value not set defualt value', () => {
+    @Component()
+    class Application {
+      @Value({ path: 'port', force: false })
+      port: any;
 
-        
-            public main(){
-                return this.appMsg;
-            }
-        
-        }
+      main() {
+        return this.port;
+      }
+    }
 
-        loadResourceConfig({'app.msg':'hello'})
-
-        const d = launch(Application)
-        expect(d).toEqual('hello');
-
-    })
-
-    it('value set defualt value',()=>{
-
-        @Component()
-        class Application {
-
-            @Value({path:'port',force:false})
-            port=3000;
-
-            main(){
-                return this.port;
-            }
-        }
-
-        expect(launch(Application)).toBe(3000);
-
-    })
-
-    it('value not set defualt value',()=>{
-
-        @Component()
-        class Application {
-
-            @Value({path:'port',force:false})
-            port:any;
-
-            main(){
-                return this.port;
-            }
-        }
-
-        expect(()=>launch(Application)).toThrow(`类:[${Application.name}] 字段:port 若无配置则必须设置默认值!`)
-
-    })
-
-})
+    expect(() => launch(Application)).toThrow(
+      `类:[${Application.name}] 字段:port 若无配置则必须设置默认值!`
+    );
+  });
+});
