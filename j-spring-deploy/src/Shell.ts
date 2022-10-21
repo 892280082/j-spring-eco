@@ -5,7 +5,7 @@ export type ShellOption = {
 };
 
 function checkPathIsAbsoulte(cwd: string) {
-  if (cwd[0] !== '/') {
+  if (path.isAbsolute(cwd)) {
     throw `路径：${cwd} 必须传入绝对路径`;
   }
 }
@@ -86,7 +86,28 @@ export class Shell {
     this.if(`! -d ${dir}`, fn);
   }
 
+  ifFileNotExist(dir: string, fn: Function) {
+    this.if(`! -f ${dir}`, fn);
+  }
+
   mkdir(dir: string) {
     this.raw(`mkdir ${dir}`);
+  }
+
+  cd(cwd: string, fn?: Function) {
+    this.raw(`cd ${cwd}`);
+
+    if (fn) {
+      this.shiftWrapFn(fn);
+      this.raw(`cd -`);
+    }
+  }
+
+  echo(dir: string) {
+    this.raw(`echo ${dir}`);
+  }
+
+  exit(code: number) {
+    this.raw(`exit ${code}`);
   }
 }

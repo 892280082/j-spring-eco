@@ -1,3 +1,4 @@
+import { AppManager } from './AppManager';
 import { Shell } from './Shell';
 
 export declare type Clazz<T> = {
@@ -6,6 +7,7 @@ export declare type Clazz<T> = {
 
 export abstract class LinuxApp {
   public shell: Shell; //命令
+  public appManager: AppManager;
 
   /**
    * 是否单例

@@ -39,6 +39,7 @@ export class AppManager {
     const app = new realClazz();
 
     app.shell = this.shell;
+    app.appManager = this;
 
     //实例化所有依赖
     app.getDepandenceList().forEach(clazz => this.get(clazz));
