@@ -47,8 +47,10 @@ export class AppManager {
     //单例的化 放置缓存
     app.isSingleton() && this.isInstallAppMap.set(clazz, app);
 
-    //安装程序
-    this.shell.ifAppNotInstall(app.getCommdName(), app.install.bind(app));
+    //如果程序需要安装 则执行安装程序
+    if (app.isNeedInstall()) {
+      this.shell.ifAppNotInstall(app.getCommdName(), app.install.bind(app));
+    }
 
     return app as T;
   }

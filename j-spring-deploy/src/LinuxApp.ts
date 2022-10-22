@@ -15,6 +15,11 @@ export abstract class LinuxApp {
   abstract isSingleton(): boolean;
 
   /**
+   * 是否需要安装
+   */
+  abstract isNeedInstall(): boolean;
+
+  /**
    * 可执行程序名称
    */
   abstract getCommdName(): string;

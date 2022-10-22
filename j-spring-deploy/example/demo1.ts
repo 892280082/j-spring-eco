@@ -1,11 +1,28 @@
-import { AppManager, Pnpm, Pm2 } from '../src';
+import { AppManager, DockerApp } from '../src';
 
 const appManager = new AppManager({});
 
-const pnpm = appManager.get(Pnpm);
+const git = appManager.get(DockerApp.Git);
+const pnpm = appManager.get(DockerApp.Pnpm);
+const builder = appManager.get(DockerApp.NodeBuilder);
+const pm2 = appManager.get(DockerApp.Pm2);
 
-pnpm.printVersion();
+const jkDemo = git.cloneOrPull({
+  cwd: '/git',
+  git: 'https://gitee.com/woaianqi/jk-demo.git',
+  user: 'woaianqi',
+  password: 'qweasd123!~',
+});
 
-pnpm.installDep({ cwd: '/etc/node', prod: true, ignoreScript: true });
+pnpm.installDep(jkDemo.projectPath);
+
+builder.build(jkDemo.projectPath);
+
+pm2.start({
+  cwd: jkDemo.projectPath,
+  file: 'dist/index.js',
+  localPort: 8080,
+  dockerPort: 3000,
+});
 
 appManager.shell.print();

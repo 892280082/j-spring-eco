@@ -13,9 +13,9 @@ function checkPathIsAbsoulte(cwd: string) {
 export class Shell {
   constructor(options: Partial<ShellOption>) {
     Object.assign(this.op, options);
-    this.ifDirNotExist(this.op.tempDir, () => {
-      this.mkdir(this.op.tempDir);
-    });
+    // this.ifDirNotExist(this.op.tempDir, () => {
+    //   this.mkdir(this.op.tempDir);
+    // });
   }
 
   op: ShellOption = {
@@ -23,7 +23,7 @@ export class Shell {
   };
 
   //所有内容
-  content: string[] = [];
+  content: string[] = ['#!/bin/bash'];
 
   //制表符数量
   deep: number = 0;
@@ -55,9 +55,13 @@ export class Shell {
     console.log(this.toString());
   }
 
-  if(cmd: string, fn: Function) {
+  if(cmd: string, fn: Function, elseFn?: Function) {
     this.raw(`if [ ${cmd} ]; then`);
     this.shiftWrapFn(fn);
+    if (elseFn) {
+      this.raw(`else`);
+      this.shiftWrapFn(elseFn);
+    }
     this.raw(`fi`);
   }
 
@@ -82,6 +86,10 @@ export class Shell {
     this.if(`! $(command -v ${appName})`, installFn);
   }
 
+  ifDirExist(dir: string, fn: Function, elseFn?: Function) {
+    this.if(`-d ${dir}`, fn, elseFn);
+  }
+
   ifDirNotExist(dir: string, fn: Function) {
     this.if(`! -d ${dir}`, fn);
   }
@@ -104,10 +112,13 @@ export class Shell {
   }
 
   echo(dir: string) {
-    this.raw(`echo ${dir}`);
+    this.raw(`echo '${dir}'`);
   }
 
-  exit(code: number) {
+  exit(code: number, msg?: string) {
+    if (msg) {
+      this.echo(msg);
+    }
     this.raw(`exit ${code}`);
   }
 }
