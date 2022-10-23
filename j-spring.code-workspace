@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "j-spring"
+		},
+		{
+			"path": "j-spring-cli"
+		},
+		{
+			"path": "j-spring-deploy"
+		},
+		{
+			"path": "j-spring-jpa"
+		},
+		{
+			"path": "j-spring-log"
+		},
+		{
+			"path": "j-spring-typeorm-session"
+		},
+		{
+			"path": "j-spring-type-wrap"
+		},
+		{
+			"path": "j-spring-util"
+		},
+		{
+			"path": "j-spring-web"
+		}
+	]
+}
