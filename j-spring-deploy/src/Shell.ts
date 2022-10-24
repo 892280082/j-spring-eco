@@ -82,6 +82,11 @@ export class Shell {
   }
 
   //如果APP没有安装
+
+  ifAppInstall(appName: string, installFn: Function, elseFn?: Function) {
+    this.if(`$(command -v ${appName})`, installFn, elseFn);
+  }
+
   ifAppNotInstall(appName: string, installFn: Function) {
     this.if(`! $(command -v ${appName})`, installFn);
   }
@@ -92,6 +97,10 @@ export class Shell {
 
   ifDirNotExist(dir: string, fn: Function) {
     this.if(`! -d ${dir}`, fn);
+  }
+
+  ifFileExist(dir: string, fn: Function, elseFn?: Function) {
+    this.if(`-f ${dir}`, fn, elseFn);
   }
 
   ifFileNotExist(dir: string, fn: Function) {
