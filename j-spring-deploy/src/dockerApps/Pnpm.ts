@@ -17,7 +17,6 @@ export class Pnpm extends DockerApp {
     this.shell.raw(`pnpm version:`);
     this.getHelper()
       .rm()
-      .print()
       .ammountRoot()
       .excute(`pnpm -v`);
   }
@@ -45,7 +44,6 @@ export class Pnpm extends DockerApp {
       () => {
         this.getHelper()
           .rm()
-          .print()
           .ammountRoot()
           .ammount(cwd, '/app')
           .excute(`pnpm install ${this.getRunFormatArg(option)}`);

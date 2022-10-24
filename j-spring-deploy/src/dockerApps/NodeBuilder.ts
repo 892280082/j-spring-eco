@@ -7,14 +7,12 @@ export class NodeBuilder extends DockerApp {
   printVersion(): void {
     this.getHelper()
       .rm()
-      .print()
       .excute('-v');
   }
 
   build(cwd: string) {
     this.getHelper()
       .rm()
-      .print()
       .ammountRoot()
       .ammountWithWork(cwd, '/app')
       .excute(`npm run build`);

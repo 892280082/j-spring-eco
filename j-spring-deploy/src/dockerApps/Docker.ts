@@ -10,14 +10,21 @@ export class DockerHelper {
     return this;
   }
 
-  print() {
+  it() {
     return this.addCmd('-it');
+  }
+
+  background() {
+    return this.addCmd('-d');
   }
 
   rm() {
     return this.addCmd('--rm');
   }
 
+  name(n: string) {
+    return this.addCmd(`--name ${n}`);
+  }
   ammount(local: string, docker: string) {
     return this.addCmd(`-v ${local}:${docker}`);
   }

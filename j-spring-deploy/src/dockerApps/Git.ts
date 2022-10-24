@@ -18,7 +18,6 @@ export class Git extends DockerApp {
   printVersion(): void {
     this.getHelper()
       .rm()
-      .print()
       .excute('--version');
   }
 
@@ -43,7 +42,10 @@ export class Git extends DockerApp {
 
     //git路径增加用户名和密码
     if (op.git.indexOf('https://') === 0 && op.user && op.password) {
-      op.git = op.git.replace('https://', `https://${op.user}:${op.password}@`);
+      op.git = op.git.replace(
+        'https://',
+        `https://${encodeURIComponent(op.user)}:${encodeURI(op.password)}@`
+      );
     }
 
     //项目实际路径
@@ -55,7 +57,6 @@ export class Git extends DockerApp {
       () => {
         this.getHelper()
           .rm()
-          .print()
           .ammountRoot()
           .ammount(projectPath, '/git')
           .excute('pull');
@@ -63,10 +64,9 @@ export class Git extends DockerApp {
       () => {
         this.getHelper()
           .rm()
-          .print()
           .ammountRoot()
           .ammount(op.cwd, '/git')
-          .excute(`clone ${op.git}`);
+          .excute(`clone '${op.git}'`);
       }
     );
 
