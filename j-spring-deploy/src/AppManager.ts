@@ -21,7 +21,7 @@ export class AppManager {
   constructor(options: AggregationOption) {
     this.shell = new Shell(options.shell ?? {});
     const defaultBuildOption: BuildOption = {
-      dist: './publish',
+      dist: './dist/publish',
       remoteDir: '/temp',
     };
     this.build = Object.assign(defaultBuildOption, options.build ?? {});

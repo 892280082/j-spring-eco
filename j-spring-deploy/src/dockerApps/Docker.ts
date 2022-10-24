@@ -1,12 +1,23 @@
 import { Clazz, LinuxApp } from '../LinuxApp';
 
 export class DockerHelper {
-  constructor(public readonly dockerApp: DockerApp) {}
+  constructor(public readonly dockerApp: DockerApp | undefined) {
+    dockerApp && this.content.push('docker run');
+  }
 
-  content: string[] = ['docker run'];
+  content: string[] = [];
 
   private addCmd(cmd: string): DockerHelper {
     this.content.push(cmd);
+    return this;
+  }
+
+  public static create() {
+    return new DockerHelper(null as any);
+  }
+
+  merge(otherHelper: DockerHelper | undefined) {
+    otherHelper && otherHelper.content.forEach(line => this.content.push(line));
     return this;
   }
 
@@ -25,8 +36,8 @@ export class DockerHelper {
   name(n: string) {
     return this.addCmd(`--name ${n}`);
   }
-  ammount(local: string, docker: string) {
-    return this.addCmd(`-v ${local}:${docker}`);
+  ammount(local: string, docker?: string) {
+    return this.addCmd(`-v ${local}:${docker ?? local}`);
   }
 
   ammountRoot() {
@@ -44,13 +55,12 @@ export class DockerHelper {
   }
 
   port(localPort: number, dockerPort?: number) {
-    dockerPort = dockerPort ?? localPort;
-    return this.addCmd(`-p ${localPort}:${dockerPort}`);
+    return this.addCmd(`-p ${localPort}:${dockerPort ?? localPort}`);
   }
 
   excute(cmd?: string) {
-    this.addCmd(`${this.dockerApp.getImageName()} ${cmd ?? ''}`);
-    this.dockerApp.shell.raw(this.content.join(' '));
+    this.addCmd(`${this.dockerApp?.getImageName()} ${cmd ?? ''}`);
+    this.dockerApp?.shell.raw(this.content.join(' '));
   }
 }
 

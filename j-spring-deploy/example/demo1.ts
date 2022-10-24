@@ -1,4 +1,4 @@
-import { AppManager, getDockerAppInstance } from '../src';
+import { AppManager, DockerHelper, getDockerAppInstance } from '../src';
 
 const appManager = new AppManager({});
 
@@ -21,6 +21,9 @@ pm2.start({
   file: 'dist/index.js',
   localPort: 8080,
   dockerPort: 3000,
+  dockerHelper: DockerHelper.create()
+    .port(443)
+    .ammount('/tmp'), //额外增加的配置
 });
 
 appManager.printShellScript();

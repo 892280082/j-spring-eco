@@ -1,4 +1,4 @@
-import { DockerApp } from './Docker';
+import { DockerApp, DockerHelper } from './Docker';
 import path from 'path';
 
 /**
@@ -24,15 +24,17 @@ export class Pm2 extends DockerApp {
     file: string;
     localPort: number;
     dockerPort: number;
+    dockerHelper?: DockerHelper;
   }) {
     const targetFile = path.join('/app', op.file).replaceAll('\\', '/');
 
     this.shell.raw(`docker stop ${op.name}`);
 
     this.getHelper()
-      .rm()
       .name(op.name)
+      .rm()
       .background()
+      .merge(op.dockerHelper)
       .ammountRoot()
       .ammountWithWork(op.cwd, '/app')
       .port(op.localPort, op.dockerPort)
