@@ -1,8 +1,8 @@
-import { AppManager,getDockerAppInstance } from '../src';
+import { AppManager, getDockerAppInstance } from '../src';
 
 const appManager = new AppManager({});
 
-const { git,pnpm,builder,pm2 }  = getDockerAppInstance(appManager);
+const { git, pnpm, builder, pm2 } = getDockerAppInstance(appManager);
 
 const jkDemo = git.cloneOrPull({
   cwd: '/git',
@@ -22,4 +22,4 @@ pm2.start({
   dockerPort: 3000,
 });
 
-appManager.shell.print();
+appManager.printShellScript()

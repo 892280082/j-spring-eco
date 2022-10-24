@@ -55,7 +55,7 @@ export class AppManager {
     return app as T;
   }
 
-  printShellScript(){
+  printShellScript() {
     console.log(this.shell.toString());
   }
 }

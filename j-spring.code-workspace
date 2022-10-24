@@ -27,5 +27,8 @@
 		{
 			"path": "j-spring-web"
 		}
-	]
+	],
+	"settings": {
+		"editor.formatOnSave": true
+	}
 }
