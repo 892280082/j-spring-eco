@@ -1,11 +1,8 @@
-import { AppManager, DockerApp } from '../src';
+import { AppManager,getDockerAppInstance } from '../src';
 
 const appManager = new AppManager({});
 
-const git = appManager.get(DockerApp.Git);
-const pnpm = appManager.get(DockerApp.Pnpm);
-const builder = appManager.get(DockerApp.NodeBuilder);
-const pm2 = appManager.get(DockerApp.Pm2);
+const { git,pnpm,builder,pm2 }  = getDockerAppInstance(appManager);
 
 const jkDemo = git.cloneOrPull({
   cwd: '/git',
