@@ -30,7 +30,7 @@ export class Pnpm extends DockerApp {
     };
 
     Object.assign(op, option);
-    const str = ['--ignore-scripts']; //默认就忽略脚本 该node版本太低 不持支编译
+    const str = ['--ignore-scripts']; //只做编译工作 一个docker 一个任务
     op.prod && str.push('--prod');
     op.noOption && str.push('--no-optional');
     str.push(op.otherArgs);
