@@ -22,11 +22,10 @@ export class Pm2 extends DockerApp {
     name: string;
     cwd: string;
     file: string;
-    localPort: number;
-    dockerPort: number;
+    ports: [number, number];
     dockerHelper?: DockerHelper;
   }) {
-    const targetFile = path.join('/app', op.file).replaceAll('\\', '/');
+    const targetFile = path.join('/app', op.file);
 
     this.shell.raw(`docker stop ${op.name}`);
 
@@ -35,9 +34,8 @@ export class Pm2 extends DockerApp {
       .rm()
       .background()
       .merge(op.dockerHelper)
-      .ammountRoot()
       .ammountWithWork(op.cwd, '/app')
-      .port(op.localPort, op.dockerPort)
+      .port(op.ports[0], op.ports[1])
       .excute(`pm2-runtime ${targetFile}`);
 
     this.shell.raw(`docker ps`);

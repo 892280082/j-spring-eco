@@ -1,8 +1,8 @@
-import { AppManager, DockerHelper, getDockerAppInstance } from '../src';
+import { AppManager, getDockerAppInstance } from '../src';
 
 const appManager = new AppManager({});
 
-const { git, pnpm, builder, pm2 } = getDockerAppInstance(appManager);
+const { git, pnpm, pm2 } = getDockerAppInstance(appManager);
 
 const jkDemo = git.cloneOrPull({
   cwd: '/git',
@@ -11,25 +11,26 @@ const jkDemo = git.cloneOrPull({
   password: 'qweasd123!~',
 });
 
-pnpm.installDep(jkDemo.projectPath);
-
-builder.build(jkDemo.projectPath);
+pnpm.installDep(jkDemo.projectPath, { tecentProxy: true, autoBuild: true });
 
 pm2.start({
   name: 'jkDemo',
   cwd: jkDemo.projectPath,
   file: 'dist/index.js',
-  localPort: 8080,
-  dockerPort: 3000,
-  dockerHelper: DockerHelper.create()
-    .port(443)
-    .ammount('/tmp'), //额外增加的配置
+  ports: [8080, 3000],
+});
+
+pm2.start({
+  name: 'jkDemo2',
+  cwd: jkDemo.projectPath,
+  file: 'dist/index.js',
+  ports: [8090, 3000],
 });
 
 appManager.printShellScript();
 
-appManager.publishBySSH({
-  host: '192.168.42.168',
-  username: 'root',
-  password: 'redhat',
-});
+// appManager.publishBySSH({
+//   host: '192.168.42.168',
+//   username: 'root',
+//   password: 'redhat',
+// });

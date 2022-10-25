@@ -3,14 +3,27 @@ import { DockerApp } from './Docker';
 type PnpmInstallDep = {
   prod: boolean; //只安装生产依赖
   noOption: boolean; //不安装可选项
-  otherArgs: string;
+  otherArgs: string; //追加自定义参数
+  cnpmProxy: boolean; //淘宝代理
+  tecentProxy: boolean; //腾讯代理
+  taobaoProxy: boolean; //淘宝代理
+  store: string; //缓存目录
+  autoBuild: boolean;
 };
 
+/***
+Dockerfile
+FROM node:18-alpine3.15
+VOLUME ['/app','/pnpm-store']
+RUN npm install pnpm -g --registry https://mirrors.cloud.tencent.com/npm/
+RUN pnpm config set store-dir /pnpm-store
+WORKDIR /app
+ */
 export class Pnpm extends DockerApp {
   //存储地
 
   getImageName(): string {
-    return 'nospy/pnpm:14-alpine';
+    return '892280082/pnpm:v3';
   }
 
   printVersion(): void {
@@ -21,35 +34,51 @@ export class Pnpm extends DockerApp {
       .excute(`pnpm -v`);
   }
 
-  getRunFormatArg(option?: Partial<PnpmInstallDep>): string {
-    const op: PnpmInstallDep = {
-      prod: false,
-      noOption: false,
-      otherArgs: '',
-    };
-
-    Object.assign(op, option);
-    const str = ['--ignore-scripts']; //只做编译工作 一个docker 一个任务
+  getRunFormatArg(op: PnpmInstallDep): string {
+    const str = [];
+    !op.autoBuild && str.push('--ignore-scripts');
     op.prod && str.push('--prod');
     op.noOption && str.push('--no-optional');
+    //使用代理
+    if (op.cnpmProxy) {
+      str.push('--registry https://r.cnpmjs.org/');
+    } else if (op.tecentProxy) {
+      str.push('--registry https://mirrors.cloud.tencent.com/npm/');
+    } else if (op.taobaoProxy) {
+      str.push('--registry https://registry.npmmirror.com/');
+    }
     str.push(op.otherArgs);
     return str.join(' ');
   }
 
   //安装依赖
   installDep(cwd: string, option?: Partial<PnpmInstallDep>) {
+    const op: PnpmInstallDep = {
+      prod: false,
+      noOption: false,
+      otherArgs: '',
+      cnpmProxy: false,
+      taobaoProxy: false,
+      tecentProxy: false,
+      store: '${HOME}/pnpm-store',
+      autoBuild: false,
+    };
+
+    Object.assign(op, option);
+
     const { shell } = this;
+
     shell.ifDirExist(
       cwd,
       () => {
         this.getHelper()
           .rm()
-          .ammountRoot()
           .ammount(cwd, '/app')
-          .excute(`pnpm install ${this.getRunFormatArg(option)}`);
+          .ammount(op.store, '/pnpm-store')
+          .excute(`pnpm install ${this.getRunFormatArg(op)}`);
       },
       () => {
-        shell.exit(100, `Pnpm:cwd ${cwd} not exist!`);
+        shell.exit(100, `pnpm error:${cwd} not exist!`);
       }
     );
   }

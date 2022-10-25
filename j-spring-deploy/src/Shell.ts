@@ -48,7 +48,7 @@ export class Shell {
 
   //打印脚本
   toString() {
-    return this.content.join('\n');
+    return this.content.join('\n').replaceAll('\\', '/');
   }
 
   print() {
@@ -109,6 +109,44 @@ export class Shell {
 
   mkdir(dir: string) {
     this.raw(`mkdir ${dir}`);
+  }
+  rm(target: string) {
+    this.raw(`rm -rf ${target}`);
+  }
+
+  copy(source: string, targetDir: string) {
+    this.ifDirExist(
+      targetDir,
+      () => {
+        this.rm(targetDir);
+      },
+      () => {
+        this.mkdir(targetDir);
+      }
+    );
+
+    //源 是目录
+    this.ifDirExist(
+      source,
+      () => {
+        //递归复制目录
+        this.raw(`cp -R ${source} ${targetDir}`);
+      },
+      () => {
+        //源如果是文件
+        this.ifFileExist(
+          source,
+          () => {
+            //复制文件
+            this.raw(`cp ${source} ${targetDir}`);
+          },
+          () => {
+            //报错
+            this.exit(1, `file not exist ${source}`);
+          }
+        );
+      }
+    );
   }
 
   cd(cwd: string, fn?: Function) {
