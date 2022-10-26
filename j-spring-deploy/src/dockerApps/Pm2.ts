@@ -1,5 +1,4 @@
-import { DockerApp, DockerHelper } from './Docker';
-import path from 'path';
+import { DockerServeApp, DockerServerOption } from './Docker';
 
 /**
 Dockerfile
@@ -9,7 +8,18 @@ VOLUME ['/app']
 WORKDIR /app
  */
 
-export class Pm2 extends DockerApp {
+type Pm2Option = {
+  cwd: string;
+  index: string;
+};
+
+export class Pm2 extends DockerServeApp {
+  public start(op: DockerServerOption & Pm2Option): void {
+    this.stop(op.containerName);
+    this.getHelperFromOption(op)
+      .ammountWithWork(op.cwd, '/app')
+      .excute(`pm2-runtime ${op.index}`);
+  }
   getImageName(): string {
     return '892280082/pm2:v2';
   }
@@ -18,26 +28,27 @@ export class Pm2 extends DockerApp {
       .rm()
       .excute('node -v');
   }
-  start(op: {
-    name: string;
-    cwd: string;
-    file: string;
-    ports: [number, number];
-    dockerHelper?: DockerHelper;
-  }) {
-    const targetFile = path.join('/app', op.file);
-
-    this.shell.raw(`docker stop ${op.name}`);
-
-    this.getHelper()
-      .name(op.name)
-      .rm()
-      .background()
-      .merge(op.dockerHelper)
-      .ammountWithWork(op.cwd, '/app')
-      .port(op.ports[0], op.ports[1])
-      .excute(`pm2-runtime ${targetFile}`);
-
-    this.shell.raw(`docker ps`);
-  }
+  // start(op: {
+  //   name: string;
+  //   cwd: string;
+  //   file: string;
+  //   ports?: [number, number];
+  //   network?: NetWorkResult;
+  //   dockerHelper?: DockerHelper;
+  // }) {
+  //   //执行文件
+  //   const targetFile = path.join('/app', op.file);
+  //   this.shell.raw(`docker stop ${op.name}`);
+  //   const h = this.getHelper()
+  //     .name(op.name)
+  //     .rm()
+  //     .background()
+  //     .bindNetwork(op.network)
+  //     .merge(op.dockerHelper)
+  //     .ammountWithWork(op.cwd, '/app');
+  //   if (op.ports) {
+  //     h.port(op.ports[0], op.ports[1]);
+  //   }
+  //   h.excute(`pm2-runtime ${targetFile}`);
+  // }
 }

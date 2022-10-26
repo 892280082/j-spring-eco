@@ -9,7 +9,7 @@
             "type": "node",
             "request": "launch",
             "args": [
-                "./example/demo1.ts"
+                "./example/deployServer.ts"
             ],
             "runtimeArgs": [
                 "-r",

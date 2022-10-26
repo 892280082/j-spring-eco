@@ -33,6 +33,10 @@ export class Shell {
     this.content.push(`${this.getShiltTable()}${cmd}`);
   }
 
+  rawWithIgnoreError(cmd: string) {
+    this.raw(`${cmd} 2>/dev/null`);
+  }
+
   //获取制表符
   getShiltTable() {
     return Array(this.deep)
@@ -89,6 +93,14 @@ export class Shell {
 
   ifAppNotInstall(appName: string, installFn: Function) {
     this.if(`! $(command -v ${appName})`, installFn);
+  }
+
+  ifPathExist(dir: string, fn: Function, elseFn?: Function) {
+    this.if(`-e ${dir}`, fn, elseFn);
+  }
+
+  ifPathNotExist(dir: string, fn: Function) {
+    this.if(`! -e ${dir}`, fn);
   }
 
   ifDirExist(dir: string, fn: Function, elseFn?: Function) {

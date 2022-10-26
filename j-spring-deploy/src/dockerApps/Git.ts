@@ -22,8 +22,16 @@ export class GitCloneResult {
     public readonly shell: Shell
   ) {}
 
-  copy(source: string, targetDir: string) {
-    this.shell.copy(path.join(this.projectPath, source), targetDir);
+  safeCopy(source: string, targetDir: string) {
+    this.shell.copy(this.safeJoin(source), targetDir);
+  }
+
+  safeJoin(targetPath: string) {
+    const realPath = path.join(this.projectPath, targetPath);
+    this.shell.ifPathNotExist(realPath, () => {
+      this.shell.exit(1, `git: ${realPath} path not exist `);
+    });
+    return realPath;
   }
 }
 
