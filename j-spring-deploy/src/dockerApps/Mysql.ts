@@ -12,7 +12,7 @@ export class Mysql extends DockerServeApp {
     this.stop(op.containerName);
     this.getHelperFromOption(op)
       .ammount(op.logDir, '/logs')
-      .ammount(op.configDir, '/etc/mysql/conf')
+      .ammount(op.configDir, '/etc/mysql')
       .ammount(op.dataDir, '/var/lib/mysql')
       .env('MYSQL_ROOT_PASSWORD', op.rootPassword)
       .excute();
