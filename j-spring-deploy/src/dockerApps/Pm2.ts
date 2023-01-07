@@ -28,27 +28,4 @@ export class Pm2 extends DockerServeApp {
       .rm()
       .excute('node -v');
   }
-  // start(op: {
-  //   name: string;
-  //   cwd: string;
-  //   file: string;
-  //   ports?: [number, number];
-  //   network?: NetWorkResult;
-  //   dockerHelper?: DockerHelper;
-  // }) {
-  //   //执行文件
-  //   const targetFile = path.join('/app', op.file);
-  //   this.shell.raw(`docker stop ${op.name}`);
-  //   const h = this.getHelper()
-  //     .name(op.name)
-  //     .rm()
-  //     .background()
-  //     .bindNetwork(op.network)
-  //     .merge(op.dockerHelper)
-  //     .ammountWithWork(op.cwd, '/app');
-  //   if (op.ports) {
-  //     h.port(op.ports[0], op.ports[1]);
-  //   }
-  //   h.excute(`pm2-runtime ${targetFile}`);
-  // }
 }
