@@ -27,6 +27,7 @@ export class IndexController {
 
   //测试1: 首页
   @Get('/')
+  @ApiRemark('首页地址')
   @Render('index.ejs')
   async index() {
     return { msg: `${this.indexMsg} => hello world!` };

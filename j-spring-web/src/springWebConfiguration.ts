@@ -16,10 +16,10 @@ export class EjsViewConfigruation implements ExpressConfiguration {
     app.set('views', path.join(this.root, this.viewPath));
     app.set('view engine', 'ejs');
   }
-  @Value({ path: 'express.view.root', force: false })
+  @Value({ path: 'express.view.root', remark: '视图根目录', force: false })
   root: string = rootPath.resolve('./');
 
-  @Value({ path: 'express.view.dir', force: false })
+  @Value({ path: 'express.view.dir', remark: '视图目录', force: false })
   viewPath: string = 'view';
 
   isExpressConfiguration(): boolean {
@@ -41,9 +41,9 @@ export class ExpressMemorySessionConfiguration implements ExpressConfiguration {
       })
     );
   }
-  @Value({ path: 'express.session.secret', force: false })
+  @Value({ path: 'express.session.secret', remark: '仅用于测试', force: false })
   secret: string = 'kity';
-  @Value({ path: 'express.session.maxAge', force: false })
+  @Value({ path: 'express.session.maxAge', remark: '仅用于测试', force: false })
   maxAge: number = 60000;
 
   isExpressConfiguration(): boolean {

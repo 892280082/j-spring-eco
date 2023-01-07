@@ -7,8 +7,8 @@ import {
   SpringWebExceptionHandler,
   MorganLogConfigruation,
 } from '../src';
-import { errorInfo } from '../src/springWebExtends';
-import { ExpressServer } from '../src/springReflectType';
+import { errorInfo } from '../src';
+import { ExpressServer } from '../src';
 import {
   StudentController,
   XiaoAiController,
